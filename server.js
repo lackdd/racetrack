@@ -34,6 +34,10 @@ app.get('/front-desk', (req, res) => {
     res.sendFile(path.join(__dirname, 'components', 'front-desk.html'));
 });
 
+//
+app.get('/spectator', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/src/guest/spectator', 'spectator.html'));
+})
 // Handle socket connections
 io.on('connection', (socket) => {
 
