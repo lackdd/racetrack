@@ -2,13 +2,22 @@
   "name": "racetrack",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": ""
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "tunnel": "npm run dev & ngrok start --config .ngrok.yml racetrack"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1",
+    "ngrok": "^5.0.0-beta.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
 }
