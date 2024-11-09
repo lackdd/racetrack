@@ -5,6 +5,7 @@ backLink.href = "./";
 backLink.id = 'back';
 backLink.innerText = "Go back to homepage";
 backLink.addEventListener('click', (event) => {
+    event.preventDefault(); // Prevent the default anchor behavior,  ei lase muidu homepage-i minna kui lingile vajutada kui seda pole
     console.log("Navigating to Homepage");
     window.location.href = '/';
 

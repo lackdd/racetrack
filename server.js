@@ -57,19 +57,20 @@ app.get('/spectator', (req, res) => {
 io.on('connection', (socket) => {
     console.log('Client connected');
 
+    // retrieve raceDriversMap data from store and send it to the client
+    const raceDriversData = store.get('raceDriversMap');
+    const raceDriversMap = new Map(raceDriversData); // Convert to Map if needed
+    socket.emit('raceDriversData', Array.from(raceDriversMap.entries()));
+
     // Listen for the 'updateRaceDrivers' event from the client
     socket.on('updateRaceDrivers', (data) => {
         console.log('Received race drivers data from client:', data);
-
-        // retrieve raceDriversMap data from store and send it to the client
-
-
         // update map in the store based on client data
-        const raceDriversMap = new Map(data);
-        store.set('raceDriversMap', Array.from(raceDriversMap.entries()));
+        const updatedRaceDriversMap = new Map(data);
+        store.set('raceDriversMap', Array.from(updatedRaceDriversMap.entries()));
 
         // broadcast the updated map to all connected clients
-        io.emit('raceDriversData', Array.from(raceDriversMap.entries()));
+        io.emit('raceDriversData', Array.from(updatedRaceDriversMap.entries()));
     });
 
     // Listen for button press event from receptionist page
