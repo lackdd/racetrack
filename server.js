@@ -12,6 +12,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+app.use(express.json());
+
 
 // should remove the ngrok warning page for new users
 app.get('/fetch-from-ngrok', async (req, res) => {
@@ -76,6 +78,11 @@ io.on('connection', (socket) => {
         io.emit('buttonPressedNotification');
     });
 });
+
+//Login
+const loginRoute = require('./public/parts/login');
+app.use('/login', loginRoute);
+
 
 
 server.listen(PORT, () => {
