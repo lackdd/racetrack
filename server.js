@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
         console.log('Received race drivers data from client:', data);
 
         // retrieve raceDriversMap data from store and send it to the client
-        
+
 
         // update map in the store based on client data
         const raceDriversMap = new Map(data);
