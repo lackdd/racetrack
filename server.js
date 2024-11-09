@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
         store.set('raceDriversMap', Array.from(updatedRaceDriversMap.entries()));
 
         // broadcast the updated map to all connected clients
-        io.emit('raceDriversData', Array.from(updatedRaceDriversMap.entries()));
+        //io.emit('raceDriversData', Array.from(updatedRaceDriversMap.entries()));
     });
 
     // Listen for button press event from receptionist page
