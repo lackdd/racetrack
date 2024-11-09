@@ -18,7 +18,6 @@ app.use((req, res, next) => {
 
 
 
-
 app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
 app.use(express.static(path.join(__dirname, 'components'))); // Serve static files
 
