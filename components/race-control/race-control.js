@@ -1,3 +1,5 @@
+const socket = io();
+
 let backLink = document.createElement('a');
 backLink.href = "./";
 backLink.id = 'back';
@@ -7,5 +9,6 @@ backLink.addEventListener('click', (event) => {
     window.location.href = '/';
 
 });
+
 
 document.body.appendChild(backLink);

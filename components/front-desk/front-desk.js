@@ -1,4 +1,4 @@
-//const store = require('../stores/store.js');
+const socket = io();
 
 let backLink = document.createElement('a');
 backLink.href = "./";
@@ -11,6 +11,10 @@ backLink.addEventListener('click', (event) => {
 });
 
 document.body.appendChild(backLink);
+
+socket.on('buttonPressedNotification', () => {
+    document.getElementById('message').textContent = 'The button was pressed on the Receptionist page!';
+});
 
 
 // add drivers and car for new race
@@ -50,7 +54,9 @@ buttonConfirmInput.addEventListener("click", () => {
         //raceDriversMap.set(driverName, { car: clickCounter });
         raceDriversMap.set(driverName, clickCounter);
         inputField.value = "";
-        store.set('raceDriversMap', Array.from(raceDriversMap.entries()));
+
+        socket.emit('updateRaceDrivers', Array.from(raceDriversMap.entries()));
+
     }
     console.log(raceDriversMap);
 });

@@ -1,9 +1,11 @@
 //Import stuff and technical stuff
+const PORT = 3000;
 const express = require('express');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
 const store = require('./stores/store.js');
+require('dotenv').config({ path: './stores/.env' });
 
 const path = require('path');
 const app = express();
@@ -36,24 +38,37 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
-});
-
 app.get('/front-desk', (req, res) => {
-    res.sendFile(path.join(__dirname, 'components', 'front-desk.html'));
+    res.sendFile(path.join(__dirname, 'components','front-desk', 'front-desk.html'));
 });
 
 app.get('/race-control', (req, res) => {
-    res.sendFile(path.join(__dirname, 'components', 'race-control.html'));
+    res.sendFile(path.join(__dirname, 'components', 'race-control', 'race-control.html'));
 });
 
 //
 app.get('/spectator', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/src/guest/spectator', 'spectator.html'));
+    res.sendFile(path.join(__dirname, 'components', 'spectator', 'spectator.html'));
 })
+
 // Handle socket connections
 io.on('connection', (socket) => {
+    console.log('Client connected');
+
+    // Listen for the 'updateRaceDrivers' event from the client
+    socket.on('updateRaceDrivers', (data) => {
+        console.log('Received race drivers data from client:', data);
+
+        // retrieve raceDriversMap data from store and send it to the client
+        
+
+        // update map in the store based on client data
+        const raceDriversMap = new Map(data);
+        store.set('raceDriversMap', Array.from(raceDriversMap.entries()));
+
+        // broadcast the updated map to all connected clients
+        io.emit('raceDriversData', Array.from(raceDriversMap.entries()));
+    });
 
     // Listen for button press event from receptionist page
     socket.on('myButtonPressed', () => {
@@ -63,6 +78,6 @@ io.on('connection', (socket) => {
 });
 
 
-server.listen(3000, () => {
-    console.log('server running at http://localhost:3000');
+server.listen(PORT, () => {
+    console.log(`server running on port ${PORT}`);
 });

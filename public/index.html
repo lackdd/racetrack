@@ -1,25 +1,23 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title></title>
+    <title>Race Goo!</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="./index.js" defer></script>
     <link rel="stylesheet" href="">
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 <div id="links">
     <a href="/spectator" id="spectatorLink">Spectator</a>
+    <a href="/front-desk" id="front-desk">Front-desk</a>
     <a href="/login" id="login">Worker</a>
 </div>
 <div id="mainContentArea">
     <p>News here</p>
 </div>
-<button id="notifyButton">Socket button!</button>
-
 
 <script type="module">
     import loadMainHeader from './MainHeader.js';
@@ -27,18 +25,6 @@
 </script>
 
 <script>
-    const socket = io();
-
-    document.getElementById('notifyButton').addEventListener('click', () => {
-        // Emit the button press event to the server
-        socket.emit('myButtonPressed');
-    });
-
-    // Handle the "Socket button" click
-    document.getElementById('notifyButton').addEventListener('click', () => {
-        socket.emit('myButtonPressed');
-    });
-
     // Dynamically import and load login content when "Worker" link is clicked
     document.getElementById('login').addEventListener('click', async (event) => {
         event.preventDefault(); // Prevent default link behavior
