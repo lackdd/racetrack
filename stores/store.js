@@ -8,11 +8,20 @@ class Store {
     }
 
     set(key, value) {
-        this.data[key] = value;
+        if (typeof value === 'object') {
+            this.data[key] = JSON.stringify(value);
+        } else {
+            this.data[key] = value;
+        }
     }
 
     get(key) {
-        return this.data[key];
+        const value = this.data[key];
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return value;
+        }
     }
 
     remove(key) {
@@ -20,7 +29,11 @@ class Store {
     }
 
     getAll() {
-        return this.data;
+        const allData = {};
+        for (let key in this.data) {
+            allData[key] = this.get(key);
+        }
+        return allData;
     }
 
     clear() {

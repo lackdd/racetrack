@@ -2,7 +2,7 @@ function loadMainHeader() {
     const mainContainer = document.createElement('div')
     const header = document.createElement('h1');
     const line = document.createElement('hr')
-    header.innerText = 'Racetrack Gooo!';
+    header.innerText = 'Beachside Racetrack';
     mainContainer.appendChild(header);
     mainContainer.appendChild(line);
 
