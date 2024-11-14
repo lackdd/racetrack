@@ -1,10 +1,12 @@
+import { Link } from 'react-router-dom';
+
 function Header() {
     return (
         <nav>
             <div className="nav-wrapper">
-                <a className="left brand-logo">
+                <Link to={'/'} className="left brand-logo">
                     Racetrack
-                </a>
+                </Link>
                 <ul className="right">
                     <li>
                         <a>front desk</a>

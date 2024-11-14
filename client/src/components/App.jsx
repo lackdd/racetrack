@@ -2,15 +2,15 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 
 import Header from './Header.jsx'
+import Landing from './Landing'
 const frontDesk = () => <h2>Front Desk Interface</h2>
 const raceControl = () => <h2>Race Control Interface</h2>
-const Landing = () => <h2>Landing</h2>
 
 function App() {
 
   return (
       <>
-          <div>
+          <div className="container">
               <BrowserRouter>
                   <div>
                       <Header />
