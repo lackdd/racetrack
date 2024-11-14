@@ -6,13 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js",
-    "tunnel": "npm run dev & ngrok start --config .ngrok.yml racetrack"
+    "racetrack": "nodemon server.js",
+    "tunnel": "npm run dev & ngrok start --config .ngrok.yml racetrack",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run racetrack\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^9.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "ngrok": "^5.0.0-beta.2",

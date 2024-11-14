@@ -4,7 +4,6 @@ const express = require('express');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
-const store = require('./stores/store.js');
 require('dotenv').config({ path: './stores/.env' });
 
 const path = require('path');
@@ -57,19 +56,14 @@ app.get('/spectator', (req, res) => {
 io.on('connection', (socket) => {
     console.log('Client connected');
 
+    //const raceDriversMap = new Map(raceDriversData); // Convert to Map if needed
+
     // Listen for the 'updateRaceDrivers' event from the client
     socket.on('updateRaceDrivers', (data) => {
         console.log('Received race drivers data from client:', data);
 
-        // retrieve raceDriversMap data from store and send it to the client
-
-
-        // update map in the store based on client data
-        const raceDriversMap = new Map(data);
-        store.set('raceDriversMap', Array.from(raceDriversMap.entries()));
-
-        // broadcast the updated map to all connected clients
-        io.emit('raceDriversData', Array.from(raceDriversMap.entries()));
+        // broadcast data to all clients
+        io.emit('raceDriversData', data);
     });
 
     // Listen for button press event from receptionist page
