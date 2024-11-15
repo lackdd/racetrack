@@ -5,4 +5,4 @@ endpoints:
   - name: racetrack
     url: intimate-upright-sunfish.ngrok-free.app
     upstream:
-      url: 3000
+      url: 5173

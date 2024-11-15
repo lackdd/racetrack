@@ -9,10 +9,14 @@ function Header() {
                 </Link>
                 <ul className="right">
                     <li>
-                        <a>front desk</a>
+                        <Link to={'/front-desk'}>
+                            front desk
+                        </Link>
                     </li>
                     <li>
-                        <a>race control</a>
+                        <Link to={'/race-control'}>
+                            race control
+                        </Link>
                     </li>
                 </ul>
             </div>
