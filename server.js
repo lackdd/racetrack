@@ -3,7 +3,7 @@ const express = require('express');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
-require('dotenv').config({ path: './stores/.env' });
+require('dotenv').config({ path: './keys.env' });
 const cors = require('cors'); // To handle CORS for frontend-backend communication
 
 const path = require('path');
@@ -107,8 +107,6 @@ io.on('connection', (socket) => {
 });
 
 //Login
-const loginRoute = require('./public/parts/login');
-app.use('/login', loginRoute);
 
 
 const PORT = process.env.PORT || 3000;
