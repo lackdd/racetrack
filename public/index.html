@@ -24,7 +24,7 @@
     import loadMainHeader from './MainHeader.js';
     loadMainHeader();
 
-    // Dynamically import and load login content when "Worker" link is clicked
+    // Dynamically import and load login-and-main content when "Worker" link is clicked
     document.getElementById('login').addEventListener('click', async (event) => {
         event.preventDefault(); // Prevent default link behavior
         const { loadLoginContent } = await import('./parts/loginView.js');
