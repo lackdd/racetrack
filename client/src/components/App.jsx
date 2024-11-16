@@ -4,8 +4,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import Header from './Header.jsx'
 import Landing from './Landing'
 import FrontDesk from './front-desk/front-desk.jsx'
+import RaceControl from './race-control/race-control.jsx'
 import {useEffect, useState} from "react";
-const raceControl = () => <h2>Race Control Interface</h2>
 
 function App() {
 
@@ -58,7 +58,7 @@ function App() {
                       <Header/>
                       <Route exact path="/" component={Landing}/>
                       <Route path="/front-desk" component={FrontDesk}/>
-                      <Route path="/race-control" component={raceControl}/>
+                      <Route path="/race-control" component={RaceControl}/>
                       <button onClick={sendDataToServer}>Send Data to Server</button>
                   </div>
               </BrowserRouter>
