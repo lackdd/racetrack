@@ -33,6 +33,6 @@ function RaceControl() {
             </ul>
         </div>
     );
-};
+}
 
 export default RaceControl;

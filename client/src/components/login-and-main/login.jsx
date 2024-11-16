@@ -1,29 +1,41 @@
-
+import Dropdown from 'react-bootstrap/Dropdown';
+import Form from 'react-bootstrap/Form';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import {useState} from "react";
 
 function Login() {
+    const [optionValue, setOptionValue] = useState("");
+    const [passwordValue, setPasswordValue] = useState("");
+
+    function givenPassword(event){
+        setPasswordValue(event.target.value)
+    }
+    function chosenOption(event) {
+        setOptionValue(event.target.value);
+    }
 
     function handleLogin(event) {
         event.preventDefault();
-        console.log("Login");
+        console.log("Login" + optionValue + passwordValue);
     }
 
     return (
         <>
             <form onSubmit={handleLogin}>
-                <p>Password:</p>
-                <input type="password"/>
+                <FloatingLabel controlId="floatingPassword" label="Password">
+                    <Form.Control type="password" placeholder="Password" onChange={givenPassword} />
+                </FloatingLabel>
 
-                <input id="radioSafety" name="role" type="radio" value="Safety official"/>
-                <label htmlFor="radioSafety">Safety Official</label>
-                <br/>
-                <input id="radioSecretary" name="role" type="radio" value="Secretary"/>
-                <label htmlFor="radioSecretary">Secretary</label>
-                <br/>
-                <input id="radioRacer" name="role" type="radio" value="Racer"/>
-                <label htmlFor="radioRacer">Racer</label>
-                <br/>
+                <Form.Select aria-label="Default select example" onChange={chosenOption}>
+                    <option>Open this select menu</option>
+                    <option value="Safety official">Safety official</option>
+                    <option value="Secretary">Secretary</option>
+                    <option value="Racer">Racer</option>
+                </Form.Select>
                 <button type="submit">Login</button>
             </form>
+
         </>
     )
 }
