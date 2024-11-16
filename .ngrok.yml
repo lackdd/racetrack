@@ -1,8 +1,11 @@
 version: 3
 agent:
-  authtoken: 2oYnldoHEfWEVDSwHnh44e7c4Ne_kMk3hNiZ3yCBK6ZJJGef
+  authtoken: 2ou9nitBxN2ncADK8NOnGXiiQJE_7Kyip7ehgrbVoqhtQAcSL
+  # authtoken: 2oYnldoHEfWEVDSwHnh44e7c4Ne_kMk3hNiZ3yCBK6ZJJGef andre authtoken
+
 endpoints:
   - name: racetrack
     url: intimate-upright-sunfish.ngrok-free.app
     upstream:
       url: 5173
+

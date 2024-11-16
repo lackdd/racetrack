@@ -3,8 +3,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import Header from './Header.jsx'
 import Landing from './Landing'
+import FrontDesk from './front-desk/front-desk.jsx'
 import {useEffect, useState} from "react";
-const frontDesk = () => <h2>Front Desk Interface</h2>
 const raceControl = () => <h2>Race Control Interface</h2>
 
 function App() {
@@ -57,7 +57,7 @@ function App() {
                   <div>
                       <Header/>
                       <Route exact path="/" component={Landing}/>
-                      <Route path="/front-desk" component={frontDesk}/>
+                      <Route path="/front-desk" component={FrontDesk}/>
                       <Route path="/race-control" component={raceControl}/>
                       <button onClick={sendDataToServer}>Send Data to Server</button>
                   </div>
