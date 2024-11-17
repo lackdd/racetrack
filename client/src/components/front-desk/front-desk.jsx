@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("https://intimate-upright-sunfish.ngrok-free.app");
+const socket = io("http://localhost:5173");
 
 let raceDriversMap = new Map();
 let clickCounter = 0;
@@ -42,7 +42,8 @@ function FrontDesk() {
                 <form className="col s12" onSubmit={(e) => e.preventDefault()}>
                     <div className="row">
                         <div className="input-field col s6">
-                            <input placeholder="Name" id="name" type="text" className="validate" value={driverName} onChange={handleInputChange}/>
+                            <input placeholder="Race driver name" id="name" type="text" className="validate" value={driverName}
+                                   onChange={handleInputChange}/>
                         </div>
                     </div>
                 </form>

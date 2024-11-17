@@ -10,7 +10,7 @@ const server = createServer(app);
 const io = new Server(server, {
     cors: {
         origin: ["http://localhost:5173", "https://intimate-upright-sunfish.ngrok-free.app"], // Replace with your frontend URL
-        
+
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],       // Allowed HTTP methods
     },
 });
@@ -18,6 +18,8 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+
+let raceData = new Map();
 
 // Handle socket connections
 io.on('connection', (socket) => {
@@ -28,9 +30,20 @@ io.on('connection', (socket) => {
     // Listen for the 'updateRaceDrivers' event from the client
     socket.on('updateRaceDrivers', (data) => {
         console.log('Received race drivers data from client:', data);
+        const updatedMap = new Map(data);
+
+        // Merge the new data into raceData
+        for (const [key, value] of updatedMap) {
+            raceData.set(key, value);
+        }
 
         // broadcast data to all clients
-        io.emit('raceDriversData', data);
+        io.emit('raceDriversData', Array.from(raceData.entries()));
+    });
+
+    // Send current race data to newly connected clients
+    socket.on('getRaceData', () => {
+        socket.emit('raceDriversData', Array.from(raceData.entries()));
     });
 });
 

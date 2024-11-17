@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
-const socket = io("https://intimate-upright-sunfish.ngrok-free.app");
+const socket = io("http://localhost:5173");
 
 
 function RaceControl() {
     const [raceDrivers, setRaceDrivers] = useState([]);
 
     useEffect(() => {
+        socket.emit('getRaceData');
+
         socket.on("raceDriversData", (data) => {
             console.log("Received race drivers data:", data);
             setRaceDrivers(data);
@@ -27,7 +29,7 @@ function RaceControl() {
             <ul>
                 {raceDrivers.map(([name, counter]) => (
                     <li key={name}>
-                        {name} (Click Count: {counter})
+                        {name} Car: {counter}
                     </li>
                 ))}
             </ul>
