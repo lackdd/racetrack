@@ -1,0 +1,48 @@
+
+
+#observerButtonsGrid {
+    display: grid;
+    gap: 20px;
+    place-items: center;
+    height: 100vh;
+    max-height: 100vh;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#observerButton {
+    display: block;
+    width: 100%;
+    font-size: 2em;
+    word-wrap: break-word
+/*    height: 0;
+    padding-bottom: 100%;*/
+
+}
+
+@media only screen and (orientation: portrait) {
+    #observerButtonsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+    }
+    #observerButton {
+        /*height: 20vh;*/
+        min-height: 23vh;
+        max-height: 23vh;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+    #observerButtonsGrid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+    #observerButton {
+        /*height: 40vh;*/
+        min-height: 45vh;
+        max-height: 45vh;
+    }
+
+}

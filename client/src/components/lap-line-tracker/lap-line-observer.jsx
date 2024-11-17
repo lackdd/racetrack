@@ -6,3 +6,56 @@
 // Cars can still cross the lap line when the race is in finish mode.
 // The observer's display should show a message to indicate that the race session is ended once that has been declared by the Safety Official.
 // The buttons must not function after the race is ended. They should disappear or be visually disabled.
+
+import { io } from "socket.io-client";
+import {useEffect, useState} from "react";
+import button from "bootstrap/js/src/button.js";
+import "./lap-line-observer.css"
+
+const socket = io("https://intimate-upright-sunfish.ngrok-free.app");
+
+
+function DriverFinished(setIsDisabled) {
+    socket.emit("driver finished"); // emit drivers lap time
+    console.log("driver finished")
+    setIsDisabled(true); // disable button when clicked
+}
+
+function LapLineObserver() {
+    const [raceDrivers, setRaceDrivers] = useState([]);
+    const [isDisabledArray, setIsDisabledArray] = useState([]);
+
+    useEffect(() => {
+        socket.on("raceDriversData", (data) => {
+            console.log("Received race drivers data:", data);
+            setRaceDrivers(data.slice(0, 8)); // max 8 drivers per race
+            setIsDisabledArray(Array(8).fill(false)); // initialize all buttons as enabled
+        });
+
+        return () => {
+            socket.off("raceDriversData");
+        };
+    }, []);
+
+    return ( // 1 button for each car. button must have car number on it. Button need to be easily pressed (large)
+        <div id="observerButtonsGrid">
+            {raceDrivers.map((driver, index) => (
+                <button id="observerButton"
+                    key={index}
+                    disabled={isDisabledArray[index]}
+                    className="waves-effect waves-light btn-large"
+                    onClick={() => {
+                        const updatedIsDisabledArray = [...isDisabledArray];
+                        updatedIsDisabledArray[index] = true;
+                        setIsDisabledArray(updatedIsDisabledArray);
+                        DriverFinished(() => setIsDisabledArray(updatedIsDisabledArray), index);
+                    }}
+                >
+                    {raceDrivers[index][0]} {/*todo change this to use car numbers later*/}
+                </button>
+            ))}
+        </div>
+    )
+}
+
+export default LapLineObserver;
