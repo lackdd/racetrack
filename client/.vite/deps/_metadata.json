@@ -1,0 +1,67 @@
+{
+  "hash": "85f2a5f6",
+  "configHash": "a453bdd1",
+  "lockfileHash": "0bad61fa",
+  "browserHash": "9f1e0e8e",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "d8f7f26c",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "946cbc3b",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/esm/react-router-dom.js",
+      "file": "react-router-dom.js",
+      "fileHash": "6de453e6",
+      "needsInterop": false
+    },
+    "socket.io-client": {
+      "src": "../../node_modules/socket.io-client/build/esm/index.js",
+      "file": "socket__io-client.js",
+      "fileHash": "17a18a87",
+      "needsInterop": false
+    },
+    "react-bootstrap/Dropdown": {
+      "src": "../../../node_modules/react-bootstrap/esm/Dropdown.js",
+      "file": "react-bootstrap_Dropdown.js",
+      "fileHash": "858bf0df",
+      "needsInterop": false
+    },
+    "react-bootstrap/Form": {
+      "src": "../../../node_modules/react-bootstrap/esm/Form.js",
+      "file": "react-bootstrap_Form.js",
+      "fileHash": "c0778fd9",
+      "needsInterop": false
+    },
+    "react-bootstrap/FloatingLabel": {
+      "src": "../../../node_modules/react-bootstrap/esm/FloatingLabel.js",
+      "file": "react-bootstrap_FloatingLabel.js",
+      "fileHash": "5a8cf44c",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-32E4H3EV": {
+      "file": "chunk-32E4H3EV.js"
+    },
+    "chunk-JHGV44H6": {
+      "file": "chunk-JHGV44H6.js"
+    },
+    "chunk-SPSBXBDJ": {
+      "file": "chunk-SPSBXBDJ.js"
+    },
+    "chunk-G4OSKBYU": {
+      "file": "chunk-G4OSKBYU.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}
