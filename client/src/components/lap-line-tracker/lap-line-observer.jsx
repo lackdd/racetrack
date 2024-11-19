@@ -7,12 +7,11 @@
 // The observer's display should show a message to indicate that the race session is ended once that has been declared by the Safety Official.
 // The buttons must not function after the race is ended. They should disappear or be visually disabled.
 
-import { io } from "socket.io-client";
 import {useEffect, useState} from "react";
 import button from "bootstrap/js/src/button.js";
 import "./lap-line-observer.css"
 
-const socket = io("https://intimate-upright-sunfish.ngrok-free.app");
+import socket from "../../socket.js";
 
 
 function DriverFinished(setIsDisabled) {

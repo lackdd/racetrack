@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5173");
+import socket from "../../socket.js";
 
 
 function RaceControl() {
     const [raceDrivers, setRaceDrivers] = useState([]);
 
     useEffect(() => {
-        socket.emit('getRaceData');
 
         socket.on("raceDriversData", (data) => {
             console.log("Received race drivers data:", data);
