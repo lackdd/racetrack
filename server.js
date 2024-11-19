@@ -39,13 +39,18 @@ io.on('connection', (socket) => {
 
         // broadcast data to all clients
         io.emit('raceDriversData', Array.from(raceData.entries()));
+        io.emit('dataToSpectator', Array.from(raceData.entries()));
     });
 
     // Send current race data to newly connected clients
     socket.on('getRaceData', () => {
         socket.emit('raceDriversData', Array.from(raceData.entries()));
     });
+    socket.on('getDataForSpectator', () => {
+        socket.emit('dataToSpectator', Array.from(raceData.entries()));
+    })
 });
+
 
 //Login
 const safetyOfficialKey = process.env.SAFETY_OF;
