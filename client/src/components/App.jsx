@@ -7,6 +7,7 @@ import Login from "./login-and-main/login.jsx";
 import NavigatorLayout from "./login-and-main/navigatorLayout.jsx";
 import PageNotFound404 from "./login-and-main/pageNotFound404.jsx";
 import Spectator from "./spectator/spectator.jsx";
+import Flag from "./login-and-main/flag.jsx";
 
 
 function App() {
