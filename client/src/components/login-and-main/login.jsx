@@ -44,7 +44,6 @@ function Login() {
                 return response.json(); // Parse the server's response
             })
             .then((responseData) => {
-
                 switch(responseData.role) {
                     case "Receptionist":
                         window.location.href = "/race-control";

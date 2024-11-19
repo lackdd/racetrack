@@ -19,7 +19,7 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
-let raceData = [];
+let raceData = new Map();
 
 // Handle socket connections
 io.on('connection', (socket) => {
@@ -30,19 +30,27 @@ io.on('connection', (socket) => {
     // Listen for the 'updateRaceDrivers' event from the client
     socket.on('updateRaceDrivers', (data) => {
         console.log('Received race drivers data from client:', data);
+        const updatedMap = new Map(data);
 
-        // replace the old data with new data
-        raceData = data;
+        // Merge the new data into raceData
+        for (const [key, value] of updatedMap) {
+            raceData.set(key, value);
+        }
 
         // broadcast data to all clients
-        io.emit('raceDriversData', raceData);
+        io.emit('raceDriversData', Array.from(raceData.entries()));
+        io.emit('dataToSpectator', Array.from(raceData.entries()));
     });
 
     // Send current race data to newly connected clients
     socket.on('getRaceData', () => {
-        socket.emit('raceDriversData', raceData);
+        socket.emit('raceDriversData', Array.from(raceData.entries()));
     });
+    socket.on('getDataForSpectator', () => {
+        socket.emit('dataToSpectator', Array.from(raceData.entries()));
+    })
 });
+
 
 //Login
 const safetyOfficialKey = process.env.SAFETY_OF;
