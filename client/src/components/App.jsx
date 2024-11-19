@@ -1,5 +1,6 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
+import RaceDetails from './front-desk/race-details';
 import Landing from './Landing'
 import FrontDesk from './front-desk/front-desk.jsx'
 import RaceControl from './race-control/race-control.jsx'
@@ -21,6 +22,7 @@ function App() {
                       <Route path="/" element={<Landing />} />
                       <Route path="/worker" element={<Login />} />
                       <Route path="/front-desk" element={<FrontDesk />} />
+                      <Route path="/front-desk/:raceName" element={<RaceDetails />} />
                       <Route path="/spectator" element={<Spectator />} />
                       <Route path="/race-control" element={<RaceControl />} />
                       <Route path="/lap-line-tracker" element={<LapLineObserver />} />

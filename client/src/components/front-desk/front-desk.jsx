@@ -1,86 +1,76 @@
 import React, { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import socket from "../../socket.js";
 
 function FrontDesk() {
-    const [raceDrivers, setRaceDrivers] = useState([]);
-    const [driverName, setDriverName] = useState("");
-    const [clickCounter, setClickCounter] = useState(0);
+    const [raceName, setRaceName] = useState("");
+    const [raceList, setRaceList] = useState([]);
 
+    const navigate = useNavigate();
 
-    const handleInputChange = (e) => {
-        setDriverName(e.target.value);
+    useEffect(() => {
+        // Fetch the latest race data from the server
+        socket.emit("getRaceData");
+
+        const handleRaceData = (data) => {
+            console.log("Received race data from server:", data);
+            setRaceList(data); // Update race list state
+        };
+
+        socket.on("raceData", handleRaceData);
+
+        return () => {
+            socket.off("raceData", handleRaceData);
+        };
+    }, []);
+
+    const handleRaceNameChange = (e) => {
+        setRaceName(e.target.value);
     };
 
-
-    const handleSubmit = () => {
-        if (driverName.trim() === "") {
-            console.log("Please enter a driver name");
+    const handleRaceSubmit = () => {
+        if (raceName.trim() === "") {
+            console.log("Please enter a valid race name.");
             return;
         }
 
-
-        setClickCounter((prevCounter) => {
-            const newClickCounter = prevCounter + 1;
-
-            // update raceDrivers state with functional updates
-            setRaceDrivers((prevDrivers) => {
-                const updatedDrivers = [...prevDrivers, { name: driverName, counter: newClickCounter }];
-
-                console.log("Emitting updated drivers:", updatedDrivers);
-                socket.emit("updateRaceDrivers", updatedDrivers);
-
-                return updatedDrivers; // update state with new drivers
-            });
-
-            return newClickCounter;
-        });
-
-
-        setDriverName("");
-        console.log("Button clicked!");
+        const newRace = { raceName };
+        socket.emit("createRace", newRace); // Notify the server
+        setRaceName("");
     };
 
-    // listen for race drivers data from the server
-    useEffect(() => {
-        const handleRaceDriversData = (data) => {
-            console.log("Received updated race drivers data:", data);
-            setRaceDrivers(data); // Update state with server-sent data
-        };
+    const handleRaceDelete = (raceName) => {
+        socket.emit("deleteRace", raceName); // Notify the server to delete the race
+    };
 
-
-        socket.on("raceDriversData", handleRaceDriversData);
-
-        console.log("Active listeners:", socket.listeners("raceDriversData"));
-
-
-        return () => {
-            socket.off("raceDriversData", handleRaceDriversData);
-        };
-    }, []); // Empty dependency array means this effect runs once on mount
+    const handleRaceClick = (race) => {
+        navigate(`/front-desk/${race.raceName}`); // Route to the specific race page
+    };
 
     return (
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: "center" }}>
             <h1>Front Desk Interface</h1>
-            <div className="row">
-                <form className="col s12" onSubmit={(e) => e.preventDefault()}>
-                    <div className="row">
-                        <div className="input-field col s6">
-                            <input
-                                placeholder="Race driver name"
-                                id="name"
-                                type="text"
-                                className="validate"
-                                value={driverName}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                    </div>
-                </form>
+            <div>
+                <input
+                    placeholder="Race name"
+                    value={raceName}
+                    onChange={handleRaceNameChange}
+                />
+                <button onClick={handleRaceSubmit}>Add Race</button>
             </div>
-            <button className="btn waves-effect waves-light" type="submit" onClick={handleSubmit}>
-                Submit
-            </button>
+            <h3>Races</h3>
+            <ul>
+                {raceList.map((race, index) => (
+                    <li key={index}>
+                        <button onClick={() => handleRaceClick(race)}>
+                            {race.raceName}
+                        </button>
+                        <button onClick={() => handleRaceDelete(race.raceName)}>
+                            Delete
+                        </button>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
