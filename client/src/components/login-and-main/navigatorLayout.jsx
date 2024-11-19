@@ -10,6 +10,7 @@ function NavigatorLayout() {
             <Link to={'/spectator'}> Spectator</Link> |
             <Link to={'/front-desk'}> (front desk)</Link>
             <Link to={'/race-control'}> (race control)</Link>
+            <Link to={'/lap-line-tracker'}> (lap line observer)</Link>
         </nav>
     );
 }
