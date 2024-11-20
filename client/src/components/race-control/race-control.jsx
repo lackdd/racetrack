@@ -31,6 +31,8 @@ function RaceControl() {
                     </li>
                 ))}
             </ul>
+
+            <button>Danger!</button>
         </div>
     );
 }
