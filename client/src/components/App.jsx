@@ -18,6 +18,7 @@ function App() {
       <>
           <div className="container">
               <BrowserRouter>
+                  {/*Need /lap-line-tracker with only buttons for cars and without any distractions */}
                    {location.pathname !== "/lap-line-tracker" && <NavigatorLayout />}
                   <Routes>
                       <Route path="/" element={<Landing />} />
@@ -33,8 +34,13 @@ function App() {
               </BrowserRouter>
 
           </div>
-          <Flag />
-          <p>Flag status here</p>
+          {/*Need /lap-line-tracker with only buttons for cars and without any distractions */}
+          {location.pathname !== "/lap-line-tracker" && (
+              <>
+                  <Flag />
+                  <p>Flag status here</p>
+              </>
+          )}
       </>
     )
 }
