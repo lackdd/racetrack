@@ -56,6 +56,8 @@ function RaceControl() {
                 ))}
             </ul>
 
+            <button>Danger!</button>
+
             {!selectedRace && (
                 <>
                     <h3>All Drivers Across All Races:</h3>
