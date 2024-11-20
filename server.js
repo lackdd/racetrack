@@ -19,32 +19,37 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
-let raceData = new Map();
+let raceData = [];
 
 // Handle socket connections
 io.on('connection', (socket) => {
     console.log('Client connected');
 
-    //const raceDriversMap = new Map(raceDriversData); // Convert to Map if needed
+    // immediately send current race data to the newly connected client
+    socket.emit("raceData", raceData);
 
-    // Listen for the 'updateRaceDrivers' event from the client
-    socket.on('updateRaceDrivers', (data) => {
-        console.log('Received race drivers data from client:', data);
-        const updatedMap = new Map(data);
+    socket.on("createRace", (newRace) => {
+        raceData.push({ raceName: newRace.raceName, drivers: [] });
+        io.emit("raceData", raceData); // Broadcast updated race data to all clients
+    });
 
-        // Merge the new data into raceData
-        for (const [key, value] of updatedMap) {
-            raceData.set(key, value);
+    socket.on("deleteRace", (raceName) => {
+        raceData = raceData.filter((race) => race.raceName !== raceName);
+        io.emit("raceData", raceData); // Broadcast updated race data to all clients
+    });
+
+    socket.on("updateRaceDrivers", ({ raceName, drivers }) => {
+        const race = raceData.find((race) => race.raceName === raceName);
+        if (race) {
+            race.drivers = drivers; // Update drivers for the specified race
         }
-
-        // broadcast data to all clients
-        io.emit('raceDriversData', Array.from(raceData.entries()));
+        io.emit("raceData", raceData); // Broadcast updated race data
         io.emit('dataToSpectator', Array.from(raceData.entries()));
     });
 
     // Send current race data to newly connected clients
     socket.on('getRaceData', () => {
-        socket.emit('raceDriversData', Array.from(raceData.entries()));
+        socket.emit('raceData', raceData);
     });
     socket.on('getDataForSpectator', () => {
         socket.emit('dataToSpectator', Array.from(raceData.entries()));

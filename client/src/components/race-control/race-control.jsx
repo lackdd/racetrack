@@ -1,38 +1,80 @@
 import React, { useState, useEffect } from "react";
-
 import socket from "../../socket.js";
 
-
 function RaceControl() {
-    const [raceDrivers, setRaceDrivers] = useState([]);
+    const [raceData, setRaceData] = useState([]); // Store all races and their drivers
+    const [selectedRace, setSelectedRace] = useState(""); // Store the currently selected race
 
     useEffect(() => {
+        // Ask the server for the latest race data on page load
+        socket.emit("getRaceData");
 
-        socket.on("raceDriversData", (data) => {
-            console.log("Received race drivers data:", data);
-            setRaceDrivers(data);
-        });
+        // Listen for updates to the race data
+        const handleRaceData = (data) => {
+            console.log("Received updated race data from server:", data);
+            setRaceData(data); // Update race data state
+        };
 
+        socket.on("raceData", handleRaceData);
+
+        // Clean up the socket listener on unmount
         return () => {
-            socket.off("raceDriversData");
+            socket.off("raceData", handleRaceData);
         };
     }, []);
 
+    const handleRaceSelection = (e) => {
+        setSelectedRace(e.target.value); // Update the selected race
+    };
+
+    // Filter the drivers based on the selected race
+    const driversToDisplay = selectedRace
+        ? raceData.find((race) => race.raceName === selectedRace)?.drivers || []
+        : [];
+
     return (
-        <div style={{textAlign: 'center'}}>
-            <h1>
-                Race Control Interface
-            </h1>
-            <h2>Race Drivers List:</h2>
+        <div style={{ textAlign: "center" }}>
+            <h1>Race Control Interface</h1>
+
+            <h2>Select a Race:</h2>
+            <select onChange={handleRaceSelection} value={selectedRace}>
+                <option value="">-- All Races --</option>
+                {raceData.map((race, index) => (
+                    <option key={index} value={race.raceName}>
+                        {race.raceName}
+                    </option>
+                ))}
+            </select>
+
+            <h2>Drivers List:</h2>
+            {selectedRace && <h3>Race: {selectedRace}</h3>}
             <ul>
-                {raceDrivers.map(([name, counter]) => (
-                    <li key={name}>
-                        {name} Car: {counter}
+                {driversToDisplay.map((driver, index) => (
+                    <li key={index}>
+                        {driver.name} - Car {driver.car}
                     </li>
                 ))}
             </ul>
 
             <button>Danger!</button>
+
+            {!selectedRace && (
+                <>
+                    <h3>All Drivers Across All Races:</h3>
+                    {raceData.map((race, index) => (
+                        <div key={index}>
+                            <h4>{race.raceName}</h4>
+                            <ul>
+                                {race.drivers.map((driver, driverIndex) => (
+                                    <li key={driverIndex}>
+                                        {driver.name} - Car {driver.car}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </>
+            )}
         </div>
     );
 }
