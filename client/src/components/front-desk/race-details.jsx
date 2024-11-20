@@ -8,7 +8,11 @@ function RaceDetails() {
     const [driverName, setDriverName] = useState("");
     const [lastAssignedCar, setLastAssignedCar] = useState(0);
 
+    // get the current race data from the server
     useEffect(() => {
+        // Fetch the latest race data from the server when user loads to page
+        socket.emit("getRaceData");
+
         const handleRaceData = (data) => {
             const race = data.find((race) => race.raceName === raceName);
             if (race) {
@@ -23,10 +27,12 @@ function RaceDetails() {
         };
     }, [raceName]);
 
+    // handle input change event for driver name
     const handleInputChange = (e) => {
         setDriverName(e.target.value);
     };
 
+    // add driver and do input validation
     const handleAddDriver = () => {
         if (driverName.trim() === "") {
             console.log("Please enter a driver name.");
@@ -47,6 +53,7 @@ function RaceDetails() {
         setDriverName("");
     };
 
+    // remove driver from race data and server
     const handleRemoveDriver = (driverName) => {
         const updatedDrivers = raceDrivers.filter((driver) => driver.name !== driverName);
         setRaceDrivers(updatedDrivers);

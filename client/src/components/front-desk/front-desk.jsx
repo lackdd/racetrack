@@ -9,9 +9,10 @@ function FrontDesk() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch the latest race data from the server
+        // Fetch the latest race data from the server when user loads to page
         socket.emit("getRaceData");
 
+        // actively fetch data from server
         const handleRaceData = (data) => {
             console.log("Received race data from server:", data);
             setRaceList(data); // Update race list state
@@ -19,15 +20,18 @@ function FrontDesk() {
 
         socket.on("raceData", handleRaceData);
 
+        // Clean up the socket listener on unmount
         return () => {
             socket.off("raceData", handleRaceData);
         };
     }, []);
 
+    // set race name
     const handleRaceNameChange = (e) => {
         setRaceName(e.target.value);
     };
 
+    // submit new race to server
     const handleRaceSubmit = () => {
         if (raceName.trim() === "") {
             console.log("Please enter a valid race name.");
