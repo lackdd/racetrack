@@ -14,10 +14,10 @@ import "./lap-line-observer.css"
 import socket from "../../socket.js";
 
 // when driver finishes (car's button is pressed)
-function DriverFinished(setIsDisabled) {
-    socket.emit("driver finished"); // emit drivers lap time and save state setIsDisabled(true)
+function DriverFinishedLap(setIsDisabled) {
+    socket.emit("driver finished"); // save and emit drivers lap time
     console.log("driver finished")
-    setIsDisabled(true); // disable button when clicked
+    setIsDisabled(true); // disable button when clicked todo remove this. Buttons must be disabled when the race ends (10 minutes)
 }
 
 // main function for lap line observer
@@ -26,20 +26,6 @@ function LapLineObserver() {
     const [race, setRace] = useState([]);
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [isDisabledArray, setIsDisabledArray] = useState([]);
-
-    // get drivers info
-/*    useEffect(() => {
-        socket.on("raceData", (data) => {
-            console.log("Received race drivers data:", data);
-            setRaceList(data.slice(0, 8)); // max 8 drivers per race todo limit of 8 drivers should be set on the front desk side to handle input validation there
-            setIsDisabledArray(Array(8).fill(false)); // initialize all buttons as enabled
-        });
-
-        // Clean up the socket listener on unmount
-        return () => {
-            socket.off("raceData");
-        };
-    }, []);*/
 
     useEffect(() => {
         // Fetch the latest race data from the server
@@ -76,7 +62,7 @@ function LapLineObserver() {
                             const updatedIsDisabledArray = [...isDisabledArray];
                             updatedIsDisabledArray[index] = true;
                             setIsDisabledArray(updatedIsDisabledArray);
-                            DriverFinished(() => setIsDisabledArray(updatedIsDisabledArray), index);
+                            DriverFinishedLap(() => setIsDisabledArray(updatedIsDisabledArray), index);
                         }}
                 >
                     {driver.name}
