@@ -14,7 +14,7 @@ import "./lap-line-observer.css"
 import socket from "../../socket.js";
 
 // when driver finishes (car's button is pressed)
-function DriverFinishedLap(setIsDisabled) {
+function driverFinishedLap(setIsDisabled) {
     socket.emit("driver finished"); // save and emit drivers lap time
     console.log("driver finished")
     setIsDisabled(true); // disable button when clicked todo remove this. Buttons must be disabled when the race ends (10 minutes)
@@ -22,8 +22,6 @@ function DriverFinishedLap(setIsDisabled) {
 
 // main function for lap line observer
 function LapLineObserver() {
-    //const [raceDrivers, setRaceDrivers] = useState([]);
-    const [race, setRace] = useState([]);
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [isDisabledArray, setIsDisabledArray] = useState([]);
 
@@ -51,23 +49,30 @@ function LapLineObserver() {
     console.log(raceDrivers)
 
     return (
-        <div id="observerButtonsGrid">
-            {raceDrivers.map((driver, index) => (
-                <button id="observerButton"
-                        key={index}
-                        disabled={isDisabledArray[index]}
-                        className="waves-effect waves-light btn-large"
-                        onClick={() => {
-                            // logic to disable the correct buttons one by one and not all at once
-                            const updatedIsDisabledArray = [...isDisabledArray];
-                            updatedIsDisabledArray[index] = true;
-                            setIsDisabledArray(updatedIsDisabledArray);
-                            DriverFinishedLap(() => setIsDisabledArray(updatedIsDisabledArray), index);
-                        }}
-                >
-                    {driver.name}
-                </button>
-            ))}
+        <div className="LapLineObserver">
+            <div className="container">
+                <div id="observerButtonsGrid">
+                    {raceDrivers.length === 0 ? (
+                        <p>No drivers submitted yet</p>
+                    ) :
+                    raceDrivers.map((driver, index) => (
+                        <button id="observerButton"
+                                key={index}
+                                disabled={isDisabledArray[index]}
+                                className="waves-effect waves-light btn-large"
+                                onClick={() => { // todo change this logic so onClick lap time is saved
+                                    // logic to disable the correct buttons one by one and not all at once
+                                    const updatedIsDisabledArray = [...isDisabledArray];
+                                    updatedIsDisabledArray[index] = true;
+                                    setIsDisabledArray(updatedIsDisabledArray);
+                                    driverFinishedLap(() => setIsDisabledArray(updatedIsDisabledArray), index);
+                                }}
+                        >
+                            {driver.name}
+                        </button>
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }
