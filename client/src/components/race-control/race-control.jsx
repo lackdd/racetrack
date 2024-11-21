@@ -68,6 +68,23 @@ function RaceControl() {
     const driversToDisplay = selectedRace
         ? raceData.find((race) => race.raceName === selectedRace)?.drivers || []
         : [];
+    //Handle flag status buttons logic
+    function handleRaceMode(event){
+        switch(event.target.value) {
+            case "danger":
+                handleRacePause();
+                break;
+            case "safe":
+                handleRaceStart();
+                break;
+            case "hazard":
+                break;
+            case "finish":
+                handleReset();
+                break;
+        }
+        socket.emit("flagButtonWasClicked", event.target.value);
+    }
 
     return (
         <div style={{textAlign: "center"}}>
@@ -75,10 +92,10 @@ function RaceControl() {
             <h5>Time remaining:</h5>
             <div className="countdown-timer-container">{timeRemaining.toFixed(1)}</div>
             <h2>Race controls:</h2>
-            <button onClick={handleRaceStart}>Safe</button>
-            <button>Hazard</button>
-            <button onClick={handleRacePause}>Danger</button>
-            <button>Finish</button>
+            <button onClick={handleRaceMode} value="safe">Safe</button>
+            <button onClick={handleRaceMode} value="danger">Danger!</button>
+            <button onClick={handleRaceMode} value="hazard">Hazardous!</button>
+            <button onClick={handleRaceMode} value="finish">Finish!</button>
             <h2>Select a Race:</h2>
             <select onChange={handleRaceSelection} value={selectedRace}>
                 <option value="">-- All Races --</option>
