@@ -1,13 +1,16 @@
-import FlagController from "./flagController.jsx";
+import {useState} from "react";
+import "./flag.css";
 
-function flag() {
+function Flag() {
+
     return (
-        <div>
-            <p>Flag page</p>
-            <FlagController/>
+        <div className="flag-wrapper">
+            <div className="flag-container">
+                <div className="pole"></div>
+                <div className="flag"></div>
+            </div>
         </div>
-
-    )
+    );
 }
 
-export default flag;
+export default Flag;
