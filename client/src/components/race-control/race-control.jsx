@@ -4,6 +4,43 @@ import socket from "../../socket.js";
 function RaceControl() {
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
     const [selectedRace, setSelectedRace] = useState(""); // Store the currently selected race
+    const [timeRemaining, setTimeRemaining] = useState(60);
+    const [timerRunning, setTimerRunning] = useState(false);
+    let timerInterval;
+
+    useEffect(() => {
+
+        if (timerRunning) {
+            timerInterval = setInterval(() => {
+                setTimeRemaining((prevTime) => {
+                    if (prevTime <= 0.1) {
+                        clearInterval(timerInterval);
+                        setTimerRunning(false);
+                        console.log("Timer finished!");
+                        return 0;
+                    }
+                    return prevTime - 0.1;
+                });
+            }, 100);
+        }
+
+        return () => clearInterval(timerInterval);
+    }, [timerRunning]);
+
+    const handleRaceStart = () => {
+        if (!timerRunning && timeRemaining > 0) {
+            setTimerRunning(true);
+        }
+    };
+    const handleRacePause = () => {
+        setTimerRunning(false);
+    };
+
+    const handleReset = () => {
+        setTimerRunning(false);
+        setTimeRemaining(60);
+    };
+
 
     useEffect(() => {
         // Ask the server for the latest race data on page load
@@ -32,15 +69,16 @@ function RaceControl() {
         ? raceData.find((race) => race.raceName === selectedRace)?.drivers || []
         : [];
 
-    //Handle flag status buttons logic
-    function handleSetFlagButtonClick(event){
-        socket.emit("flagButtonWasClicked", event.target.value);
-    }
-
     return (
         <div style={{textAlign: "center"}}>
             <h1>Race Control Interface</h1>
-
+            <h5>Time remaining:</h5>
+            <div className="countdown-timer-container">{timeRemaining.toFixed(1)}</div>
+            <h2>Race controls:</h2>
+            <button onClick={handleRaceStart}>Safe</button>
+            <button>Hazard</button>
+            <button onClick={handleRacePause}>Danger</button>
+            <button>Finish</button>
             <h2>Select a Race:</h2>
             <select onChange={handleRaceSelection} value={selectedRace}>
                 <option value="">-- All Races --</option>
@@ -61,7 +99,6 @@ function RaceControl() {
                 ))}
             </ul>
 
-
             {!selectedRace && (
                 <>
                     <h3>All Drivers Across All Races:</h3>
@@ -79,12 +116,6 @@ function RaceControl() {
                     ))}
                 </>
             )}
-            <div>
-                <button onClick={handleSetFlagButtonClick} value="safe">Safe</button>
-                <button onClick={handleSetFlagButtonClick} value="danger">Danger!</button>
-                <button onClick={handleSetFlagButtonClick} value="hazard">Hazardous!</button>
-                <button onClick={handleSetFlagButtonClick} value="finish">Finish!</button>
-            </div>
         </div>
     );
 }
