@@ -1,4 +1,3 @@
-import {useState} from "react";
 import "./flag.css";
 
 function Flag() {

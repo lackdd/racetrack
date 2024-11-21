@@ -7,7 +7,7 @@ function NavigatorLayout() {
         <nav>
             <Link to="/">Home</Link> |
             <Link to="/worker"> Worker</Link> |
-            <Link to={'/flag'}> Flag</Link> |
+            <Link to={'/flagController'}> Flag</Link> |
             <Link to={'/spectator'}> Spectator</Link> |
             <Link to={'/front-desk'}> (front desk)</Link>
             <Link to={'/race-control'}> (race control)</Link>
