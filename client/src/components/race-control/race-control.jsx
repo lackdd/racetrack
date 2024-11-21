@@ -32,8 +32,13 @@ function RaceControl() {
         ? raceData.find((race) => race.raceName === selectedRace)?.drivers || []
         : [];
 
+    //Handle flag status buttons logic
+    function handleSetFlagButtonClick(event){
+        socket.emit("flagButtonWasClicked", event.target.value);
+    }
+
     return (
-        <div style={{ textAlign: "center" }}>
+        <div style={{textAlign: "center"}}>
             <h1>Race Control Interface</h1>
 
             <h2>Select a Race:</h2>
@@ -56,7 +61,6 @@ function RaceControl() {
                 ))}
             </ul>
 
-            <button>Danger!</button>
 
             {!selectedRace && (
                 <>
@@ -75,6 +79,12 @@ function RaceControl() {
                     ))}
                 </>
             )}
+            <div>
+                <button onClick={handleSetFlagButtonClick} value="safe">Safe</button>
+                <button onClick={handleSetFlagButtonClick} value="danger">Danger!</button>
+                <button onClick={handleSetFlagButtonClick} value="hazard">Hazardous!</button>
+                <button onClick={handleSetFlagButtonClick} value="finish">Finish!</button>
+            </div>
         </div>
     );
 }

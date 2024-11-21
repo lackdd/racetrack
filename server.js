@@ -20,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 let raceData = [];
+let flagStatus = "";
 
 // Handle socket connections
 io.on('connection', (socket) => {
@@ -54,6 +55,18 @@ io.on('connection', (socket) => {
     socket.on('getDataForSpectator', () => {
         socket.emit('dataToSpectator', Array.from(raceData.entries()));
     })
+
+    //Handle flag status here
+    socket.on('flagButtonWasClicked', (data) => {
+        flagStatus = data;
+        io.emit('broadcastFlagButtonChange', flagStatus);
+    });
+
+    socket.on('FlagPageConnected', () => {
+        socket.emit('currentFlagStatus', flagStatus);
+    })
+
+
 });
 
 
@@ -78,6 +91,8 @@ app.post('/api/login', (req, res) => {
     }
 });
 
+
+//Create PORT
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);

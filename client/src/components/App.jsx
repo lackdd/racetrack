@@ -9,9 +9,9 @@ import NavigatorLayout from "./login-and-main/navigatorLayout.jsx";
 import PageNotFound404 from "./login-and-main/pageNotFound404.jsx";
 import Spectator from "./spectator/spectator.jsx";
 import LapLineObserver from "./lap-line-tracker/lap-line-observer.jsx";
-import Flag from "./flag/flag.jsx";
+import FlagController from "./flag/flagController.jsx";
 import "./App.css";
-import FlagPage from "./flag/flagPage.jsx";
+import FlagPage from "./flag/flag.jsx";
 
 function App() {
     return (
@@ -22,7 +22,7 @@ function App() {
                   <Routes>
                       <Route path="/" element={<Landing />} />
                       <Route path="/worker" element={<Login />} />
-                      <Route path="/flagPage" element={<FlagPage />} />
+                      <Route path="/flag" element={<FlagPage />} />
                       <Route path="/front-desk" element={<FrontDesk />} />
                       <Route path="/front-desk/:raceName" element={<RaceDetails />} />
                       <Route path="/spectator" element={<Spectator />} />
@@ -33,8 +33,8 @@ function App() {
               </BrowserRouter>
 
           </div>
-          <Flag />
-          <p>Flag status here</p>
+
+
       </>
     )
 }
