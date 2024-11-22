@@ -6,10 +6,10 @@ function RaceControl() {
     const [selectedRace, setSelectedRace] = useState(""); // Store the currently selected race
     const [timeRemaining, setTimeRemaining] = useState(60);
     const [timerRunning, setTimerRunning] = useState(false);
+    const [raceStarted, setRaceStarted] = useState(false);
     let timerInterval;
 
     useEffect(() => {
-
         if (timerRunning) {
             timerInterval = setInterval(() => {
                 setTimeRemaining((prevTime) => {
@@ -17,6 +17,7 @@ function RaceControl() {
                         clearInterval(timerInterval);
                         setTimerRunning(false);
                         console.log("Timer finished!");
+                        setRaceStarted(false);
                         return 0;
                     }
                     return prevTime - 0.1;
@@ -77,10 +78,15 @@ function RaceControl() {
             case "safe":
                 handleRaceStart();
                 break;
+            case "start":
+                handleRaceStart();
+                setRaceStarted(true);
+                break;
             case "hazard":
                 break;
             case "finish":
                 handleReset();
+                setRaceStarted(false);
                 break;
         }
         socket.emit("flagButtonWasClicked", event.target.value);
@@ -91,11 +97,15 @@ function RaceControl() {
             <h1>Race Control Interface</h1>
             <h5>Time remaining:</h5>
             <div className="countdown-timer-container">{timeRemaining.toFixed(1)}</div>
+            <button onClick={handleRaceMode} value="start">Start race</button>
+            { raceStarted && (
+                <div>
             <h2>Race controls:</h2>
             <button onClick={handleRaceMode} value="safe">Safe</button>
             <button onClick={handleRaceMode} value="danger">Danger!</button>
             <button onClick={handleRaceMode} value="hazard">Hazardous!</button>
             <button onClick={handleRaceMode} value="finish">Finish!</button>
+                </div>)}
             <h2>Select a Race:</h2>
             <select onChange={handleRaceSelection} value={selectedRace}>
                 <option value="">-- All Races --</option>
