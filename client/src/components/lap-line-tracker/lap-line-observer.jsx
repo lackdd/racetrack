@@ -51,6 +51,7 @@ function LapLineObserver() {
     }, []);
 
 
+
     // update race data when flagStatus changes to "safe"
     useEffect(() => {
         // Fetch the latest race data from the server
@@ -59,12 +60,17 @@ function LapLineObserver() {
         // get drivers' info
         const handleRaceData = (data) => {
             console.log("Received race data from server:", data);
-            // Create a new array with the "laps" property added to each driver object
-            const updatedRaceDrivers = data[0].drivers.map((driver) => ({
-                ...driver,
-                laps: 0,
-            }));
-            setRaceDrivers(updatedRaceDrivers); // change this to use status in the object instead
+            setRaceDrivers(data[0].drivers)
+            // if (Array.isArray(data) && data.length > 0 && data[0].hasOwnProperty('drivers')) {
+            //     // Create a new array with the "laps" property added to each driver object
+            //     const updatedRaceDrivers = data[0].drivers.map((driver) => ({
+            //         ...driver,
+            //         laps: 0,
+            //     }));
+            //     setRaceDrivers(updatedRaceDrivers);
+            // } else {
+            //     console.error("Invalid race data received");
+            // }
         };
 
         socket.on("raceData", handleRaceData);
@@ -72,7 +78,7 @@ function LapLineObserver() {
         return () => {
             socket.off("raceData", handleRaceData);
         };
-    }, [flagStatus === "safe"]);
+    }, []); // flagStatus === "safe", flagStatus === "gray"
 
 
     // when driver finishes a lap (or starts the first lap) (car's button is pressed)
@@ -106,9 +112,7 @@ function LapLineObserver() {
         <div className="LapLineObserver">
             <div className="container">
                 <div id="observerButtonsGrid">
-                    {raceDrivers.length === 0 ? (
-                            <p className={"information"}>No drivers submitted yet</p>
-                        ) :
+                    {raceDrivers.length === 0 ? (<p className={"information"}>No drivers submitted yet</p>) :
                         raceDrivers.map((driver, index) => (
                             <button id="observerButton"
                                     key={index}
