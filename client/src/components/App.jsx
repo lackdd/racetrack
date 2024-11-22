@@ -5,26 +5,26 @@ import Landing from './Landing'
 import FrontDesk from './front-desk/front-desk.jsx'
 import RaceControl from './race-control/race-control.jsx'
 import Login from "./login-and-main/login.jsx";
-import NavigatorLayout from "./login-and-main/navigatorLayout.jsx";
+import Navigator from "./login-and-main/navigator.jsx";
 import PageNotFound404 from "./login-and-main/pageNotFound404.jsx";
 import Spectator from "./spectator/spectator.jsx";
 import LapLineObserver from "./lap-line-tracker/lap-line-observer.jsx";
 import "./App.css";
-import FlagController from "./flag/flagController.jsx";
+import Flag from "./flag/flag.jsx";
 import RaceCountdown from "./race-countdown/race-countdown.jsx"
 import NextRace from "./next-race/next-race.jsx";
 
 function App() {
     return (
-      <>
-          <div className="container">
+      <div className="mainContainer">
+          <div>
               <BrowserRouter>
                   {/*Need /lap-line-tracker with only buttons for cars and without any distractions */}
-                   {location.pathname !== "/lap-line-tracker" && <NavigatorLayout />}
+                   {location.pathname !== "/lap-line-tracker" && <Navigator />}
                   <Routes>
                       <Route path="/" element={<Landing />} />
                       <Route path="/worker" element={<Login />} />
-                      <Route path="/flagController" element={<FlagController />} />
+                      <Route path="/flagController" element={<Flag />} />
                       <Route path="/front-desk" element={<FrontDesk />} />
                       <Route path="/front-desk/:raceName" element={<RaceDetails />} />
                       <Route path="/spectator" element={<Spectator />} />
@@ -46,7 +46,7 @@ function App() {
 
               </>
           )}
-      </>
+      </div>
     )
 }
 
