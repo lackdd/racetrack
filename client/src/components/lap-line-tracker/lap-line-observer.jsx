@@ -75,7 +75,7 @@ function formatLapTime(milliseconds) {
 }
 
 function fastestLapTime(milliseconds) {
-    
+
 }
 
 function LapLineObserver() {
