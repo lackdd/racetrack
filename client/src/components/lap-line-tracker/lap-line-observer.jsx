@@ -78,22 +78,27 @@ function formatLapTime(milliseconds) {
     function LapLineObserver() {
 
 
-        const [elapsedTime, setElapsedTime] = useState(0);
-        //const [elapsedTimes, setElapsedTimes] = useState([]);
-        //const [timerRunningList, setTimerRunningList] = useState([]);
-        const [timerRunning, setTimerRunning] = useState(false);
-        let timerInterval = [];
+        //const [elapsedTime, setElapsedTime] = useState(0);
+        const [elapsedTimes, setElapsedTimes] = useState({});
+        const [timerRunningList, setTimerRunningList] = useState({});
+        //const [timerRunning, setTimerRunning] = useState(false);
+        const timerInterval = useRef({});
 
 
         //setTimerRunning(timerStarted);
+        const driverNameRef = useRef("");
+        function giveName(driverName2) {
+            driverNameRef.current = driverName2;
+        }
 
         useEffect(() => {
-            if (timerRunning) {
-                timerInterval = setInterval(() => {
-                    setElapsedTime((prevElapsedTime) => {
+
+            if (timerRunningList[driverNameRef.current]) {
+                timerInterval[driverNameRef.current] = setInterval(() => {
+                    setElapsedTimes[driverNameRef.current]((prevElapsedTime) => {
                         if (prevElapsedTime >= 60) {
-                            setTimerRunning(false);
-                            clearInterval(timerInterval);
+                            setTimerRunningList[driverNameRef.current](false);
+                            clearInterval(timerInterval[driverNameRef.current]);
                             console.log("Timer finished!");
                             return 60;
                         }
@@ -103,8 +108,8 @@ function formatLapTime(milliseconds) {
             }
 
 
-            return () => clearInterval(timerInterval);
-        }, [timerRunning]);
+            return () => clearInterval(timerInterval[driverNameRef.current]);
+        }, [timerRunningList[driverNameRef.current]]);
 
 
             const [raceDrivers, setRaceDrivers] = useState([]);
@@ -156,6 +161,10 @@ function formatLapTime(milliseconds) {
                             lapTimes: [],
                             elapsedTime: 0,
                         }));
+                        setElapsedTimes((prev) => ({
+                            ...prev,
+                            [driverName]: 0,
+                        }));
                         setRaceDrivers(updatedRaceDrivers);
                         // console.log(updatedRaceDrivers)
                     } else {
@@ -170,17 +179,24 @@ function formatLapTime(milliseconds) {
                 };
             }, [flagStatus === "gray"]); // flagStatus === "safe", flagStatus === "gray"
 
-        const handleRaceStart = (driver) => {
-
-            if (!timerRunning && elapsedTime < 60) {
-                setTimerRunning(true);
+        const handleRaceStart = (driver, driverName) => {
+            giveName(driverName);
+            console.log("what is this: " + timerRunningList)
+            if (!timerRunningList[driverName] && elapsedTimes[driverName] < 60) {
+                setTimerRunningList((prev) => ({
+                    ...prev,
+                    [driverName]: true,
+                }));
 
             }
-            console.log("Elapsed time: " + elapsedTime.toFixed(2))
-            driver.elapsedTime = elapsedTime;
+            console.log("Elapsed time: " + elapsedTimes[driverName])
+            driver.elapsedTime = elapsedTimes[driverName];
         }
         const handleReset = () => {
-            setElapsedTime(0);
+            setElapsedTimes((prev) => ({
+                ...prev,
+                [driverName]: 0,
+            }));
         };
 
 //
@@ -202,7 +218,7 @@ function formatLapTime(milliseconds) {
                                 console.log(`driver ${driverName} started their race`);
                                 console.log(raceDrivers);
                                 //handleReset();
-                                handleRaceStart(driver);
+                                handleRaceStart(driver, driver.name);
                                 return {
                                     ...driver,
                                     laps: driver.laps + 1
@@ -211,7 +227,7 @@ function formatLapTime(milliseconds) {
                                 console.log(`driver ${driverName} finished a lap`);
                                 console.log(raceDrivers);
                                 //handleReset();
-                                handleRaceStart(driver);
+                                handleRaceStart(driver, driver.name);
                                 return {
                                     ...driver,
                                     laps: driver.laps + 1,
@@ -230,9 +246,9 @@ function formatLapTime(milliseconds) {
 
             return (
                 <div className="LapLineObserver">
-                    <h5>Time remaining:</h5>
-                    <div className="countdown-timer-container">{elapsedTime.toFixed(2)}</div>
-                    <p>test</p>
+                    {/*<h5>Time remaining:</h5>*/}
+                    {/*<div className="countdown-timer-container">{driver.elapsedTime.toFixed(2)}</div>*/}
+                    {/*<p>test</p>*/}
                     <div className="container">
                         <div id="observerButtonsGrid">
                             {raceDrivers.length === 0 ? (<p className={"information"}>No drivers submitted yet</p>) :
@@ -243,7 +259,7 @@ function formatLapTime(milliseconds) {
                                             disabled={isDisabled}
                                             onClick={() => driverFinishedLap(driver.name)}>
                                         {driver.name}<br/>
-                                        {driver.elapsedTime.toFixed(2)}
+                                        {/*{elapsedTimes}*/}
                                     </button>
                                 ))}
                             {isDisabled && <p className={"information"}>Race session has ended</p>}
