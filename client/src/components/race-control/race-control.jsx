@@ -79,7 +79,7 @@ function RaceControl() {
                 handleRaceStart();
                 break;
             case "start":
-                handleRaceStart();
+                timerForSelectedRace();
                 setRaceStarted(true);
                 break;
             case "hazard":
@@ -92,12 +92,32 @@ function RaceControl() {
         socket.emit("flagButtonWasClicked", event.target.value);
     };
 
+    const timerForSelectedRace = () => {
+        if(selectedRace) {
+                const race = raceData.find((race) => race.raceName === selectedRace);
+                    if(race) {
+                        timerInterval.current[race.raceName] = setInterval(() => {
+                            setTimeRemaining((prevTime) => {
+
+                                if (prevTime <= 0.1) {
+                                    clearInterval(timerInterval);
+                                    setTimerRunning(false);
+                                    console.log("Timer finished!");
+                                    setRaceStarted(false);
+                                    return 0;
+                                }
+                                return prevTime - 0.1;
+                            });
+                        }, 100);
+                    }
+                }
+        };
+
     return (
         <div style={{textAlign: "center"}}>
             <h1>Race Control Interface</h1>
             <h5>Time remaining:</h5>
             <div className="countdown-timer-container">{timeRemaining.toFixed(1)}</div>
-            <button onClick={handleRaceMode} value="start">Start race</button>
             { raceStarted && (
                 <div>
             <h2>Race controls:</h2>
@@ -119,6 +139,7 @@ function RaceControl() {
             <h2>Drivers List:</h2>
             {selectedRace && <h3>Race: {selectedRace}</h3>}
             <ul>
+                <button onClick={handleRaceMode} value="start">Start race</button>
                 {driversToDisplay.map((driver, index) => (
                     <li key={index}>
                         {driver.name} - Car {driver.car}
@@ -129,7 +150,7 @@ function RaceControl() {
 
             {!selectedRace && (
                 <>
-                    <h3>All Drivers Across All Races:</h3>
+                <h3>All Drivers Across All Races:</h3>
                     {raceData.map((race, index) => (
                         <div key={index}>
                             <h4>{race.raceName}</h4>
