@@ -21,26 +21,7 @@ function RaceControl() {
     const [timerRunningObj, setTimerRunningObj] = useState({});
     const [raceStarted, setRaceStarted] = useState(false);
     const timerInterval = useRef({});
-
-
-    /*useEffect(() => {
-        if (timerRunning) {
-            timerInterval.current = setInterval(() => {
-                setTimeRemaining((prevTime) => {
-                    if (prevTime <= 0.1) {
-                        clearInterval(timerInterval.current);
-                        setTimerRunning(false);
-                        console.log("Timer finished!");
-                        setRaceStarted(false);
-                        return 0;
-                    }
-                    return prevTime - 0.1;
-                });
-            }, 100);
-        }
-
-        return () => clearInterval(timerInterval);
-    }, [timerRunning]);*/
+    const [isOngoingObj, setIsOngoingObj] = useState({});
 
     useEffect(() => {
         // Ask the server for the latest race data on page load
@@ -51,11 +32,14 @@ function RaceControl() {
             console.log("Received updated race data from server:", data);
             // Initialize elapsed times for all races
             const initialRemainingTimes = {};
+            const initialTimerRunningValues = {};
             data.forEach((race) => {
                 initialRemainingTimes[race.raceName] = 60000;
+                initialTimerRunningValues[race.raceName] = false;
             });
 
             setTimeRemainingObj(initialRemainingTimes);
+            setTimerRunningObj(initialTimerRunningValues);
             setRaceData(data); // Update race data state
         };
 
@@ -64,8 +48,38 @@ function RaceControl() {
         // Clean up the socket listener on unmount
         return () => {
             socket.off("raceData", handleRaceData);
+            // clear all intervals on unmount
+            Object.values(timerInterval.current).forEach(clearInterval);
         };
     }, []);
+
+    useEffect(() => {
+        if (!selectedRace) return;
+
+        if (timerRunningObj[selectedRace]) {
+            // Start the timer for the selected race
+            timerInterval.current[selectedRace] = setInterval(() => {
+                setTimeRemainingObj((prev) => {
+                    const timeLeft = prev[selectedRace];
+                    if (timeLeft <= 100) {
+                        clearInterval(timerInterval.current[selectedRace]);
+                        setTimerRunningObj((prev) => ({
+                            ...prev,
+                            [selectedRace]: false,
+                        }));
+                        return { ...prev, [selectedRace]: 0 };
+                    }
+                    return { ...prev, [selectedRace]: timeLeft - 100 };
+                });
+            }, 100);
+        } else {
+            // Stop the timer for the selected race
+            clearInterval(timerInterval.current[selectedRace]);
+        }
+
+        // Cleanup on race switch or component unmount
+        return () => clearInterval(timerInterval.current[selectedRace]);
+    }, [timerRunningObj[selectedRace]]);
 
     const handleRaceSelection = (e) => {
         setSelectedRace(e.target.value); // Update the selected race
@@ -80,79 +94,69 @@ function RaceControl() {
     function handleRaceMode(event) {
         switch (event.target.value) {
             case "danger":
-                handleRacePause();
+                setTimerRunningObj((prev) => ({
+                    ...prev,
+                    [selectedRace]: false,
+                }));
                 break;
             case "safe":
-                handleRaceStart();
+                setTimerRunningObj((prev) => ({
+                    ...prev,
+                    [selectedRace]: true,
+                }));
                 break;
             case "start":
-                console.log(timeRemainingObj[selectedRace]);
-                timerForSelectedRace();
+                setTimerRunningObj((prev) => ({
+                    ...prev,
+                    [selectedRace]: true,
+                }));
+                setRaceData((prevRaceData) => {
+                    const updatedRaceData = [...prevRaceData];
+                    updatedRaceData.forEach((race) => {
+                        if (race.raceName === selectedRace) {
+                            race.isOngoing = true; // Update the property
+                        }
+                    });
+                    console.log(updatedRaceData);
+                    socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true });
+                    return updatedRaceData;
+                });
                 setRaceStarted(true);
                 break;
             case "hazard":
                 break;
             case "finish":
-                handleReset();
+                setTimerRunningObj((prev) => ({
+                    ...prev,
+                    [selectedRace]: false,
+                }));
+                setTimeRemainingObj((prev) => ({
+                    ...prev,
+                    [selectedRace]: 60000, // Reset timer
+                }));
+                setRaceData((prevRaceData) => {
+                    const updatedRaceData = [...prevRaceData];
+                    updatedRaceData.forEach((race) => {
+                        if (race.raceName === selectedRace) {
+                            race.isOngoing = false; // Update the property
+                        }
+                    });
+                    console.log(updatedRaceData);
+                    //socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: false });
+                    return updatedRaceData;
+                });
                 setRaceStarted(false);
+                break;
+            default:
                 break;
         }
         socket.emit("flagButtonWasClicked", event.target.value);
-    };
-
-    const timerForSelectedRace = () => {
-        if(selectedRace) {
-                        timerInterval.current[selectedRace] = setInterval(() => {
-                            setTimeRemainingObj((prev) => {
-                                const timeLeft = prev[selectedRace] || 0;
-                                if (timeLeft  <= 100) {
-                                    clearInterval(timerInterval.current[selectedRace]);
-                                    setTimerRunningObj((prevState) => ({
-                                        ...prevState,
-                                        [selectedRace]: false,
-                                    }));
-                                    console.log("Timer finished!");
-                                    setRaceStarted(false);
-                                    return {...prev, [selectedRace]: 0}
-                                }
-                                return {...prev, [selectedRace]: timeLeft - 100};
-                            });
-                        }, 100);
-                }
-        };
-
-    const handleRaceStart = () => {
-        if (!timerRunning && timeRemainingObj[selectedRace] > 0) {
-            setTimerRunningObj[selectedRace](true);
-        }
-    };
-    const handleRacePause = () => {
-        setTimerRunning(false);
-    };
-
-/*    const handleReset = () => {
-        setTimerRunning(false);
-        setTimeRemaining(60);
-    };*/
-
-    // Stop and reset timer for a driver
-    const handleReset = (selectedRace) => {
-        //clearInterval(timerInterval.current[selectedRace]);
-        setTimerRunningObj((prev) => ({
-            ...prev,
-            [selectedRace]: false,
-        }));
-        setTimeRemainingObj((prev) => ({
-            ...prev,
-            [selectedRace]: 60000, // in milliseconds
-        }));
     };
 
     return (
         <div style={{textAlign: "center"}}>
             <h1>Race Control Interface</h1>
             <h5>Time remaining:</h5>
-{/*            <div className="countdown-timer-container">{timeRemainingObj[selectedRace] || 0}</div>*/}
             <div className="countdown-timer-container">{formatTimer(timeRemainingObj[selectedRace]) || 0}</div>
             {raceStarted && (
                 <div>
@@ -162,6 +166,8 @@ function RaceControl() {
                     <button onClick={handleRaceMode} value="hazard">Hazardous!</button>
                     <button onClick={handleRaceMode} value="finish">Finish!</button>
                 </div>)}
+            { !raceStarted && (
+                <>
             <h2>Select a Race:</h2>
             <select onChange={handleRaceSelection} value={selectedRace}>
                 <option value="">-- All Races --</option>
@@ -171,6 +177,8 @@ function RaceControl() {
                     </option>
                 ))}
             </select>
+            </>
+    )}
 
             <h2>Drivers List:</h2>
             {selectedRace && <h3>Race: {selectedRace}</h3>}

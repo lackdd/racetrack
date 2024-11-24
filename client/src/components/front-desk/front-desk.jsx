@@ -5,6 +5,7 @@ import socket from "../../socket.js";
 function FrontDesk() {
     const [raceName, setRaceName] = useState("");
     const [raceList, setRaceList] = useState([]);
+    const [isOngoing, setIsOngoing] = useState(false);
 
     const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ function FrontDesk() {
             return;
         }
 
-        const newRace = { raceName };
+        const newRace = { raceName, isOngoing };
         socket.emit("createRace", newRace); // Notify the server
         setRaceName("");
     };

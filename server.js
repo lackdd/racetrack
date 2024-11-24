@@ -30,7 +30,15 @@ io.on('connection', (socket) => {
     socket.emit("raceData", raceData);
 
     socket.on("createRace", (newRace) => {
-        raceData.push({ raceName: newRace.raceName, drivers: [] });
+        raceData.push({ raceName: newRace.raceName, isOngoing: newRace.isOngoing, drivers: [] });
+        io.emit("raceData", raceData); // Broadcast updated race data to all clients
+    });
+
+    socket.on("updateRaceStatus", ({ raceName, isOngoing }) => {
+        const race = raceData.find((race) => race.raceName === raceName);
+        if (race) {
+            race.isOngoing = isOngoing; // Update the `isOngoing` status
+        }
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
     });
 
