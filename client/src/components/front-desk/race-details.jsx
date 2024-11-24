@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import socket from "../../socket.js";
 
 function RaceDetails() {
@@ -80,6 +81,9 @@ function RaceDetails() {
                     </li>
                 ))}
             </ul>
+            <Link to={'/front-desk'}>
+                Go back
+            </Link>
         </div>
     );
 }

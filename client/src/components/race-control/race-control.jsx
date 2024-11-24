@@ -30,17 +30,26 @@ function RaceControl() {
         // Listen for updates to the race data
         const handleRaceData = (data) => {
             console.log("Received updated race data from server:", data);
-            // Initialize elapsed times for all races
-            const initialRemainingTimes = {};
-            const initialTimerRunningValues = {};
-            data.forEach((race) => {
-                initialRemainingTimes[race.raceName] = 60000;
-                initialTimerRunningValues[race.raceName] = false;
+
+            // Sync timer values from server
+            setTimeRemainingObj((prev) => {
+                const updatedRemainingTimes = { ...prev };
+                data.forEach((race) => {
+                    updatedRemainingTimes[race.raceName] = race.timeRemaining || 60000; // Default to 1 minute if undefined
+                });
+                return updatedRemainingTimes;
             });
 
-            setTimeRemainingObj(initialRemainingTimes);
-            setTimerRunningObj(initialTimerRunningValues);
-            setRaceData(data); // Update race data state
+            // Sync `timerRunningObj` from `isOngoing`
+            setTimerRunningObj((prev) => {
+                const updatedTimerRunningValues = { ...prev };
+                data.forEach((race) => {
+                    updatedTimerRunningValues[race.raceName] = race.isOngoing || false;
+                });
+                return updatedTimerRunningValues;
+            });
+
+            setRaceData(data); // Update race data from server
         };
 
         socket.on("raceData", handleRaceData);
@@ -67,9 +76,13 @@ function RaceControl() {
                             ...prev,
                             [selectedRace]: false,
                         }));
+                        socket.emit("updateTimerValue", { raceName: selectedRace, timeRemaining: 0 }); // Emit final value
                         return { ...prev, [selectedRace]: 0 };
                     }
-                    return { ...prev, [selectedRace]: timeLeft - 100 };
+
+                    const newTime = timeLeft - 100;
+                    socket.emit("updateTimerValue", { raceName: selectedRace, timeRemaining: newTime }); // Emit updated timer
+                    return { ...prev, [selectedRace]: newTime };
                 });
             }, 100);
         } else {
@@ -79,7 +92,7 @@ function RaceControl() {
 
         // Cleanup on race switch or component unmount
         return () => clearInterval(timerInterval.current[selectedRace]);
-    }, [timerRunningObj[selectedRace]]);
+    }, [timerRunningObj[selectedRace], selectedRace]);
 
     const handleRaceSelection = (e) => {
         setSelectedRace(e.target.value); // Update the selected race
@@ -110,17 +123,7 @@ function RaceControl() {
                     ...prev,
                     [selectedRace]: true,
                 }));
-                setRaceData((prevRaceData) => {
-                    const updatedRaceData = [...prevRaceData];
-                    updatedRaceData.forEach((race) => {
-                        if (race.raceName === selectedRace) {
-                            race.isOngoing = true; // Update the property
-                        }
-                    });
-                    console.log(updatedRaceData);
-                    socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true });
-                    return updatedRaceData;
-                });
+                socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true }); // Notify server
                 setRaceStarted(true);
                 break;
             case "hazard":
@@ -130,21 +133,7 @@ function RaceControl() {
                     ...prev,
                     [selectedRace]: false,
                 }));
-                setTimeRemainingObj((prev) => ({
-                    ...prev,
-                    [selectedRace]: 60000, // Reset timer
-                }));
-                setRaceData((prevRaceData) => {
-                    const updatedRaceData = [...prevRaceData];
-                    updatedRaceData.forEach((race) => {
-                        if (race.raceName === selectedRace) {
-                            race.isOngoing = false; // Update the property
-                        }
-                    });
-                    console.log(updatedRaceData);
-                    //socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: false });
-                    return updatedRaceData;
-                });
+                socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: false }); // Notify server
                 setRaceStarted(false);
                 break;
             default:

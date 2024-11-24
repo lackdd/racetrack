@@ -42,6 +42,14 @@ io.on('connection', (socket) => {
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
     });
 
+    socket.on("updateTimerValue", ({ raceName, timeRemaining }) => {
+        const race = raceData.find((race) => race.raceName === raceName);
+        if (race) {
+            race.timeRemaining = timeRemaining; // Update timer value on the server
+        }
+        io.emit("raceData", raceData); // Broadcast updated race data to all clients
+    });
+
     socket.on("deleteRace", (raceName) => {
         raceData = raceData.filter((race) => race.raceName !== raceName);
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
