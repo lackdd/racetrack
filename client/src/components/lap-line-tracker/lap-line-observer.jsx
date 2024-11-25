@@ -12,6 +12,7 @@ import button from "bootstrap/js/src/button.js";
 import "./lap-line-observer.css"
 
 import socket from "../../socket.js";
+import {loadConfigFromFile} from "vite";
 
 // function lapTimer() {
 //     let [elapsedTime, setElapsedTime] = useState(0);
@@ -65,6 +66,7 @@ import socket from "../../socket.js";
 //     }
 // }
 
+// format lap time to readable format
 function formatLapTime(milliseconds) {
     // todo maybe save as milliseconds so they can easily be compared and reformat after that to display
     const minutes = Math.floor(milliseconds / 60000);
@@ -74,8 +76,18 @@ function formatLapTime(milliseconds) {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millisecondsRemainder.toString().padStart(2, '0')}`;
 }
 
-function fastestLapTime(milliseconds) {
+// calculate the fastest lap time for each driver
+function fastestLapTime(laptimes) {
+    //laptimes = laptimes.slice(1, laptimes.length)
+    if (laptimes.length < 1) { //
+        return null
+    }
+    return Math.min(...laptimes);
+}
 
+function fastestDriver(fastestLapTimes) {
+    const fastestLapTime = fastestLapTimes.filter(laptime => laptime !== 0);
+    return fastestLapTime;
 }
 
 function LapLineObserver() {
@@ -115,7 +127,7 @@ function LapLineObserver() {
                     laps: 0,
                     lapTimes: [],
                     lapTimesMS: [],
-                    fastestLap: 0,
+                    fastestLap: null,
                 }));
 
                 // Initialize elapsed times for all drivers
@@ -143,13 +155,18 @@ function LapLineObserver() {
                 [driverName]: true,
             }));
 
+            clearInterval(timerInterval.current[driverName]);
+
             timerInterval.current[driverName] = setInterval(() => {
                 setElapsedTimes((prev) => ({
                     ...prev,
                     [driverName]: (prev[driverName] || 0) + 10,
                 }));
             }, 10);
+
+
         }
+
     };
 
     // Stop and reset timer for a driver
@@ -170,24 +187,30 @@ function LapLineObserver() {
         setRaceDrivers((prev) =>
             prev.map((driver) => {
                 if (driver.name === driverName) {
-                    const newLapTimes = [
-                        ...driver.lapTimes,
-                        //formatLapTime(elapsedTimes[driverName] || 0),
-                        driver.laps > 0 ? formatLapTime(elapsedTimes[driverName] || 0) : null,
-                    ];
-                    const newLapTimesMS = [
-                        ...driver.lapTimesMS,
-                        //elapsedTimes[driverName] || 0,
-                        driver.laps > 0 ? elapsedTimes[driverName] || 0 : null,
-                    ];
-                    console.log(newLapTimes);
-                    console.log(driver)
-                    return {
-                        ...driver,
-                        laps: driver.laps + 1,
-                        lapTimes: newLapTimes,
-                        lapTimesMS: newLapTimesMS,
-                    };
+                    if (driver.laps === 0) { // don't have anything on the first click that's starts the first lap's timer
+                        return {
+                            ...driver,
+                            laps: driver.laps + 1,
+                        };
+                    } else {
+                        const newLapTimes = [
+                            ...driver.lapTimes,
+                            //formatLapTime(elapsedTimes[driverName] || 0),
+                        ];
+                        const newLapTimesMS = [
+                            ...driver.lapTimesMS,
+                            //elapsedTimes[driverName] || 0,
+                            elapsedTimes[driverName] || 0,
+                        ];
+                        console.log(driver.lapTimes)
+                        return {
+                            ...driver,
+                            laps: driver.laps + 1,
+                            lapTimes: newLapTimes,
+                            lapTimesMS: newLapTimesMS,
+                            fastestLap: formatLapTime(fastestLapTime(driver.lapTimesMS)),
+                        };
+                    }
                 }
                 return driver;
             })
@@ -196,8 +219,10 @@ function LapLineObserver() {
         handleRaceStart(driverName);
     };
 
+
     return (
         <div className="LapLineObserver">
+            <p>Fastest lap time: </p>
             <div className="container">
                 <div id="observerButtonsGrid">
                     {raceDrivers.length === 0 ? (
@@ -212,7 +237,7 @@ function LapLineObserver() {
                                 onClick={() => driverFinishedLap(driver.name)}
                             >
                                 {driver.name}
-                                <br />
+                                <br/>
                                 {formatLapTime(elapsedTimes[driver.name] || 0)}
                             </button>
                         ))
@@ -225,10 +250,6 @@ function LapLineObserver() {
 }
 
 export default LapLineObserver;
-
-
-
-
 
 
 // vana kood enne chat-gpt muudatusi
