@@ -10,92 +10,58 @@ function formatTimer(milliseconds) {
     return milliseconds === undefined ? `01:00:00` : `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millisecondsRemainder.toString().padStart(2, '0')}`;
 }
 
-function fastestLapTime(milliseconds) {
-
-}
-
 function RaceControl() {
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
     const [selectedRace, setSelectedRace] = useState(""); // Store the currently selected race
-    const [timeRemainingObj, setTimeRemainingObj] = useState({});
-    const [timerRunningObj, setTimerRunningObj] = useState({});
+    const [timeRemaining, setTimeRemaining] = useState(0);
     const [raceStarted, setRaceStarted] = useState(false);
-    const timerInterval = useRef({});
-    const [isOngoingObj, setIsOngoingObj] = useState({});
 
     useEffect(() => {
-        // Ask the server for the latest race data on page load
+        // Request the latest race data from the server
         socket.emit("getRaceData");
 
-        // Listen for updates to the race data
+        // Listen for race data updates
         const handleRaceData = (data) => {
-            console.log("Received updated race data from server:", data);
+            setRaceData(data);
+        };
 
-            // Sync timer values from server
-            setTimeRemainingObj((prev) => {
-                const updatedRemainingTimes = { ...prev };
-                data.forEach((race) => {
-                    updatedRemainingTimes[race.raceName] = race.timeRemaining || 60000; // Default to 1 minute if undefined
-                });
-                return updatedRemainingTimes;
-            });
-
-            // Sync `timerRunningObj` from `isOngoing`
-            setTimerRunningObj((prev) => {
-                const updatedTimerRunningValues = { ...prev };
-                data.forEach((race) => {
-                    updatedTimerRunningValues[race.raceName] = race.isOngoing || false;
-                });
-                return updatedTimerRunningValues;
-            });
-
-            setRaceData(data); // Update race data from server
+        // Listen for timer updates for the selected race
+        const handleTimerUpdate = (data) => {
+            if (data.raceName === selectedRace) {
+                setTimeRemaining(data.timeRemaining);
+            }
         };
 
         socket.on("raceData", handleRaceData);
+        socket.on("timerUpdate", handleTimerUpdate);
 
-        // Clean up the socket listener on unmount
+        // Cleanup listeners on unmount
         return () => {
             socket.off("raceData", handleRaceData);
-            // clear all intervals on unmount
-            Object.values(timerInterval.current).forEach(clearInterval);
+            socket.off("timerUpdate", handleTimerUpdate);
         };
-    }, []);
+    }, [selectedRace]);
 
-    useEffect(() => {
-        if (!selectedRace) return;
+    const startTimer = () => {
+        socket.emit("startTimer", selectedRace);
+        setRaceStarted(true);
+    };
 
-        if (timerRunningObj[selectedRace]) {
-            // Start the timer for the selected race
-            timerInterval.current[selectedRace] = setInterval(() => {
-                setTimeRemainingObj((prev) => {
-                    const timeLeft = prev[selectedRace];
-                    if (timeLeft <= 100) {
-                        clearInterval(timerInterval.current[selectedRace]);
-                        setTimerRunningObj((prev) => ({
-                            ...prev,
-                            [selectedRace]: false,
-                        }));
-                        socket.emit("updateTimerValue", { raceName: selectedRace, timeRemaining: 0 }); // Emit final value
-                        return { ...prev, [selectedRace]: 0 };
-                    }
+    const pauseTimer = () => {
+        socket.emit("pauseTimer", selectedRace);
+    };
 
-                    const newTime = timeLeft - 100;
-                    socket.emit("updateTimerValue", { raceName: selectedRace, timeRemaining: newTime }); // Emit updated timer
-                    return { ...prev, [selectedRace]: newTime };
-                });
-            }, 100);
-        } else {
-            // Stop the timer for the selected race
-            clearInterval(timerInterval.current[selectedRace]);
-        }
-
-        // Cleanup on race switch or component unmount
-        return () => clearInterval(timerInterval.current[selectedRace]);
-    }, [timerRunningObj[selectedRace], selectedRace]);
+    const resetTimer = () => {
+        socket.emit("resetTimer", selectedRace);
+        setRaceStarted(false);
+    };
 
     const handleRaceSelection = (e) => {
         setSelectedRace(e.target.value); // Update the selected race
+        // Request the initial timer value for the selected race
+        socket.emit("getTimeRemaining", e.target.value, (data) => {
+            setTimeRemaining(data.timeRemaining);
+        });
     };
 
     // Filter the drivers based on the selected race
@@ -107,32 +73,20 @@ function RaceControl() {
     function handleRaceMode(event) {
         switch (event.target.value) {
             case "danger":
-                setTimerRunningObj((prev) => ({
-                    ...prev,
-                    [selectedRace]: false,
-                }));
+                pauseTimer();
                 break;
             case "safe":
-                setTimerRunningObj((prev) => ({
-                    ...prev,
-                    [selectedRace]: true,
-                }));
+                startTimer();
                 break;
             case "start":
-                setTimerRunningObj((prev) => ({
-                    ...prev,
-                    [selectedRace]: true,
-                }));
+                startTimer();
                 socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true }); // Notify server
                 setRaceStarted(true);
                 break;
             case "hazard":
                 break;
             case "finish":
-                setTimerRunningObj((prev) => ({
-                    ...prev,
-                    [selectedRace]: false,
-                }));
+                resetTimer();
                 socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: false }); // Notify server
                 setRaceStarted(false);
                 break;
@@ -146,7 +100,7 @@ function RaceControl() {
         <div style={{textAlign: "center"}}>
             <h1>Race Control Interface</h1>
             <h5>Time remaining:</h5>
-            <div className="countdown-timer-container">{formatTimer(timeRemainingObj[selectedRace]) || 0}</div>
+            <div className="countdown-timer-container">{formatTimer(timeRemaining)}</div>
             {raceStarted && (
                 <div>
                     <h2>Race controls:</h2>

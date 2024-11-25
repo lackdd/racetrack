@@ -4,6 +4,7 @@ const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 require('dotenv').config({ path: './keys.env' });
 const cors = require('cors'); // To handle CORS for frontend-backend communication
+const Timer = require('./timer.js');
 
 const app = express();
 const server = createServer(app);
@@ -22,15 +23,44 @@ app.use(express.json());
 let raceData = [];
 let flagStatus = "";
 
+const timer = new Timer();
+
+// Initialize "nextRace" timer
+timer.initializeTimer("nextRace");
+
 // Handle socket connections
 io.on('connection', (socket) => {
     console.log('Client connected');
+
+    // Initialize timers for all races
+    raceData.forEach((race) => {
+        timer.initializeTimer(race.raceName);
+    });
+
+    // Handle timer commands
+    socket.on('startTimer', (raceName) => {
+        timer.startTimer(raceName, io);
+    });
+
+    socket.on('pauseTimer', (raceName) => {
+        timer.pauseTimer(raceName);
+    });
+
+    socket.on('resetTimer', (raceName) => {
+        timer.resetTimer(raceName, io);
+    });
+
+    socket.on('getTimeRemaining', (raceName, callback) => {
+        const timeRemaining = timer.getTimeRemaining(raceName);
+        callback({ raceName, timeRemaining });
+    });
 
     // immediately send current race data to the newly connected client
     socket.emit("raceData", raceData);
 
     socket.on("createRace", (newRace) => {
         raceData.push({ raceName: newRace.raceName, isOngoing: newRace.isOngoing, drivers: [] });
+        timer.initializeTimer(newRace.raceName); // Initialize timer for the new race
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
     });
 
