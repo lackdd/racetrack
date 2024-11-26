@@ -119,14 +119,17 @@ function RaceControl() {
             {currentRace && (
                 <>
                     <ul>
-                        {!raceStarted && currentRace !== -1 && (
-                            <button onClick={handleRaceMode} value="start">Start race</button>)}
+                        {!raceStarted && currentRaceIndex !== -1 && (
+                            <>
+                            <button onClick={handleRaceMode} value="start">Start race</button>
                         <h2>Drivers List:</h2>
                         {driversToDisplay.map((driver, index) => (
                             <li key={index}>
                                 {driver.name} - Car {driver.car}
                             </li>
                         ))}
+                            </>
+                    )}
                     </ul>
                 </>
             )}
