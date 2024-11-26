@@ -39,7 +39,19 @@ io.on('connection', (socket) => {
 
     // Handle timer commands
     socket.on('startTimer', (raceName) => {
-        timer.startTimer(raceName, io);
+        timer.startTimer(raceName, io, raceData);
+
+        const race = raceData.find(r => r.raceName === raceName);
+        if (race) {
+            // Update the appropriate timer field
+            if (raceName === "nextRace") {
+                race.timeRemainingNextRace = timer.getTimeRemaining(raceName);
+            } else {
+                race.timeRemainingOngoingRace = timer.getTimeRemaining(raceName);
+                race.isOngoing = true; // Mark the race as ongoing
+            }
+            io.emit("raceData", raceData); // Broadcast updated race data to all clients
+        }
     });
 
     socket.on('pauseTimer', (raceName) => {
@@ -59,7 +71,7 @@ io.on('connection', (socket) => {
     socket.emit("raceData", raceData);
 
     socket.on("createRace", (newRace) => {
-        raceData.push({ raceName: newRace.raceName, isOngoing: newRace.isOngoing, drivers: [] });
+        raceData.push({ raceName: newRace.raceName, isOngoing: newRace.isOngoing, drivers: [], timeRemainingOngoingRace: 0, timeRemainingNextRace: 0, });
         timer.initializeTimer(newRace.raceName); // Initialize timer for the new race
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
     });

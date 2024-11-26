@@ -15,7 +15,7 @@ class Timer {
         }
     }
 
-    startTimer(raceName, io) {
+    startTimer(raceName, io, raceData) {
         const timer = this.timers[raceName];
         if (timer && !timer.running) {
             timer.running = true;
@@ -24,6 +24,17 @@ class Timer {
                 if (timer.timeRemaining <= 0) {
                     this.stopTimer(raceName);
                     timer.timeRemaining = 0; // Ensure it doesn't go negative
+                }
+
+                // Update the raceData dynamically
+                const race = raceData.find(r => r.raceName === raceName);
+                if (race) {
+                    if (raceName === "nextRace") {
+                        race.timeRemainingNextRace = timer.timeRemaining;
+                    } else {
+                        race.timeRemainingOngoingRace = timer.timeRemaining;
+                    }
+                    io.emit("raceData", raceData); // Broadcast updated race data to all clients
                 }
                 // Broadcast updated time to all clients
                 io.emit('timerUpdate', { raceName, timeRemaining: timer.timeRemaining });

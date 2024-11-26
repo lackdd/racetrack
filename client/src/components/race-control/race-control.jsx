@@ -80,7 +80,7 @@ function RaceControl() {
                 break;
             case "start":
                 startTimer();
-                socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true }); // Notify server
+                socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true, timeRemainingOngoingRace: timeRemaining, }); // Notify server
                 setRaceStarted(true);
                 break;
             case "hazard":
