@@ -12,9 +12,10 @@ function formatTimer(milliseconds) {
 
 function RaceControl() {
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
-    const [selectedRace, setSelectedRace] = useState(""); // Store the currently selected race
     const [timeRemaining, setTimeRemaining] = useState(0);
     const [raceStarted, setRaceStarted] = useState(false);
+    const [currentRaceIndex, setCurrentRaceIndex] = useState(0);
+    const currentRace = raceData[currentRaceIndex] || {};
 
     useEffect(() => {
         // Request the latest race data from the server
@@ -22,12 +23,13 @@ function RaceControl() {
 
         // Listen for race data updates
         const handleRaceData = (data) => {
+            console.log("Received race data from server:", data);
             setRaceData(data);
         };
 
         // Listen for timer updates for the selected race
         const handleTimerUpdate = (data) => {
-            if (data.raceName === selectedRace) {
+            if (data.raceName === currentRace.raceName) {
                 setTimeRemaining(data.timeRemaining);
             }
         };
@@ -40,34 +42,24 @@ function RaceControl() {
             socket.off("raceData", handleRaceData);
             socket.off("timerUpdate", handleTimerUpdate);
         };
-    }, [selectedRace]);
+    }, [currentRace.raceName]);
 
     const startTimer = () => {
-        socket.emit("startTimer", selectedRace);
+        socket.emit("startTimer", currentRace.raceName);
         setRaceStarted(true);
     };
 
     const pauseTimer = () => {
-        socket.emit("pauseTimer", selectedRace);
+        socket.emit("pauseTimer", currentRace.raceName);
     };
 
     const resetTimer = () => {
-        socket.emit("resetTimer", selectedRace);
+        socket.emit("resetTimer", currentRace.raceName);
         setRaceStarted(false);
     };
 
-    const handleRaceSelection = (e) => {
-        setSelectedRace(e.target.value); // Update the selected race
-        // Request the initial timer value for the selected race
-        socket.emit("getTimeRemaining", e.target.value, (data) => {
-            setTimeRemaining(data.timeRemaining);
-        });
-    };
-
     // Filter the drivers based on the selected race
-    const driversToDisplay = selectedRace
-        ? raceData.find((race) => race.raceName === selectedRace)?.drivers || []
-        : [];
+    const driversToDisplay = currentRace?.drivers || [];
 
     //Handle Flag status buttons logic
     function handleRaceMode(event) {
@@ -80,15 +72,20 @@ function RaceControl() {
                 break;
             case "start":
                 startTimer();
-                socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: true, timeRemainingOngoingRace: timeRemaining, }); // Notify server
+                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: true, timeRemainingOngoingRace: timeRemaining, }); // Notify server
                 setRaceStarted(true);
                 break;
             case "hazard":
                 break;
             case "finish":
                 resetTimer();
-                socket.emit("updateRaceStatus", { raceName: selectedRace, isOngoing: false }); // Notify server
+                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: false }); // Notify server
                 setRaceStarted(false);
+                if (currentRaceIndex + 1 < raceData.length) {
+                    setCurrentRaceIndex(currentRaceIndex + 1);
+                } else if (currentRaceIndex + 1 === raceData.length) {
+                    setCurrentRaceIndex(-1);
+                }
                 break;
             default:
                 break;
@@ -96,61 +93,41 @@ function RaceControl() {
         socket.emit("flagButtonWasClicked", event.target.value);
     };
 
+
     return (
         <div style={{textAlign: "center"}}>
             <h1>Race Control Interface</h1>
-            <h5>Time remaining:</h5>
-            <div className="countdown-timer-container">{formatTimer(timeRemaining)}</div>
             {raceStarted && (
                 <div>
+                    <h5>Time remaining:</h5>
+                    <div className="countdown-timer-container">{formatTimer(timeRemaining)}</div>
                     <h2>Race controls:</h2>
                     <button onClick={handleRaceMode} value="safe">Safe</button>
                     <button onClick={handleRaceMode} value="danger">Danger!</button>
                     <button onClick={handleRaceMode} value="hazard">Hazardous!</button>
                     <button onClick={handleRaceMode} value="finish">Finish!</button>
                 </div>)}
-            { !raceStarted && (
+            {!raceStarted && (
                 <>
-            <h2>Select a Race:</h2>
-            <select onChange={handleRaceSelection} value={selectedRace}>
-                <option value="">-- All Races --</option>
-                {raceData.map((race, index) => (
-                    <option key={index} value={race.raceName}>
-                        {race.raceName}
-                    </option>
-                ))}
-            </select>
+                    {currentRace ? (
+                        <h2>Next Race: {currentRace.raceName}</h2>
+                    ) : (
+                        <h2>No races in the queue</h2>
+                    )}
             </>
     )}
-
-            <h2>Drivers List:</h2>
-            {selectedRace && <h3>Race: {selectedRace}</h3>}
-            <ul>
-                {selectedRace && !raceStarted && (
-                    <button onClick={handleRaceMode} value="start">Start race</button>)}
-                {driversToDisplay.map((driver, index) => (
-                    <li key={index}>
-                        {driver.name} - Car {driver.car}
-                    </li>
-                ))}
-            </ul>
-
-
-            {!selectedRace && (
+            {currentRace && (
                 <>
-                    <h3>All Drivers Across All Races:</h3>
-                    {raceData.map((race, index) => (
-                        <div key={index}>
-                            <h4>{race.raceName}</h4>
-                            <ul>
-                                {race.drivers.map((driver, driverIndex) => (
-                                    <li key={driverIndex}>
-                                        {driver.name} - Car {driver.car}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    <ul>
+                        {!raceStarted && currentRace !== -1 && (
+                            <button onClick={handleRaceMode} value="start">Start race</button>)}
+                        <h2>Drivers List:</h2>
+                        {driversToDisplay.map((driver, index) => (
+                            <li key={index}>
+                                {driver.name} - Car {driver.car}
+                            </li>
+                        ))}
+                    </ul>
                 </>
             )}
         </div>

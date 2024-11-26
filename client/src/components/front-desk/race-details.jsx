@@ -15,6 +15,7 @@ function RaceDetails() {
         socket.emit("getRaceData");
 
         const handleRaceData = (data) => {
+            console.log("Received race data from server:", data);
             const race = data.find((race) => race.raceName === raceName);
             if (race) {
                 setRaceDrivers(race.drivers || []);
