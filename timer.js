@@ -34,7 +34,7 @@ class Timer {
                     } else {
                         race.timeRemainingOngoingRace = timer.timeRemaining;
                     }
-                    io.emit("raceData", raceData); // Broadcast updated race data to all clients
+                    //io.emit("raceData", raceData); // Broadcast updated race data to all clients
                 }
                 // Broadcast updated time to all clients
                 io.emit('timerUpdate', { raceName, timeRemaining: timer.timeRemaining });

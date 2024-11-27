@@ -1,40 +1,28 @@
-// The Lap-line observer has been given a tablet which may be used in landscape or portrait.
-// Their interface requires 1 button for each car which will be pressed as the respective car passes the lap-line.
-// The button must simply have the car's number on it.
-// As many cars cross the lap-line quickly and often, the buttons must be very hard to miss (they must occupy a large tappable area).
-
-// Cars can still cross the lap line when the race is in finish mode.
-// The observer's display should show a message to indicate that the race session is ended once that has been declared by the Safety Official.
-// The buttons must not function after the race is ended. They should disappear or be visually disabled.
-
-import React, {useEffect, useState, useRef} from "react";
-import button from "bootstrap/js/src/button.js";
-import "./lap-line-observer.css"
-
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import "./lap-line-observer.css";
 import socket from "../../socket.js";
 
-// format lap time to readable format
+// Helper function to format lap times
 function formatLapTime(milliseconds) {
-    // todo maybe save as milliseconds so they can easily be compared and reformat after that to display
     const minutes = Math.floor(milliseconds / 60000);
     const seconds = Math.floor((milliseconds % 60000) / 1000);
     const millisecondsRemainder = milliseconds % 1000;
 
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millisecondsRemainder.toString().padStart(2, '0')}`;
+    return `${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}:${millisecondsRemainder.toString().padStart(3, '0')}`;
 }
 
-//calculate the fastest lap time for each driver
+// Helper function to calculate the fastest lap time for each driver
 function fastestLapTime(laptimes) {
-    //laptimes = laptimes.slice(1, laptimes.length)
-    if (laptimes.length < 1) { //
-        return null
+    if (laptimes.length < 1) {
+        return null;
     }
     return Math.min(...laptimes);
 }
 
 function LapLineObserver() {
     const [elapsedTimes, setElapsedTimes] = useState({});
-    const [timerRunningList, setTimerRunningList] = useState({});
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [raceStarted, setRaceStarted] = useState(false);
     const [flagStatus, setFlagStatus] = useState([]);
@@ -45,6 +33,44 @@ function LapLineObserver() {
 
     const timerInterval = useRef({});
 
+    // Memoized function to handle incoming race data
+    const handleRaceData = useCallback((raceData) => {
+        const onGoingRace = raceData.filter((race) => race.isOngoing === true);
+
+        if (onGoingRace.length > 0) {
+            const updatedRaceDrivers = onGoingRace[0].drivers.map((driver) => ({
+                ...driver,
+                laps: 0,
+                lapTimes: [],
+                lapTimesMS: [],
+                fastestLap: null,
+            }));
+
+            const initialElapsedTimes = {};
+            updatedRaceDrivers.forEach((driver) => {
+                initialElapsedTimes[driver.name] = 0;
+            });
+
+            // Compare and update `elapsedTimes` only if it has changed
+            setElapsedTimes((prev) => {
+                if (JSON.stringify(prev) !== JSON.stringify(initialElapsedTimes)) {
+                    return initialElapsedTimes;
+                }
+                return prev; // No change, skip re-render
+            });
+
+            // Compare and update `raceDrivers` only if it has changed
+            setRaceDrivers((prev) => {
+                if (JSON.stringify(prev) !== JSON.stringify(updatedRaceDrivers)) {
+                    return updatedRaceDrivers;
+                }
+                return prev; // No change, skip re-render
+            });
+        } else {
+            console.error("No ongoing race exists.");
+        }
+    }, []);
+
     // Handle flag changes
     useEffect(() => {
         socket.emit("broadcastFlagButtonChange");
@@ -54,82 +80,45 @@ function LapLineObserver() {
 
             if (newFlagStatus === "finish") {
                 setIsDisabled(true);
-                console.log("The race has finished!")
+                setRaceStarted(false);
+                console.log("Race started = false");
+                console.log("The race has finished!");
             } else {
                 setIsDisabled(false);
             }
 
             if (newFlagStatus === "start") {
                 setRaceStarted(true);
-                console.log("The race has started!")
-            } else {
-                setRaceStarted(false);
+                console.log("Race started = true");
             }
-
         });
-        console.log("Current race started value: " + raceStarted);
+
         // Clean up the socket listener on unmount
         return () => {
             socket.off("broadcastFlagButtonChange");
         };
     }, []);
 
-
     // Fetch race data
     useEffect(() => {
-        if (!raceStarted) {
-        socket.emit("getRaceData");
+        if (raceStarted) {
+            console.log("Race has started, fetching data...");
+            socket.emit("getRaceData");
 
-        const handleRaceData = (raceData) => {
+            socket.on("raceData", handleRaceData);
 
-            const onGoingRace = raceData.filter((race) => race.isOngoing === true);
-
-            if (onGoingRace.length > 0) { // (Array.isArray(raceData) && raceData.length > 0 && onGoingRace)
-                console.log(onGoingRace)
-
-                // if (onGoingRace.length > 0 && onGoingRace[0].hasOwnProperty("drivers")) {
-                const updatedRaceDrivers = onGoingRace[0].drivers.map((driver) => ({
-                    ...driver,
-                    laps: 0,
-                    lapTimes: [],
-                    lapTimesMS: [],
-                    fastestLap: null,
-                }));
-
-                // Initialize elapsed times for all drivers
-                const initialElapsedTimes = {};
-                updatedRaceDrivers.forEach((driver) => {
-                    initialElapsedTimes[driver.name] = 0;
-                });
-
-                setElapsedTimes(initialElapsedTimes);
-                setRaceDrivers(updatedRaceDrivers);
-                console.log(raceData)
-                // } else {
-                //     console.error("Invalid race data received.");
-                // }
-            } else {
-                console.error("No ongoing race exists");
-            }
-        };
-
-        socket.on("raceData", handleRaceData);
-
-        // Clean up the socket listener on unmount
-        return () => {
-            socket.off("raceData", handleRaceData);
-        };
-    }
-    }, [raceStarted]);
+            // Clean up the socket listener on unmount
+            return () => {
+                socket.off("raceData", handleRaceData);
+            };
+        } else {
+            console.log("Race is not started or has finished.");
+        }
+    }, [raceStarted, handleRaceData]);
 
     // Start timer for a driver
     const handleRaceStart = (driverName) => {
-        if (!timerRunningList[driverName]) {
-            setTimerRunningList((prev) => ({
-                ...prev,
-                [driverName]: true,
-            }));
-
+        if (!timerInterval.current[driverName]) {
             clearInterval(timerInterval.current[driverName]);
 
             timerInterval.current[driverName] = setInterval(() => {
@@ -138,19 +127,13 @@ function LapLineObserver() {
                     [driverName]: (prev[driverName] || 0) + 10,
                 }));
             }, 10);
-
-
         }
-
     };
 
     // Stop and reset timer for a driver
     const handleReset = (driverName) => {
-        //clearInterval(timerInterval.current[driverName]);
-        setTimerRunningList((prev) => ({
-            ...prev,
-            [driverName]: false,
-        }));
+        clearInterval(timerInterval.current[driverName]);
+        delete timerInterval.current[driverName];
         setElapsedTimes((prev) => ({
             ...prev,
             [driverName]: 0,
@@ -159,10 +142,11 @@ function LapLineObserver() {
 
     // Handle lap completion for a driver
     const driverCrossedFinishLine = (driverName) => {
+        console.log(raceDrivers);
         setRaceDrivers((prev) =>
             prev.map((driver) => {
                 if (driver.name === driverName) {
-                    if (driver.laps === 0) { // don't save anything on the first click that's starts the first lap's timer
+                    if (driver.laps === 0) {
                         return {
                             ...driver,
                             laps: driver.laps + 1,
@@ -192,7 +176,6 @@ function LapLineObserver() {
         handleRaceStart(driverName);
     };
 
-
     return (
         <div className="LapLineObserver">
             <div className="container">
@@ -209,7 +192,7 @@ function LapLineObserver() {
                                 onClick={() => driverCrossedFinishLine(driver.name)}
                             >
                                 {driver.name}
-                                <br/>
+                                <br />
                                 {formatLapTime(elapsedTimes[driver.name] || 0)}
                             </button>
                         ))

@@ -40,6 +40,7 @@ io.on('connection', (socket) => {
     // Handle timer commands
     socket.on('startTimer', (raceName) => {
         timer.startTimer(raceName, io, raceData);
+        let timerStarted = false;
 
         const race = raceData.find(r => r.raceName === raceName);
         if (race) {
@@ -49,8 +50,10 @@ io.on('connection', (socket) => {
             } else {
                 race.timeRemainingOngoingRace = timer.getTimeRemaining(raceName);
                 race.isOngoing = true; // Mark the race as ongoing
+                timerStarted = true;
             }
             io.emit("raceData", raceData); // Broadcast updated race data to all clients
+            io.emit("timerStarted", timerStarted);
         }
     });
 
