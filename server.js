@@ -21,6 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 let raceData = [];
+let queuePosition = 0;
 let flagStatus = "";
 
 const timer = new Timer();
@@ -72,9 +73,10 @@ io.on('connection', (socket) => {
 
     // immediately send current race data to the newly connected client
     socket.emit("raceData", raceData);
+    //socket.emit("queuePosition", queuePosition);
 
     socket.on("createRace", (newRace) => {
-        raceData.push({ raceName: newRace.raceName, isOngoing: newRace.isOngoing, drivers: [], timeRemainingOngoingRace: 0, timeRemainingNextRace: 0, });
+        raceData.push({ raceName: newRace.raceName, isOngoing: newRace.isOngoing, drivers: [], timeRemainingOngoingRace: 0, timeRemainingNextRace: 0 });
         timer.initializeTimer(newRace.raceName); // Initialize timer for the new race
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
     });
@@ -112,7 +114,19 @@ io.on('connection', (socket) => {
     // Send current race data to newly connected clients
     socket.on('getRaceData', () => {
         socket.emit('raceData', raceData);
+        //socket.emit("queuePosition", queuePosition);
     });
+
+    // Send current race data to newly connected clients
+    socket.on('getQueuePosition', () => {
+        socket.emit("queuePosition", queuePosition);
+    });
+
+    socket.on('updateQueuePosition', (position) => {
+        queuePosition = position;
+        io.emit('queuePosition', position);
+    })
+
     socket.on('getDataForSpectator', () => {
         socket.emit('dataToSpectator', Array.from(raceData.entries()));
     })

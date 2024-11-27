@@ -14,17 +14,26 @@ function RaceControl() {
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
     const [timeRemaining, setTimeRemaining] = useState(0);
     const [raceStarted, setRaceStarted] = useState(false);
-    const [currentRaceIndex, setCurrentRaceIndex] = useState(0);
+    const [currentRaceIndex, setCurrentRaceIndex] = useState(1);
+    //const currentRaceIndex = useRef(0);
     const currentRace = raceData[currentRaceIndex] || {};
 
     useEffect(() => {
         // Request the latest race data from the server
         socket.emit("getRaceData");
+        socket.emit("getQueuePosition");
+
 
         // Listen for race data updates
         const handleRaceData = (data) => {
             console.log("Received race data from server:", data);
             setRaceData(data);
+            //setCurrentRaceIndex(data[]);
+        };
+
+        const handleRaceQueue = (queue) => {
+            console.log("Received race queue from server:", queue);
+            setCurrentRaceIndex(queue);
         };
 
         // Listen for timer updates for the selected race
@@ -35,12 +44,14 @@ function RaceControl() {
         };
 
         socket.on("raceData", handleRaceData);
-        socket.on("timerUpdate", handleTimerUpdate);
+        socket.on("queuePosition", handleRaceQueue);
+        //socket.on("timerUpdate", handleTimerUpdate);
 
         // Cleanup listeners on unmount
         return () => {
             socket.off("raceData", handleRaceData);
-            socket.off("timerUpdate", handleTimerUpdate);
+            socket.off("queuePosition", handleRaceQueue);
+            //socket.off("timerUpdate", handleTimerUpdate);
         };
     }, [currentRace.raceName]);
 
@@ -79,13 +90,16 @@ function RaceControl() {
                 break;
             case "finish":
                 resetTimer();
-                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: false }); // Notify server
+                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: false, }); // Notify server
+                console.log(currentRaceIndex);
+                socket.emit("updateQueuePosition", currentRaceIndex+1);
                 setRaceStarted(false);
-                if (currentRaceIndex + 1 < raceData.length) {
+                /*if (currentRaceIndex + 1 < raceData.length) {
                     setCurrentRaceIndex(currentRaceIndex + 1);
+                    //setRaceData[0].queuePosition(10);
                 } else if (currentRaceIndex + 1 === raceData.length) {
                     setCurrentRaceIndex(-1);
-                }
+                }*/
                 break;
             default:
                 break;
