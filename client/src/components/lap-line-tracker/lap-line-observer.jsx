@@ -36,7 +36,8 @@ function LapLineObserver() {
     const [elapsedTimes, setElapsedTimes] = useState({});
     const [timerRunningList, setTimerRunningList] = useState({});
     const [raceDrivers, setRaceDrivers] = useState([]);
-    const [flagStatus, setFlagStatus] = useState(null);
+    const [raceStarted, setRaceStarted] = useState(false);
+    const [flagStatus, setFlagStatus] = useState([]);
     const [isDisabled, setIsDisabled] = useState(() => {
         const storedIsDisabled = localStorage.getItem("isDisabled");
         return storedIsDisabled === "true";
@@ -46,25 +47,48 @@ function LapLineObserver() {
 
     // Handle flag changes
     useEffect(() => {
+        socket.emit("broadcastFlagButtonChange");
         socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
             setFlagStatus(newFlagStatus);
+            console.log("Flag status changed to: " + newFlagStatus);
+
             if (newFlagStatus === "finish") {
                 setIsDisabled(true);
+                console.log("The race has finished!")
             } else {
                 setIsDisabled(false);
             }
-        });
 
-        return () => socket.off("broadcastFlagButtonChange");
+            if (newFlagStatus === "start") {
+                setRaceStarted(true);
+                console.log("The race has started!")
+            } else {
+                setRaceStarted(false);
+            }
+
+        });
+        console.log("Current race started value: " + raceStarted);
+        // Clean up the socket listener on unmount
+        return () => {
+            socket.off("broadcastFlagButtonChange");
+        };
     }, []);
+
 
     // Fetch race data
     useEffect(() => {
+        if (!raceStarted) {
         socket.emit("getRaceData");
 
-        const handleRaceData = (data) => {
-            if (Array.isArray(data) && data.length > 0 && data[0].hasOwnProperty("drivers")) {
-                const updatedRaceDrivers = data[0].drivers.map((driver) => ({
+        const handleRaceData = (raceData) => {
+
+            const onGoingRace = raceData.filter((race) => race.isOngoing === true);
+
+            if (onGoingRace.length > 0) { // (Array.isArray(raceData) && raceData.length > 0 && onGoingRace)
+                console.log(onGoingRace)
+
+                // if (onGoingRace.length > 0 && onGoingRace[0].hasOwnProperty("drivers")) {
+                const updatedRaceDrivers = onGoingRace[0].drivers.map((driver) => ({
                     ...driver,
                     laps: 0,
                     lapTimes: [],
@@ -80,14 +104,23 @@ function LapLineObserver() {
 
                 setElapsedTimes(initialElapsedTimes);
                 setRaceDrivers(updatedRaceDrivers);
+                console.log(raceData)
+                // } else {
+                //     console.error("Invalid race data received.");
+                // }
             } else {
-                console.error("Invalid race data received.");
+                console.error("No ongoing race exists");
             }
         };
 
         socket.on("raceData", handleRaceData);
-        return () => socket.off("raceData", handleRaceData);
-    }, []);
+
+        // Clean up the socket listener on unmount
+        return () => {
+            socket.off("raceData", handleRaceData);
+        };
+    }
+    }, [raceStarted]);
 
     // Start timer for a driver
     const handleRaceStart = (driverName) => {
@@ -165,7 +198,7 @@ function LapLineObserver() {
             <div className="container">
                 <div id="observerButtonsGrid">
                     {raceDrivers.length === 0 ? (
-                        <p className="information">No drivers submitted yet</p>
+                        <p className="information">No ongoing race exists</p>
                     ) : (
                         raceDrivers.map((driver, index) => (
                             <button
