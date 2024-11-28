@@ -14,6 +14,7 @@ function RaceControl() {
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
     const [timeRemaining, setTimeRemaining] = useState(0);
     const [raceStarted, setRaceStarted] = useState(false);
+    const [raceDataLength, setRaceDataLength] = useState(0);
     const [currentRaceIndex, setCurrentRaceIndex] = useState(1);
     //const currentRaceIndex = useRef(0);
     const currentRace = raceData[currentRaceIndex] || {};
@@ -26,8 +27,14 @@ function RaceControl() {
 
         // Listen for race data updates
         const handleRaceData = (data) => {
-            console.log("Received race data from server:", data);
+            //console.log("Received race data from server:", data);
             setRaceData(data);
+            console.log("Inside handleRaceData: " + data.length);
+            const onGoingRace = raceData.filter((race) => race.isOngoing === true);
+            if (onGoingRace.length > 0) {
+                setRaceStarted(true);
+            }
+
             //setCurrentRaceIndex(data[]);
         };
 
@@ -44,20 +51,36 @@ function RaceControl() {
         };
 
         socket.on("raceData", handleRaceData);
-        socket.on("queuePosition", handleRaceQueue);
-        //socket.on("timerUpdate", handleTimerUpdate);
 
+        socket.on("timerUpdate", handleTimerUpdate);
+
+        //setRaceDataLength(raceData.length)
+
+        // Compare and update raceDataLength only if it has changed
+        setRaceDataLength((prev) => {
+            if ((prev) !== raceData.length) {
+                console.log("previous value: " + prev)
+                console.log("Inside setRaceDataLength: " + raceData.length);
+                socket.emit("updateQueuePosition", currentRaceIndex);
+                return raceDataLength;
+            }
+            console.log("previous value: " + prev)
+            return prev; // No change, skip re-render
+        });
+
+        console.log("Race data length changed:", raceDataLength);
+
+        socket.on("queuePosition", handleRaceQueue);
         // Cleanup listeners on unmount
         return () => {
             socket.off("raceData", handleRaceData);
             socket.off("queuePosition", handleRaceQueue);
-            //socket.off("timerUpdate", handleTimerUpdate);
+            socket.off("timerUpdate", handleTimerUpdate);
         };
     }, [currentRace.raceName]);
 
     const startTimer = () => {
         socket.emit("startTimer", currentRace.raceName);
-        setRaceStarted(true);
     };
 
     const pauseTimer = () => {
@@ -66,7 +89,6 @@ function RaceControl() {
 
     const resetTimer = () => {
         socket.emit("resetTimer", currentRace.raceName);
-        setRaceStarted(false);
     };
 
     // Filter the drivers based on the selected race
@@ -76,6 +98,7 @@ function RaceControl() {
     function handleRaceMode(event) {
         switch (event.target.value) {
             case "danger":
+                console.log(raceData)
                 pauseTimer();
                 break;
             case "safe":
@@ -87,19 +110,20 @@ function RaceControl() {
                 setRaceStarted(true);
                 break;
             case "hazard":
+                console.log(raceData)
                 break;
             case "finish":
                 resetTimer();
                 socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: false, }); // Notify server
                 console.log(currentRaceIndex);
-                socket.emit("updateQueuePosition", currentRaceIndex+1);
                 setRaceStarted(false);
-                /*if (currentRaceIndex + 1 < raceData.length) {
-                    setCurrentRaceIndex(currentRaceIndex + 1);
+                if (currentRaceIndex + 1 < raceData.length) {
+                    socket.emit("updateQueuePosition", currentRaceIndex+1);
+                    setRaceDataLength(raceData.length);
                     //setRaceData[0].queuePosition(10);
                 } else if (currentRaceIndex + 1 === raceData.length) {
-                    setCurrentRaceIndex(-1);
-                }*/
+                    socket.emit("updateQueuePosition", -1);
+                }
                 break;
             default:
                 break;
@@ -144,6 +168,9 @@ function RaceControl() {
                         ))}
                             </>
                     )}
+                        {currentRaceIndex === -1 && (
+                            <p>Next race has not been submitted</p>
+                        )}
                     </ul>
                 </>
             )}

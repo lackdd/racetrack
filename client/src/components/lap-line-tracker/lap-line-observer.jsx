@@ -25,7 +25,7 @@ function LapLineObserver() {
     const [elapsedTimes, setElapsedTimes] = useState({});
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [raceStarted, setRaceStarted] = useState(false);
-    const [flagStatus, setFlagStatus] = useState([]);
+    const [flagStatus, setFlagStatus] = useState("");
     const [isDisabled, setIsDisabled] = useState(() => {
         const storedIsDisabled = localStorage.getItem("isDisabled");
         return storedIsDisabled === "true";
@@ -35,40 +35,43 @@ function LapLineObserver() {
 
     // Memoized function to handle incoming race data
     const handleRaceData = useCallback((raceData) => {
-        const onGoingRace = raceData.filter((race) => race.isOngoing === true);
+        //if (flagStatus === "start") {
+            const onGoingRace = raceData.filter((race) => race.isOngoing === true);
 
-        if (onGoingRace.length > 0) {
-            const updatedRaceDrivers = onGoingRace[0].drivers.map((driver) => ({
-                ...driver,
-                laps: 0,
-                lapTimes: [],
-                lapTimesMS: [],
-                fastestLap: null,
-            }));
+            if (onGoingRace.length > 0) {
+                const updatedRaceDrivers = onGoingRace[0].drivers.map((driver) => ({
+                    ...driver,
+                    laps: 0,
+                    lapTimes: [],
+                    lapTimesMS: [],
+                    fastestLap: null,
+                }));
 
-            const initialElapsedTimes = {};
-            updatedRaceDrivers.forEach((driver) => {
-                initialElapsedTimes[driver.name] = 0;
-            });
+                const initialElapsedTimes = {};
+                updatedRaceDrivers.forEach((driver) => {
+                    initialElapsedTimes[driver.name] = 0;
+                });
 
-            // Compare and update `elapsedTimes` only if it has changed
-            setElapsedTimes((prev) => {
-                if (JSON.stringify(prev) !== JSON.stringify(initialElapsedTimes)) {
-                    return initialElapsedTimes;
-                }
-                return prev; // No change, skip re-render
-            });
+                // Compare and update `elapsedTimes` only if it has changed
+                setElapsedTimes((prev) => {
+                    if (JSON.stringify(prev) !== JSON.stringify(initialElapsedTimes)) {
+                        console.log("Resetting elapsed times. flag status changed to: " + flagStatus)
+                        return initialElapsedTimes;
+                    }
+                    return prev; // No change, skip re-render
+                });
 
-            // Compare and update `raceDrivers` only if it has changed
-            setRaceDrivers((prev) => {
-                if (JSON.stringify(prev) !== JSON.stringify(updatedRaceDrivers)) {
-                    return updatedRaceDrivers;
-                }
-                return prev; // No change, skip re-render
-            });
-        } else {
-            console.error("No ongoing race exists.");
-        }
+                // Compare and update `raceDrivers` only if it has changed
+                setRaceDrivers((prev) => {
+                    if (JSON.stringify(prev) !== JSON.stringify(updatedRaceDrivers)) {
+                        return updatedRaceDrivers;
+                    }
+                    return prev; // No change, skip re-render
+                });
+            } else {
+                console.error("No ongoing race exists.");
+            }
+        //}
     }, []);
 
     // Handle flag changes
@@ -172,6 +175,9 @@ function LapLineObserver() {
                 return driver;
             })
         );
+        // todo emit data to server
+        // todo reset timers when flagstatus === finish or raceStarted === false
+        // todo when flag status changes to "safe" the timers reset
         handleReset(driverName);
         handleRaceStart(driverName);
     };
