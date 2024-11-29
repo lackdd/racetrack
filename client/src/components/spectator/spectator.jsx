@@ -1,13 +1,8 @@
-import { io } from "socket.io-client";
+import socket from "../../socket.js";
 import { useState, useEffect, useRef } from "react";
-
-const socket = io("http://localhost:3000");
 
 function Spectator() {
     const [raceDrivers, setRaceDrivers] = useState([]); // State to store data
-
-
-
 
     useEffect(() => {
         socket.emit("getDataForSpectator", (data) => {

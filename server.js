@@ -9,6 +9,8 @@ const Timer = require('./timer.js');
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
+    transports: ['websocket'], // forces websocket only, no polling
+    //forceNew: true,             // Force new connection
     cors: {
         origin: ["http://localhost:5173", "https://intimate-upright-sunfish.ngrok-free.app"], // Replace with your frontend URL
 
