@@ -102,6 +102,7 @@ function RaceControl() {
                 pauseTimer();
                 break;
             case "safe":
+                //socket.emit("continueTimer", currentRace.raceName);
                 startTimer();
                 break;
             case "start":

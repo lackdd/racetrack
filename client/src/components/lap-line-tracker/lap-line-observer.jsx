@@ -25,7 +25,8 @@ function LapLineObserver() {
     const [elapsedTimes, setElapsedTimes] = useState({});
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [raceStarted, setRaceStarted] = useState(false);
-    const [flagStatus, setFlagStatus] = useState("");
+    const [raceMode, setRaceMode] = useState("");
+    const [currentRaceName, setCurrentRaceName] = useState("");
     const [isDisabled, setIsDisabled] = useState(() => {
         const storedIsDisabled = localStorage.getItem("isDisabled");
         return storedIsDisabled === "true";
@@ -33,12 +34,46 @@ function LapLineObserver() {
 
     const timerInterval = useRef({});
 
+    // Handle incoming flag changes -> race modes
+    useEffect(() => {
+        socket.emit("broadcastFlagButtonChange");
+        socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
+            setRaceMode(newFlagStatus);
+            console.log("Getting flag status from server")
+        });
+
+        // Clean up the socket listener on unmount
+        return () => {
+            socket.off("broadcastFlagButtonChange");
+        };
+    }, []);
+
+    // use flag changes -> race mode
+    useEffect(() => {
+        console.log("Flag status changed to: " + raceMode);
+
+        if (raceMode === "finish") {
+            setIsDisabled(true);
+            setRaceStarted(false);
+            console.log("The race has finished! Final results:");
+            handleRaceStop();
+        }
+
+        if (raceMode === "start") {
+            setRaceMode("safe");
+            setIsDisabled(false);
+            setRaceStarted(true);
+            console.log("The race has started!");
+        }
+
+    }, [raceMode]);
+
     // Memoized function to handle incoming race data
     const handleRaceData = useCallback((raceData) => {
-        //if (flagStatus === "start") {
             const onGoingRace = raceData.filter((race) => race.isOngoing === true);
-
+            setCurrentRaceName(onGoingRace[0].raceName);
             if (onGoingRace.length > 0) {
+                console.log("inside handleRaceData")
                 const updatedRaceDrivers = onGoingRace[0].drivers.map((driver) => ({
                     ...driver,
                     laps: 0,
@@ -55,7 +90,6 @@ function LapLineObserver() {
                 // Compare and update `elapsedTimes` only if it has changed
                 setElapsedTimes((prev) => {
                     if (JSON.stringify(prev) !== JSON.stringify(initialElapsedTimes)) {
-                        console.log("Resetting elapsed times. flag status changed to: " + flagStatus)
                         return initialElapsedTimes;
                     }
                     return prev; // No change, skip re-render
@@ -71,48 +105,25 @@ function LapLineObserver() {
             } else {
                 console.error("No ongoing race exists.");
             }
-        //}
-    }, []);
-
-    // Handle flag changes
-    useEffect(() => {
-        socket.emit("broadcastFlagButtonChange");
-        socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-            setFlagStatus(newFlagStatus);
-            console.log("Flag status changed to: " + newFlagStatus);
-
-            if (newFlagStatus === "finish") {
-                setIsDisabled(true);
-                setRaceStarted(false);
-                console.log("Race started = false");
-                console.log("The race has finished!");
-            } else {
-                setIsDisabled(false);
-            }
-
-            if (newFlagStatus === "start") {
-                setRaceStarted(true);
-                console.log("Race started = true");
-            }
-        });
-
-        // Clean up the socket listener on unmount
-        return () => {
-            socket.off("broadcastFlagButtonChange");
-        };
     }, []);
 
     // Fetch race data
     useEffect(() => {
         if (raceStarted) {
             console.log("Race has started, fetching data...");
-            socket.emit("getRaceData");
+            socket.emit("sendRaceData");
 
-            socket.on("raceData", handleRaceData);
+            socket.on("sendRaceData", (data) => {
+                console.log("New data fetched");
+                handleRaceData(data);
+                // if (raceStarted === false) {
+                //     handleRaceData(data);
+                // }
+            });
 
             // Clean up the socket listener on unmount
             return () => {
-                socket.off("raceData", handleRaceData);
+                socket.off("sendRaceData", handleRaceData);
             };
         } else {
             console.log("Race is not started or has finished.");
@@ -125,10 +136,10 @@ function LapLineObserver() {
             clearInterval(timerInterval.current[driverName]);
 
             timerInterval.current[driverName] = setInterval(() => {
-                setElapsedTimes((prev) => ({
-                    ...prev,
-                    [driverName]: (prev[driverName] || 0) + 10,
-                }));
+                    setElapsedTimes((prev) => ({
+                        ...prev,
+                        [driverName]: (prev[driverName] || 0) + 10,
+                    }));
             }, 10);
         }
     };
@@ -143,9 +154,16 @@ function LapLineObserver() {
         }));
     };
 
+
+    const handleRaceStop = (driverName) => {
+        raceDrivers.forEach((driver) => {
+            clearInterval(timerInterval.current[driver.name]);
+        });
+        console.log(raceDrivers)
+    };
+
     // Handle lap completion for a driver
     const driverCrossedFinishLine = (driverName) => {
-        console.log(raceDrivers);
         setRaceDrivers((prev) =>
             prev.map((driver) => {
                 if (driver.name === driverName) {
@@ -168,25 +186,31 @@ function LapLineObserver() {
                             laps: driver.laps + 1,
                             lapTimes: newLapTimes,
                             lapTimesMS: newLapTimesMS,
-                            fastestLap: formatLapTime(fastestLapTime(driver.lapTimesMS)),
+                            fastestLap: formatLapTime(fastestLapTime(newLapTimesMS)),
                         };
                     }
                 }
                 return driver;
             })
         );
+        // todo when flag status changes to "safe" the timers reset. Currently only when the first flag status after start is "safe" then the timers reset
         // todo emit data to server
-        // todo reset timers when flagstatus === finish or raceStarted === false
-        // todo when flag status changes to "safe" the timers reset
         handleReset(driverName);
         handleRaceStart(driverName);
     };
+
+    // latest lap data
+    useEffect(() => {
+        console.log(currentRaceName);
+        console.log(raceDrivers)
+        socket.emit("updateRaceDrivers", {raceName: currentRaceName, drivers: raceDrivers})
+    }, [raceDrivers]); // or use elapsedTimes as a dependency so current lap times can be updated
 
     return (
         <div className="LapLineObserver">
             <div className="container">
                 <div id="observerButtonsGrid">
-                    {raceDrivers.length === 0 ? (
+                    {raceDrivers.length === 0 && isDisabled === false ? (
                         <p className="information">No ongoing race exists</p>
                     ) : (
                         raceDrivers.map((driver, index) => (

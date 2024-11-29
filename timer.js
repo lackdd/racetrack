@@ -22,7 +22,7 @@ class Timer {
             timer.interval = setInterval(() => {
                 timer.timeRemaining -= 100;
                 if (timer.timeRemaining <= 0) {
-                    this.stopTimer(raceName);
+                    this.resetTimer(raceName); // was this.stopTimer(raceName)
                     timer.timeRemaining = 0; // Ensure it doesn't go negative
                 }
 

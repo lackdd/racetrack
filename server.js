@@ -61,6 +61,10 @@ io.on('connection', (socket) => {
         timer.pauseTimer(raceName);
     });
 
+    socket.on('continueTimer', (raceName) => {
+        timer.continueTimer(raceName);
+    });
+
     socket.on('resetTimer', (raceName) => {
         timer.resetTimer(raceName, io);
     });
@@ -103,9 +107,11 @@ io.on('connection', (socket) => {
 
     socket.on("updateRaceDrivers", ({ raceName, drivers }) => {
         const race = raceData.find((race) => race.raceName === raceName);
+        console.log("i got new race driver data");
         if (race) {
             race.drivers = drivers; // Update drivers for the specified race
         }
+        console.log(raceData);
         io.emit("raceData", raceData); // Broadcast updated race data
         io.emit('dataToSpectator', Array.from(raceData.entries()));
     });
@@ -113,6 +119,11 @@ io.on('connection', (socket) => {
     // Send current race data to newly connected clients
     socket.on('getRaceData', () => {
         socket.emit('raceData', raceData);
+        //socket.emit("queuePosition", queuePosition);
+    });
+
+    socket.on('sendRaceData', () => {
+        socket.emit('sendRaceData', raceData);
         //socket.emit("queuePosition", queuePosition);
     });
 
