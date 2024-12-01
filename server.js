@@ -163,6 +163,7 @@ const raceDriverKey = process.env.RACE_DRIVER;
 
 app.post('/api/login', (req, res) => {
     const { role, password } = req.body; // Destructure the received data
+    console.log(role + "is trying to log in with password: " + password);
     if (role === "Safety official" && password === safetyOfficialKey) {
         res.json({ message: 'Correct password', role });
     } else if (role === "Lap line obs" && password === lapLineKey){

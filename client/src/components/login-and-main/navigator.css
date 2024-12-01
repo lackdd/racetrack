@@ -23,37 +23,3 @@
 .navContainer a:hover {
     color: #ffc107;
 }
-
-.dropDownContainer .dropdown-toggle {
-    color: white;
-    background-color: #28a745;
-    border: none;
-    font-size: 16px;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.dropDownContainer .dropdown-toggle:hover {
-    background-color: #218838;
-}
-
-
-.dropDownContainer .dropdown-menu {
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 10px 0;
-}
-
-.dropDownContainer .dropdown-item {
-    font-size: 15px;
-    padding: 8px 20px;
-    color: #007bff;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dropDownContainer .dropdown-item:hover {
-    background-color: #f8f9fa;
-    color: #0056b3;
-}

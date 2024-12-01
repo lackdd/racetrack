@@ -1,4 +1,3 @@
-import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
@@ -6,28 +5,27 @@ import {useState} from "react";
 
 
 function Login() {
-    const [optionValue, setOptionValue] = useState("");
-    const [passwordValue, setPasswordValue] = useState("");
+    const [optionValue, setOptionValue] = useState("Safety official");
+    const [passwordValue, setPasswordValue] = useState("11");
     const [loginStatusText, setLoginStatusText] = useState("");
 
-
     function givenPassword(event){
-        setPasswordValue(event.target.value)
+        setPasswordValue(event.target.value);
+        console.log(event.target.value + " password given");
+
     }
     function chosenOption(event) {
         setOptionValue(event.target.value);
+        console.log(event.target.value + " option selected");
     }
-
 
     function handleLogin(event){
         event.preventDefault();
-
 
         const dataToSend = {
             role:optionValue,
             password:passwordValue,
         }
-
         const fetchOptions = {
             method: "POST",
             headers: {
@@ -49,19 +47,18 @@ function Login() {
                         window.location.href = "/race-control";
                         break;
                     case "Racer":
-                        window.location.href = "/pageNotFound404";
+                        window.location.href = "/driver/next-race";
                         break;
                     case "Safety official":
-                        window.location.href = "/pageNotFound404";
+                        window.location.href = "/front-desk";
                         break;
                     case "Lap line obs":
-                        window.location.href = "/pageNotFound404";
+                        window.location.href = "/lap-line-tracker";
                         break;
                 }
 
                 console.log('Response from server:', responseData);
                 setLoginStatusText("");
-
 
             })
             .catch((error) => {
