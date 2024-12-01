@@ -104,7 +104,7 @@ function App() {
                           path="/lap-line-tracker"
                           element={
                               <>
-                                  <DynamicNavigator links={otherLinks} />
+                                  {/*<DynamicNavigator links={otherLinks} />*/}
                                   <LapLineObserver />
                               </>
                           }
