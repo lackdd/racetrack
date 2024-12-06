@@ -5,7 +5,7 @@ function formatTimer(milliseconds) {
     // todo maybe save as milliseconds so they can easily be compared and reformat after that to display
     const minutes = Math.floor(milliseconds / 60000);
     const seconds = Math.floor((milliseconds % 60000) / 1000);
-    const millisecondsRemainder = milliseconds % 1000;
+    const millisecondsRemainder = milliseconds % 1000 / 10;
 
     return milliseconds === undefined ? `01:00:00` : `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${millisecondsRemainder.toString().padStart(2, '0')}`;
 }

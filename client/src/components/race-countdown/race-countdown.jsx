@@ -13,7 +13,7 @@ function formatLapTime(milliseconds) {
         seconds: seconds.toString().padStart(2, '0'),
         milliseconds: millisecondsRemainder.toString().padStart(2, '0')
     };
-} // todo võiks saada täpsema timeri
+}
 
 function RaceCountdown() {
     //const [currentRaceData, setCurrentRaceData] = useState([]); // Store all races and their drivers

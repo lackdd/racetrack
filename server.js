@@ -211,7 +211,7 @@ io.on('connection', (socket) => {
                 timerIntervalId = null; // Reset the interval ID
                 socket.emit('currentRaceTimer', null);
             }
-        }, 100); // Emit the timer every 100 milliseconds
+        }, 10); // Emit the timer every 10 milliseconds
     });
 
     // Handle stopwatch sockets
