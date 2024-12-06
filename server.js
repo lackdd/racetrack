@@ -22,9 +22,10 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+
 let raceData = [];
 let queuePosition = 0;
-let flagStatus = "";
+let flagStatus = ""; //Only values: "danger", "hazard", "finish", "safe"; race-control.jsx sets flagStatus
 
 const timer = new Timer();
 
@@ -113,7 +114,6 @@ io.on('connection', (socket) => {
         }
         console.log(raceData);
         io.emit("raceData", raceData); // Broadcast updated race data
-        io.emit('dataToSpectator', Array.from(raceData.entries()));
     });
 
     // Send current race data to newly connected clients
@@ -137,19 +137,22 @@ io.on('connection', (socket) => {
         io.emit('queuePosition', position);
     })
 
-    socket.on('getDataForSpectator', () => {
-        socket.emit('dataToSpectator', Array.from(raceData.entries()));
-    })
+
 
     //Handle flag status here
     socket.on('flagButtonWasClicked', (data) => {
         flagStatus = data;
         io.emit('broadcastFlagButtonChange', flagStatus);
     });
-
     socket.on('FlagPageConnected', () => {
         socket.emit('currentFlagStatus', flagStatus);
     })
+
+    //Handle spectator stuff here
+    socket.on('getRaceData', () => {
+        socket.emit('raceDataToSpectator', raceData);
+
+    });
 
 
 });
