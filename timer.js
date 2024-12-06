@@ -20,7 +20,7 @@ class Timer {
         if (timer && !timer.running) {
             timer.running = true;
             timer.interval = setInterval(() => {
-                timer.timeRemaining -= 100;
+                timer.timeRemaining -= 10;
                 if (timer.timeRemaining <= 0) {
                     this.resetTimer(raceName); // was this.stopTimer(raceName)
                     timer.timeRemaining = 0; // Ensure it doesn't go negative
@@ -38,7 +38,7 @@ class Timer {
                 }
                 // Broadcast updated time to all clients
                 io.emit('timerUpdate', { raceName, timeRemaining: timer.timeRemaining });
-            }, 100);
+            }, 10);
         }
     }
 
