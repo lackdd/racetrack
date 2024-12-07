@@ -12,6 +12,7 @@ import Flag from "./flag/flag.jsx";
 import RaceCountdown from "./race-countdown/race-countdown.jsx"
 import NextRace from "./next-race/next-race.jsx";
 import DynamicNavigator from "./login-and-main/dynamic-navigator.jsx";
+import RacingPanel from "./login-and-main/racing-panel.jsx";
 
 function App() {
     const spectatorLinks = [
@@ -40,7 +41,7 @@ function App() {
                       <Route path="/" element={
                           <>
                               <DynamicNavigator links={spectatorLinks} />
-                              <p>Main page</p>
+                              <RacingPanel/>
                           </>
                       } />
 
