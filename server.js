@@ -271,18 +271,22 @@ const safetyOfficialKey = process.env.SAFETY_OF;
 const lapLineKey = process.env.LAP_LINE_OBS;
 const receptionistKey = process.env.RECEPTIONIST;
 const raceDriverKey = process.env.RACE_DRIVER;
+const DEV = process.env.DEV;
 
 app.post('/api/login', (req, res) => {
-    const { role, password } = req.body; // Destructure the received data
+    const {role, password} = req.body; // Destructure the received data
     console.log(role + "is trying to log in with password: " + password);
     if (role === "Safety official" && password === safetyOfficialKey) {
-        res.json({ message: 'Correct password', role });
-    } else if (role === "Lap line obs" && password === lapLineKey){
-        res.json({ message: 'Correct password', role });
+        res.json({message: 'Correct password', role});
+    } else if (role === "Lap line obs" && password === lapLineKey) {
+        res.json({message: 'Correct password', role});
     } else if (role === "Receptionist" && password === receptionistKey) {
-        res.json({ message: 'Correct password', role });
+        res.json({message: 'Correct password', role});
     } else if (role === "Racer" && password === raceDriverKey) {
-        res.json({ message: 'Correct password', role });
+        res.json({message: 'Correct password', role});
+    } else if (role === "DEV" && password === DEV) {
+        res.json({message: 'Correct password', role});
+
     } else {
         res.status(401).json({ message: 'Invalid password' });
     }
