@@ -81,6 +81,7 @@ function App() {
                         <Route path="/worker" element={<Login setRole={setRole} />} />
                         <Route path="/lap-line-tracker" element={<LapLineObserver />} />
                         <Route path="/front-desk" element={<FrontDesk />} />
+                         <Route path="/front-desk/:raceName" element={<RaceDetails />} />
                         <Route path="/race-control" element={<RaceControl />} />
                         <Route path="/driver/race-countdown" element={<RaceCountdown />} />
                         <Route path="/driver/next-race" element={<NextRace />} />
