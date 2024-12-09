@@ -22,59 +22,85 @@ function fastestLapTime(laptimes) {
 }
 
 function LapLineObserver() {
-    const [elapsedTimes, setElapsedTimes] = useState({});
+    //const [elapsedTimes, setElapsedTimes] = useState({});
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [raceStarted, setRaceStarted] = useState(false);
-    const [raceMode, setRaceMode] = useState("");
+    //const [raceOngoing, setRaceOngoing] = useState(true);
+    const [raceMode, setRaceMode] = useState("")
     const [currentRaceName, setCurrentRaceName] = useState("");
-    const [isDisabled, setIsDisabled] = useState(() => {
-        const storedIsDisabled = localStorage.getItem("isDisabled");
-        return storedIsDisabled === "true";
-    });
+    // const [isDisabled, setIsDisabled] = useState(() => {
+    //     const storedIsDisabled = localStorage.getItem("isDisabled");
+    //     return storedIsDisabled === "true";
+    // });
+    const [isDisabled, setIsDisabled] = useState("");
     const [currentLapTimes, setCurrentLapTimes] = useState({});
 
     // Handle incoming flag changes (race modes)
     useEffect(() => {
-        socket.emit("flagButtonWasClicked");
+        socket.emit("getRaceMode");
+        socket.emit("getAreAllRacesFinished")
 
-        socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-            setRaceMode(newFlagStatus);
-            console.log("Getting flag status from server")
+        socket.on("raceMode", (newRacemode) => {
+            setRaceMode(newRacemode);
+            console.log("Getting race mode from the server")
+        });
+        socket.on("areAllRacesFinished", (data) => {
+            console.log("AreAllRacesFinished value from server: " + data);
+            //setRaceOngoing(data);
         });
 
         // Clean up the socket listener on unmount
         return () => {
-            socket.off("broadcastFlagButtonChange");
+            socket.off("raceMode");
         };
     }, []);
 
     // use flag changes (race mode) to start and finish the race
     useEffect(() => {
-        console.log("Flag status changed to: " + raceMode);
+        console.log("Race mode changed to: " + raceMode);
 
         if (raceMode === "finish") {
             setIsDisabled(true);
             setRaceStarted(false);
             console.log("The race has finished! Final results:");
+            console.log(raceDrivers)
             //handleRaceStop();
             stopStopwatch(raceDrivers)
         }
 
-        if (raceMode === "start" || raceMode === "safe" || raceMode === "danger" || raceMode === "hazard") {
-            // if (raceMode === "start") {
-            //     setRaceMode("safe");
-            // }
+        if (raceMode === "safe") {
             setIsDisabled(false);
             setRaceStarted(true);
             console.log("The race has started!");
         }
+
+        // if (raceMode === "danger" || raceMode === "hazard") {
+        // }
 
     }, [raceMode]);
 
     // Memoized function to handle incoming race data
     const handleRaceData = useCallback((raceData) => {
         const onGoingRace = raceData.filter((race) => race.isOngoing === true);
-        setCurrentRaceName(onGoingRace[0].raceName);
+        if (onGoingRace[0]) {
+            setCurrentRaceName(onGoingRace[0].raceName);
+        } else {
+            setCurrentRaceName("")
+            console.error("No ongoing race exists");
+            return;
+        }
+        // try {
+        //     setCurrentRaceName(onGoingRace[0].raceName);
+        // } catch (err) {
+        //     console.error("No ongoing race exists");
+        //     return;
+        // }
+        // if (onGoingRace[0].raceName) {
+        //
+        // } else {
+        //     console.error("No ongoing race exists.");
+        // }
+
         if (onGoingRace.length > 0) {
             const updatedRaceDrivers = onGoingRace[0].drivers
 
@@ -85,29 +111,28 @@ function LapLineObserver() {
                 }
                 return prev; // No change, skip re-render
             });
-        } else {
-            console.error("No ongoing race exists.");
         }
+
     }, []);
 
     // Fetch race data
     useEffect(() => {
         if (raceStarted) {
-            socket.emit("sendRaceData");
+            socket.emit("getRaceData");
 
-            socket.on("sendRaceData", (data) => {
+            socket.on("raceData", (data) => {
                 console.log("New data fetched");
                 handleRaceData(data);
             });
 
             // Clean up the socket listener on unmount
             return () => {
-                socket.off("sendRaceData", handleRaceData);
+                socket.off("raceData", handleRaceData);
             };
         } else {
             console.log("Race is not started or has finished.");
         }
-    }, [raceStarted, handleRaceData]);
+    }, [raceStarted]);
 
     // always get the latest stopwatch data form the server
     useEffect(() => {
@@ -149,8 +174,8 @@ function LapLineObserver() {
     const driverCrossedFinishLine = (driverName) => {
         setRaceDrivers((prev) =>
             prev.map((driver) => {
-                console.log(currentLapTimes[driverName])
                 if (driver.name === driverName && currentLapTimes[driverName] !== undefined) {
+                    console.log(currentLapTimes[driverName]) // todo logs twice when button is clicked
                     const newLapTimes = [
                         ...driver.lapTimes,
                         formatLapTime(currentLapTimes[driverName] || 0),
@@ -179,7 +204,8 @@ function LapLineObserver() {
         <div className="LapLineObserver">
             <div className="container">
                 <div id="observerButtonsGrid">
-                    {raceDrivers.length === 0 && isDisabled === false ? (
+                    {/*{raceDrivers.length === 0 && !isDisabled ? (*/}
+                    {!currentRaceName ? (
                         <p className="information">No ongoing race exists</p>
                     ) : (
                         raceDrivers.map((driver, index) => (
@@ -196,7 +222,8 @@ function LapLineObserver() {
                             </button>
                         ))
                     )}
-                    {isDisabled && <p className="information">Race session has ended</p>}
+                    {/*{isDisabled && <p className="information">Race session has ended</p>}*/}
+                    {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
                 </div>
             </div>
         </div>

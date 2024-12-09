@@ -10,7 +10,7 @@ class Timer {
         this.updateTimerFunction = updateFunction;
     }
 
-    initializeTimer(raceName, initialTime = 6000) {
+    initializeTimer(raceName, initialTime = 60000) {
         if (!this.timers[raceName]) {
             this.timers[raceName] = {
                 timeRemaining: initialTime,
@@ -59,7 +59,7 @@ class Timer {
         }
     }
 
-    resetTimer(raceName, io, initialTime = 6000) {
+    resetTimer(raceName, io, initialTime = 60000) {
         this.pauseTimer(raceName);
         if (this.timers[raceName]) {
             this.timers[raceName].timeRemaining = initialTime;
