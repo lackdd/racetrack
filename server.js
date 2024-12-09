@@ -6,6 +6,7 @@ require('dotenv').config({ path: './keys.env' });
 const cors = require('cors'); // To handle CORS for frontend-backend communication
 const Timer = require('./timer.js');
 const Stopwatch = require('./stopwatch.js');
+//const socket = require("./client/src/socket");  tekitab erroreid kui uncommentida
 
 const app = express();
 const server = createServer(app);
@@ -26,6 +27,7 @@ app.use(express.json());
 let raceData = [];
 
 let queuePosition = -1;
+let raceMode = "";
 
 let areAllRacesFinished = true;
 let flagStatus = "";
@@ -46,7 +48,8 @@ io.on('connection', (socket) => {
     });
 
     // Handle timer commands
-    socket.on('startTimer', (raceName) => {
+    function startTimer(raceName) {
+        console.log("Timer started for race:", raceName);
         timer.startTimer(raceName, io, raceData);
 
         const race = raceData.find(r => r.raceName === raceName);
@@ -60,7 +63,7 @@ io.on('connection', (socket) => {
             }
             io.emit("raceData", raceData); // Broadcast updated race data to all clients
         }
-    });
+    }
 
     socket.on('pauseTimer', (raceName) => {
         timer.pauseTimer(raceName);
@@ -107,21 +110,32 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on("updateRaceStatus", ({ raceName, isOngoing }) => {
+    function updateRaceStatus ({ raceName, isOngoing })  {
         const race = raceData.find((race) => race.raceName === raceName);
         if (race) {
             race.isOngoing = isOngoing; // Update the `isOngoing` status
         }
+        console.log("got race status from socket.on" + isOngoing);
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
+    };
+
+    socket.on("updateRaceStatus", ({ raceName, isOngoing }) => {
+        console.log("got race status from client in socket.on:" + isOngoing);
+        updateRaceStatus({raceName, isOngoing});
     });
 
-    socket.on("updateTimerValue", ({ raceName, timeRemaining }) => {
+    function updateTimer ({ raceName, timeRemaining })  {
         const race = raceData.find((race) => race.raceName === raceName);
         if (race) {
             race.timeRemaining = timeRemaining; // Update timer value on the server
+            if (race.timeRemaining === 0) {
+                updateRaceMode("finish", race.raceName);
+            }
         }
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
-    });
+    };
+
+    timer.setUpdateTimerFunction(updateTimer);
 
     socket.on("deleteRace", (raceName) => {
         raceData = raceData.filter((race) => race.raceName !== raceName);
@@ -147,14 +161,18 @@ io.on('connection', (socket) => {
         //socket.emit("queuePosition", queuePosition);
     });
 
-    socket.on('sendRaceData', () => {
-        socket.emit('sendRaceData', raceData);
-        //socket.emit("queuePosition", queuePosition);
+    socket.on('updateRaceData', (data) => {
+        raceData = data;
+        io.emit('raceData', raceData);
     });
 
     // Send current race data to newly connected clients
     socket.on('getQueuePosition', () => {
         socket.emit("queuePosition", queuePosition);
+    });
+
+    socket.on('getRaceMode', () => {
+        socket.emit("raceMode", raceMode);
     });
 
     socket.on('getAreAllRacesFinished', () => {
@@ -167,6 +185,45 @@ io.on('connection', (socket) => {
         io.emit('queuePosition', queuePosition);
     });
 
+    function updateRaceMode (mode, raceName)  {
+        raceMode = mode;
+        io.emit('raceMode', raceMode);
+
+            switch (raceMode) {
+                case "danger":
+                    //console.log(raceData)
+                    timer.pauseTimer(raceName);
+                    console.log("danger");
+                    break;
+                case "safe":
+                    startTimer(raceName);
+                    console.log("safe");
+                    break;
+                case "hazard":
+                    //console.log(raceData)
+                    break;
+                case "finish":
+                    timer.resetTimer(raceName, io);
+                    //updateRaceStatus( { raceName: raceName, isOngoing: false, });
+                    //setRaceStarted(false);
+                    /*if (queuePosition < raceData.length-1) {
+                        queuePosition++;
+                        io.emit('queuePosition', queuePosition);
+                    } else {
+                        areAllRacesFinished = true;
+                        io.emit('areAllRacesFinished', areAllRacesFinished);
+                    }*/
+                    break;
+                default:
+                    break;
+            }
+            flagButtonWasClicked(raceMode);
+    };
+
+    socket.on('updateRaceMode', (mode, raceName) => {
+        updateRaceMode(mode, raceName);
+    });
+
     socket.on('updateAreAllRacesFinished', (data) => {
         areAllRacesFinished = data;
         io.emit('areAllRacesFinished', areAllRacesFinished);
@@ -177,7 +234,7 @@ io.on('connection', (socket) => {
     });
 
     //Handle flag status here
-    socket.on('flagButtonWasClicked', (data) => {
+    function flagButtonWasClicked(data) {
         if (data !== undefined) {
             flagStatus = data;
         }
@@ -186,6 +243,10 @@ io.on('connection', (socket) => {
         }
         //console.log("flag status on server: " + flagStatus);
         io.emit('broadcastFlagButtonChange', flagStatus);
+    };
+
+    socket.on("flagButtonWasClicked", (data) => {
+       flagButtonWasClicked(data);
     });
 
     socket.on('FlagPageConnected', () => {

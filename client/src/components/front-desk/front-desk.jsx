@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import socket from "../../socket.js";
+import "./front-desk.css";
 
 function FrontDesk() {
     const [raceName, setRaceName] = useState("");
     const [raceList, setRaceList] = useState([]);
     const [isOngoing, setIsOngoing] = useState(false);
+    const [raceStarted, setRaceStarted] = useState(false);
 
     const navigate = useNavigate();
 
@@ -17,6 +19,8 @@ function FrontDesk() {
         const handleRaceData = (data) => {
             console.log("Received race data from server:", data);
             setRaceList(data); // Update race list state
+            const ongoingRace = data.find((race) => race.isOngoing === true);
+            setRaceStarted(!!ongoingRace);
         };
 
         socket.on("raceData", handleRaceData);
@@ -53,29 +57,32 @@ function FrontDesk() {
     };
 
     return (
-        <div style={{ textAlign: "center" }}>
-            <h1>Front Desk Interface</h1>
+        <div className="front-desk" style={{ textAlign: "center" }}>
+            <h1 className="header">Front Desk Interface</h1>
+            { !raceStarted && (
+                <>
             <div>
-                <input
+                <input className="input"
                     placeholder="Race name"
                     value={raceName}
                     onChange={handleRaceNameChange}
                 />
-                <button onClick={handleRaceSubmit}>Add Race</button>
+                <button className="button add-button" onClick={handleRaceSubmit}>Add Race</button>
             </div>
-            <h3>Races</h3>
-            <ul>
+            <ul className="ul">
                 {raceList.map((race, index) => (
                     <li key={index}>
-                        <button onClick={() => handleRaceClick(race)}>
+                        <button className="button" onClick={() => handleRaceClick(race)}>
                             {race.raceName}
                         </button>
-                        <button onClick={() => handleRaceDelete(race.raceName)}>
+                        <button className="button" onClick={() => handleRaceDelete(race.raceName)}>
                             Delete
                         </button>
                     </li>
                 ))}
             </ul>
+            </>
+            )}
         </div>
     );
 }

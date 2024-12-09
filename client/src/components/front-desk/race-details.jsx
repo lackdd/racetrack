@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import socket from "../../socket.js";
+import "./front-desk.css";
 
 function RaceDetails() {
     const { raceName } = useParams(); // Get the race name from the URL
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [driverName, setDriverName] = useState("");
     const [lastAssignedCar, setLastAssignedCar] = useState(0);
+    const [editValues, setEditValues] = useState({});
+
+    const navigate = useNavigate();
 
     // get the current race data from the server
     useEffect(() => {
@@ -19,6 +23,13 @@ function RaceDetails() {
             const race = data.find((race) => race.raceName === raceName);
             if (race) {
                 setRaceDrivers(race.drivers || []);
+                // näitab edit current driveri asemel originaalseid nimesid
+                /*setEditValues(
+                    race.drivers.reduce((acc, driver) => {
+                        acc[driver.name] = driver.name;
+                        return acc;
+                    }, {})
+                );*/
             }
         };
 
@@ -34,8 +45,21 @@ function RaceDetails() {
         setDriverName(e.target.value);
     };
 
+    const handleEditInputChange = (e, name) => {
+        const {value} = e.target;
+        setEditValues((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
     // add driver and do input validation
     const handleAddDriver = () => {
+        if (raceDrivers.length >= 8) {
+            console.log("Race drivers spots are filled already");
+            return;
+        }
+
         if (driverName.trim() === "") {
             console.log("Please enter a driver name.");
             return;
@@ -67,29 +91,60 @@ function RaceDetails() {
         socket.emit("updateRaceDrivers", { raceName, drivers: updatedDrivers });
     };
 
+    const handleEditDriver = (originalName) => {
+        const updatedName = editValues[originalName];
+        const nameAlreadyExists = raceDrivers.some((driver) => driver.name === updatedName);
+        if (updatedName === "") {
+            console.log("Driver name can't be empty.");
+            return;
+        }
+
+        if (nameAlreadyExists) {
+            console.log(`Driver name "${updatedName}" already exists.`);
+            return;
+        }
+
+        const updatedDrivers = raceDrivers.map((driver) => {
+            if (driver.name === originalName) {
+                return { ...driver, name: updatedName };
+            }
+            return driver;
+        });
+
+        setRaceDrivers(updatedDrivers);
+        socket.emit("updateRaceDrivers", { raceName, drivers: updatedDrivers });
+    };
+
     return (
-        <div style={{ textAlign: "center" }}>
-            <h1>Race: {raceName}</h1>
+        <div className="front-desk" style={{ textAlign: "center" }}>
+            <h1 className="header">Race: {raceName}</h1>
             <div>
-                <input
+                <input className="input"
                     placeholder="Driver name"
                     value={driverName}
                     onChange={handleInputChange}
                 />
-                <button onClick={handleAddDriver}>Add Driver</button>
+                <button className="button" onClick={handleAddDriver}>Add Driver</button>
             </div>
-            <h2>Drivers</h2>
-            <ul>
+            <ul className="ul">
                 {raceDrivers.map((driver, index) => (
                     <li key={index}>
-                        {driver.name} - Car {driver.car}
-                        <button onClick={() => handleRemoveDriver(driver.name)}>Remove</button>
+                        <span className="driver-details">
+                            {driver.name} - Car {driver.car}
+                        </span>
+                        <input className="input race-details-input"
+                            placeholder="Edit driver name"
+                            value={editValues[driver.name] || ""}
+                            onChange={(e) => handleEditInputChange(e, driver.name)}
+                        />
+                        <button className="button race-details-button" onClick={() => handleEditDriver(driver.name)}>Edit</button>
+                        <button className="button race-details-button" onClick={() => handleRemoveDriver(driver.name)}>Remove</button>
                     </li>
                 ))}
             </ul>
-            <Link to={'/front-desk'}>
+            <button className="button go-back-button" onClick={() => navigate('/front-desk')}>
                 Go back
-            </Link>
+            </button>
         </div>
     );
 }

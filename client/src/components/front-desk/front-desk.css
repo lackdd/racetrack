@@ -1,0 +1,94 @@
+.front-desk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.front-desk .button {
+    height: 150px;
+    width: 600px;
+    font-size: 80px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    background: rgb(66, 184, 221);
+    color: white;
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.front-desk .add-button {
+    margin-left: 10px;
+}
+
+.front-desk .button:hover {
+    background-color: #0056b3;
+}
+
+.front-desk .button:active {
+    background-color: #004085;
+}
+
+.front-desk .input {
+    height: 150px;
+    margin: 9px;
+    width: 600px;
+    font-size: 80px;
+    border-radius: 10px;
+    text-align: center;
+    //border: none;
+}
+
+.front-desk .ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.front-desk .race-details-button {
+    height: 80px;
+    width: 320px;
+    font-size: 43px;
+}
+
+.front-desk .go-back-button {
+    margin-top: 100px;
+    height: 80px;
+    width: 320px;
+    font-size: 43px;
+}
+
+.front-desk .race-details-input {
+    height: 80px;
+    width: 320px;
+    font-size: 43px;
+}
+
+.front-desk .driver-details {
+    font-weight: bold;
+    height: 80px;
+    width: 320px;
+    font-size: 43px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    background: rgb(66, 184, 221);
+    color: white;
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.front-desk .header {
+    font-weight: bold;
+    height: 80px;
+    width: 500px;
+    font-size: 43px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    //background: rgb(66, 184, 221);
+    color: rgb(66, 184, 221);
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}

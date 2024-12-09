@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
 import socket from "../../socket.js";
+import "./race-control.css";
 
 function formatTimer(milliseconds) {
     // todo maybe save as milliseconds so they can easily be compared and reformat after that to display
@@ -14,6 +15,7 @@ function RaceControl() {
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
     const [timeRemaining, setTimeRemaining] = useState(0);
     const [raceStarted, setRaceStarted] = useState(false);
+    const [raceMode, setRaceMode] = useState("");
     //const previousRaceDataLength = useRef(0);
     const [currentRaceIndex, setCurrentRaceIndex] = useState();
     const [areAllRacesFinished, setAreAllRacesFinished] = useState(true);
@@ -27,16 +29,27 @@ function RaceControl() {
         //if (!queuePositionFetched) return;
         socket.emit("getAreAllRacesFinished");
         socket.emit("getRaceData");
+        socket.emit("getRaceMode");
 
         const handleRaceQueue = (queue) => {
-            console.log("Queue pos from server: " + queue)
+            //console.log("Queue pos from server: " + queue);
             setCurrentRaceIndex(queue); // Synchronize with server
+        };
+
+        const handleRaceModeData = (data) => {
+            //console.log("Race mode from server: " + data);
+            setRaceMode(data);
         };
 
         const handleRaceData = (data) => {
             // If the areAllRacesFinished is true and new races are added, set it to the first new race
-            console.log("data.length:", data.length);
-            console.log("currentRaceIndex+1:", currentRaceIndex+1);
+            data.find((race) => {
+                if (race.isOngoing === true) {
+                    setRaceStarted(true);
+                }
+            });
+            //console.log("data.length:", data.length);
+            //console.log("currentRaceIndex+1:", currentRaceIndex+1);
             if (areAllRacesFinished === true && data.length > currentRaceIndex+1) {
                 //console.log("data.length:", data.length);
                 //console.log("currentRaceIndex+1:", currentRaceIndex+1);
@@ -48,7 +61,7 @@ function RaceControl() {
         };
 
         const handleAreAllRacesFinished = (data) => {
-            console.log("AreAllRacesFinished value from server: " + data);
+            //console.log("AreAllRacesFinished value from server: " + data);
             setAreAllRacesFinished(data); // Synchronize with server
         };
 
@@ -62,14 +75,16 @@ function RaceControl() {
         socket.on("raceData", handleRaceData);
         socket.on("timerUpdate", handleTimerUpdate);
         socket.on("areAllRacesFinished", handleAreAllRacesFinished);
+        socket.on("raceMode", handleRaceModeData);
 
         return () => {
             socket.off("queuePosition", handleRaceQueue);
             socket.off("raceData", handleRaceData);
             socket.off("timerUpdate", handleTimerUpdate);
             socket.off("areAllRacesFinished", handleAreAllRacesFinished);
+            socket.off("raceMode", handleRaceModeData);
         };
-    }, [currentRace?.raceName, currentRaceIndex, areAllRacesFinished]);
+    }, [currentRace?.raceName, currentRaceIndex, areAllRacesFinished, raceMode]);
 
 
     const startTimer = () => {
@@ -91,26 +106,47 @@ function RaceControl() {
     function handleRaceMode(event) {
         switch (event.target.value) {
             case "danger":
-                console.log(raceData)
-                pauseTimer();
+                //console.log(raceData)
+                //pauseTimer();
+                setRaceMode("danger");
+                socket.emit("updateRaceMode", "danger", currentRace.raceName);
                 break;
             case "safe":
-                startTimer();
+                //startTimer();
+                setRaceMode("safe");
+                socket.emit("updateRaceMode", "safe", currentRace.raceName);
                 break;
             case "start":
-                startTimer();
-                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: true, timeRemainingOngoingRace: timeRemaining, }); // Notify server
+                //startTimer();
+                console.log("emitting updateracestatus: ");
                 setRaceStarted(true);
+                setRaceMode("safe");
+                socket.emit("updateRaceMode", "safe", currentRace.raceName);
+
+                // delete last race
+                if (currentRaceIndex > 0) {
+                    const raceToRemove = raceData[currentRaceIndex - 1];
+                    const updatedRaceData = raceData.filter((race) => race !== raceToRemove);
+                    setRaceData(updatedRaceData);
+                    const newIndex = currentRaceIndex - 1;
+                    setCurrentRaceIndex(newIndex);
+                    socket.emit("updateQueuePosition", newIndex);
+                    socket.emit("updateRaceData", updatedRaceData);
+                }
+                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: true, timeRemainingOngoingRace: timeRemaining, }); // Notify server
                 break;
             case "hazard":
-                console.log(raceData)
+                //console.log(raceData)
+                setRaceMode("hazard");
+                socket.emit("updateRaceMode", "hazard", currentRace.raceName);
                 break;
             case "finish":
-                resetTimer();
-                socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: false, }); // Notify server
+                //resetTimer();
+                //socket.emit("updateRaceStatus", { raceName: currentRace.raceName, isOngoing: false, }); // Notify server
                 //console.log(currentRaceIndex);
-                setRaceStarted(false);
-                if (currentRaceIndex < raceData.length-1) {
+                //setRaceStarted(false);
+
+                /*if (currentRaceIndex < raceData.length-1) {
                     //setAreAllRacesFinished(false);
                     //socket.emit("updateAreAllRacesFinished", false);
                     const nextRaceIndex = currentRaceIndex + 1;
@@ -120,32 +156,51 @@ function RaceControl() {
                     setAreAllRacesFinished(true);
                     //console.log("i was here, currentraceindex should be -1 but is:", currentRaceIndex);
                     socket.emit("updateAreAllRacesFinished", true);
-                }
+                }*/
+                setRaceMode("finish");
+                socket.emit("updateRaceMode", "finish", currentRace.raceName);
                 break;
             default:
                 break;
         }
-        socket.emit("flagButtonWasClicked", event.target.value);
+        //socket.emit("flagButtonWasClicked", event.target.value);
     };
 
+    function handleEndRace() {
+        socket.emit("flagButtonWasClicked", "danger");
+        if (currentRaceIndex < raceData.length-1) {
+            let nextRaceIndex = currentRaceIndex + 1;
+            setCurrentRaceIndex(nextRaceIndex);
+            socket.emit("updateQueuePosition", nextRaceIndex);
+        } else {
+            setAreAllRacesFinished(true);
+            socket.emit("updateAreAllRacesFinished", true);
+            console.log(currentRace.raceName);
+        }
+        socket.emit("updateRaceStatus", {raceName: currentRace.raceName, isOngoing: false,});
+        setRaceStarted(false);
+    };
 
     return (
-        <div style={{textAlign: "center"}}>
-            <h1>Race Control Interface</h1>
-            {raceStarted && (
-                <div>
-                    <h5>Time remaining:</h5>
+        <div className="race-control" style={{textAlign: "center"}}>
+            <h1 className="header">Race Control Interface</h1>
+            {raceStarted && raceMode !== "finish" && (
+                <div >
+                    <h5 className="header">Time remaining:</h5>
                     <div className="countdown-timer-container">{formatTimer(timeRemaining)}</div>
-                    <h2>Race controls:</h2>
-                    <button onClick={handleRaceMode} value="safe">Safe</button>
-                    <button onClick={handleRaceMode} value="danger">Danger!</button>
-                    <button onClick={handleRaceMode} value="hazard">Hazardous!</button>
-                    <button onClick={handleRaceMode} value="finish">Finish!</button>
+                    <h2 className="header">Race controls:</h2>
+                    <button className="button" onClick={handleRaceMode} value="safe">Safe</button>
+                    <button className="button" onClick={handleRaceMode} value="danger">Danger!</button>
+                    <button className="button" onClick={handleRaceMode} value="hazard">Hazardous!</button>
+                    <button className="button" onClick={handleRaceMode} value="finish">Finish!</button>
                 </div>)}
+            {raceStarted && raceMode === "finish" && (
+                <button className="button" onClick={handleEndRace}>End race session</button>
+                )}
             {!raceStarted && !areAllRacesFinished && (
                 <>
                     {currentRace ? (
-                        <h2>Next Race: {currentRace.raceName}</h2>
+                        <h2 className="header">Next Race: {currentRace.raceName}</h2>
                     ) : (
                         <h2>No races in the queue</h2>
                     )}
@@ -153,23 +208,25 @@ function RaceControl() {
             )}
             {currentRace && (
                 <>
-                    <ul>
+                    <ul className="ul">
                         {!raceStarted && areAllRacesFinished !== true && (
                             <>
                                 <button
-                                    className="waves-effect waves-light btn"
+                                    className="button"
                                     /*                                style={{backgroundColor: "blue", color: "white"}}*/
                                     onClick={handleRaceMode} value="start">Start race</button>
-                                <h2>Drivers List:</h2>
+                                <h2 className="header">Drivers List:</h2>
                                 {driversToDisplay.map((driver, index) => (
                                     <li key={index}>
+                                        <span className="driver-details">
                                         {driver.name} - Car {driver.car}
+                                            </span>
                                     </li>
-                                ))}
+                                    ))}
                             </>
                         )}
-                        {areAllRacesFinished === true && (
-                            <p>Next race has not been submitted</p>
+                        {areAllRacesFinished === true && raceStarted === false && (
+                            <p className="header">Next race has not been submitted</p>
                         )}
                     </ul>
                 </>

@@ -3,9 +3,14 @@
 class Timer {
     constructor() {
         this.timers = {}; // Store timers for races
+        this.updateTimerFunction = null;
     }
 
-    initializeTimer(raceName, initialTime = 600000) {
+    setUpdateTimerFunction(updateFunction) {
+        this.updateTimerFunction = updateFunction;
+    }
+
+    initializeTimer(raceName, initialTime = 6000) {
         if (!this.timers[raceName]) {
             this.timers[raceName] = {
                 timeRemaining: initialTime,
@@ -22,8 +27,11 @@ class Timer {
             timer.interval = setInterval(() => {
                 timer.timeRemaining -= 10;
                 if (timer.timeRemaining <= 0) {
-                    this.resetTimer(raceName); // was this.stopTimer(raceName)
+                    this.pauseTimer(raceName); // was this.stopTimer(raceName)
                     timer.timeRemaining = 0; // Ensure it doesn't go negative
+                    if (this.updateTimerFunction) {
+                        this.updateTimerFunction({ raceName, timeRemaining: timer.timeRemaining });
+                    }
                 }
 
                 // Update the raceData dynamically
@@ -36,6 +44,7 @@ class Timer {
                     }
                     //io.emit("raceData", raceData); // Broadcast updated race data to all clients
                 }
+
                 // Broadcast updated time to all clients
                 io.emit('timerUpdate', { raceName, timeRemaining: timer.timeRemaining });
             }, 10);
@@ -50,7 +59,7 @@ class Timer {
         }
     }
 
-    resetTimer(raceName, io, initialTime = 600000) {
+    resetTimer(raceName, io, initialTime = 6000) {
         this.pauseTimer(raceName);
         if (this.timers[raceName]) {
             this.timers[raceName].timeRemaining = initialTime;

@@ -1,0 +1,73 @@
+.race-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.race-control .button {
+    height: 150px;
+    width: 600px;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 80px;
+    margin: 10px;
+    background: rgb(66, 184, 221);
+    color: white;
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.race-control .button:hover {
+    background-color: #0056b3;
+}
+
+.race-control .button:active {
+    background-color: #004085;
+}
+
+.race-control .driver-details {
+    font-weight: bold;
+    height: 80px;
+    width: 320px;
+    font-size: 43px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    background: rgb(66, 184, 221);
+    color: white;
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.race-control .ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.race-control .header {
+    font-weight: bold;
+    height: 80px;
+    width: auto;
+    font-size: 43px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    color: rgb(66, 184, 221);
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.countdown-timer-container {
+    font-weight: bold;
+    height: 80px;
+    width: auto;
+    font-size: 43px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    color: rgb(66, 184, 221);
+    border: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
