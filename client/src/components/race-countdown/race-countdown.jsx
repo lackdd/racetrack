@@ -3,19 +3,8 @@
 import socket from "../../socket.js";
 import React, {useEffect, useRef, useState} from "react";
 import {toggleFullScreen} from "../universal/toggleFullscreen.js";
+import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
-
-function formatLapTime(milliseconds) {
-    const minutes = Math.floor(milliseconds / 60000);
-    const seconds = Math.floor((milliseconds % 60000) / 1000);
-    const millisecondsRemainder = (milliseconds % 1000) / 10;
-
-    return {
-        minutes: minutes.toString().padStart(2, '0'),
-        seconds: seconds.toString().padStart(2, '0'),
-        milliseconds: millisecondsRemainder.toString().padStart(2, '0')
-    };
-}
 
 function RaceCountdown() {
     //const [currentRaceData, setCurrentRaceData] = useState([]); // Store all races and their drivers
@@ -61,16 +50,30 @@ function RaceCountdown() {
     // }
 
     // Handle incoming flag changes (race modes) so a race starting triggers the next useEffect to retrieve the timer data from the server
+    // useEffect(() => {
+    //     socket.emit("broadcastFlagButtonChange");
+    //     socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
+    //         setRaceMode(newFlagStatus);
+    //         console.log("Getting flag status from server")
+    //     });
+    //
+    //     // Clean up the socket listener on unmount
+    //     return () => {
+    //         socket.off("broadcastFlagButtonChange");
+    //     };
+    // }, []);
+
+    // Handle incoming race mode changes so a race starting triggers the next useEffect to retrieve the timer data from the server
     useEffect(() => {
-        socket.emit("broadcastFlagButtonChange");
-        socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-            setRaceMode(newFlagStatus);
-            console.log("Getting flag status from server")
+        socket.emit("getRaceMode");
+        socket.on("raceMode", (newRaceMode) => {
+            setRaceMode(newRaceMode);
+            console.log("Getting race mode from server")
         });
 
         // Clean up the socket listener on unmount
         return () => {
-            socket.off("broadcastFlagButtonChange");
+            socket.off("raceMode");
         };
     }, []);
 
@@ -95,7 +98,7 @@ function RaceCountdown() {
 
 
     useEffect(() => {
-        if (timer % 60000 === 0 && timer % 60100 === 0 && timer % 60200 === 0 && timer !== 600000) {
+        if (timer % 60000 === 0 && timer % 60010 === 0 && timer % 60020 === 0 && timer !== 600000) {
             //setIsFlashing(prevIsFlashing => !prevIsFlashing);
             setIsFlashing(true);
         } else {

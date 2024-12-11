@@ -10,19 +10,9 @@
 import React, { useState, useEffect } from "react";
 import socket from "../../socket.js";
 import {toggleFullScreen} from "../universal/toggleFullscreen.js";
+import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
 
-function formatLapTime(milliseconds) {
-    const minutes = Math.floor(milliseconds / 60000);
-    const seconds = Math.floor((milliseconds % 60000) / 1000);
-    const millisecondsRemainder = (milliseconds % 1000) / 10;
-
-    return {
-        minutes: minutes.toString().padStart(2, '0'),
-        seconds: seconds.toString().padStart(2, '0'),
-        milliseconds: millisecondsRemainder.toString().padStart(2, '0')
-    };
-} // todo võiks saada täpsema timeri
 
 function NextRace() {
     const [timeRemaining, setTimeRemaining] = useState(0);
@@ -32,15 +22,35 @@ function NextRace() {
     const [nextRaceData, setNextRaceData] = useState([]); // Store all races and their drivers
 
 
+    // // Handle incoming flag changes (race modes)
+    // useEffect(() => {
+    //     socket.emit("flagButtonWasClicked");
+    //
+    //     socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
+    //         if (newFlagStatus === "danger") { // display current race's drivers and an extra message to proceed to the paddock
+    //             setRaceMode("danger");
+    //         }
+    //         if (newFlagStatus === "start" || newFlagStatus === "safe") { // display subsequent race session
+    //             setRaceMode("safe");
+    //         }
+    //         console.log("Getting flag status from server")
+    //     });
+    //
+    //     // Clean up the socket listener on unmount
+    //     return () => {
+    //         socket.off("broadcastFlagButtonChange");
+    //     };
+    // }, []);
+
     // Handle incoming flag changes (race modes)
     useEffect(() => {
-        socket.emit("flagButtonWasClicked");
+        socket.emit("getRaceMode");
 
-        socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-            if (newFlagStatus === "danger") { // display current race's drivers and an extra message to proceed to the paddock
+        socket.on("raceMode", (newRaceMode) => {
+            if (newRaceMode === "danger") { // display current race's drivers and an extra message to proceed to the paddock
                 setRaceMode("danger");
             }
-            if (newFlagStatus === "start" || newFlagStatus === "safe") { // display subsequent race session
+            if (newRaceMode === "start" || newRaceMode === "safe") { // display subsequent race session
                 setRaceMode("safe");
             }
             console.log("Getting flag status from server")
@@ -48,7 +58,7 @@ function NextRace() {
 
         // Clean up the socket listener on unmount
         return () => {
-            socket.off("broadcastFlagButtonChange");
+            socket.off("raceMode");
         };
     }, []);
 
