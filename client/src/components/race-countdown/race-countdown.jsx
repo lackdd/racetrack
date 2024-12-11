@@ -2,6 +2,8 @@
 
 import socket from "../../socket.js";
 import React, {useEffect, useRef, useState} from "react";
+import {toggleFullScreen} from "../universal/toggleFullscreen.js";
+import "../universal/universal.css"
 
 function formatLapTime(milliseconds) {
     const minutes = Math.floor(milliseconds / 60000);
@@ -105,42 +107,50 @@ function RaceCountdown() {
     const time = formatLapTime(timer);
 
     return (
-        <div
-            style={{fontSize: "8em",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: "100%",
-                fontFamily: "monospace"}}>
-            {timer === 0 ? (
-                <p style={{ color: "black" }}>00:00:00</p>
-            ) : timer < 10000 && timer !== 0 ? (
-                <p style={{color: "red"}}>
-                    {/*{formatLapTime(timer)}*/}
-                    <span style={{width: "2ch"}}>{time.minutes}</span>:
-                    <span style={{width: "2ch"}}>{time.seconds}</span>:
-                    <span style={{width: "2ch"}}>{time.milliseconds}</span>
-                </p>
-            ) : isFlashing ? (
-                <p style={{color: "red"}}>
-                    {/*{formatLapTime(timer)}*/}
-                    <span style={{width: "2ch"}}>{time.minutes}</span>:
-                    <span style={{width: "2ch"}}>{time.seconds}</span>:
-                    <span style={{width: "2ch"}}>{time.milliseconds}</span>
-                </p>
-            ) : (
-                // <p>{formatLapTime(timer)}</p>
-                <p style={{display: "flex"}}>
-                    <span style={{width: "2ch"}}>{time.minutes}</span>:
-                    <span style={{width: "2ch"}}>{time.seconds}</span>:
-                    <span style={{width: "2ch"}}>{time.milliseconds}</span>
-                </p>
-            )}
+        <div className="RaceCountdown">
+            <div
+                style={{
+                    fontSize: "8em",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "100%",
+                    fontFamily: "monospace"
+                }}>
+                {timer === 0 ? (
+                    <p style={{color: "black"}}>00:00:00</p>
+                ) : timer < 10000 && timer !== 0 ? (
+                    <p style={{color: "red"}}>
+                        {/*{formatLapTime(timer)}*/}
+                        <span style={{width: "2ch"}}>{time.minutes}</span>:
+                        <span style={{width: "2ch"}}>{time.seconds}</span>:
+                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                    </p>
+                ) : isFlashing ? (
+                    <p style={{color: "red"}}>
+                        {/*{formatLapTime(timer)}*/}
+                        <span style={{width: "2ch"}}>{time.minutes}</span>:
+                        <span style={{width: "2ch"}}>{time.seconds}</span>:
+                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                    </p>
+                ) : (
+                    // <p>{formatLapTime(timer)}</p>
+                    <p style={{display: "flex"}}>
+                        <span style={{width: "2ch"}}>{time.minutes}</span>:
+                        <span style={{width: "2ch"}}>{time.seconds}</span>:
+                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                    </p>
+                )}
+            </div>
+            <button
+                id="fullscreenButton"
+                onClick={toggleFullScreen}>fullscreen
+            </button>
         </div>
     )
 }

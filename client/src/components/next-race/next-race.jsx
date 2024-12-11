@@ -9,6 +9,8 @@
 // The Next Race screen switches to the subsequent race session.
 import React, { useState, useEffect } from "react";
 import socket from "../../socket.js";
+import {toggleFullScreen} from "../universal/toggleFullscreen.js";
+import "../universal/universal.css"
 
 function formatLapTime(milliseconds) {
     const minutes = Math.floor(milliseconds / 60000);
@@ -143,12 +145,12 @@ function NextRace() {
     const time = formatLapTime(timeRemaining);
 
     return (
-        <div>
+        <div className="NextRace">
             <div>
                 <h1>Next Race</h1>
                 <h3>Time Remaining:
                     {timeRemaining === 0 ? (
-                        <p style={{ color: "black" }}>00:00:00</p>
+                        <p style={{color: "black"}}>00:00:00</p>
                     ) : (
                         <p style={{display: "flex"}}>
                             <span style={{width: "2ch"}}>{time.minutes}</span>:
@@ -166,6 +168,10 @@ function NextRace() {
                 <p>You car:</p>
                 <p>You lap times: </p>
             </div>
+            <button
+                id="fullscreenButton"
+                onClick={toggleFullScreen}>fullscreen
+            </button>
         </div>
 
 

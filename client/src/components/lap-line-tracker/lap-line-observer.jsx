@@ -1,25 +1,10 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./lap-line-observer.css";
+import "../universal/universal.css"
 import socket from "../../socket.js";
-
-// Helper function to format lap times
-function formatLapTime(milliseconds) {
-    const minutes = Math.floor(milliseconds / 60000);
-    const seconds = Math.floor((milliseconds % 60000) / 1000);
-    const millisecondsRemainder = milliseconds % 1000;
-
-    return `${minutes.toString().padStart(2, '0')}:${seconds
-        .toString()
-        .padStart(2, '0')}:${millisecondsRemainder.toString().padStart(3, '0')}`;
-}
-
-// Helper function to calculate the fastest lap time for each driver
-function fastestLapTime(laptimes) {
-    if (laptimes.length < 1) {
-        return null;
-    }
-    return Math.min(...laptimes);
-}
+import {toggleFullScreen} from "../universal/toggleFullscreen.js";
+import {formatLapTime} from "../universal/formatLapTime.js";
+import {fastestLapTime} from "../universal/calculateFastestLapTime.js"
 
 function LapLineObserver() {
     //const [elapsedTimes, setElapsedTimes] = useState({});
@@ -27,7 +12,10 @@ function LapLineObserver() {
     const [raceStarted, setRaceStarted] = useState(false);
     //const [raceOngoing, setRaceOngoing] = useState(true);
     const [raceMode, setRaceMode] = useState("")
-    const [currentRaceName, setCurrentRaceName] = useState("");
+    //const [currentRaceName, setCurrentRaceName] = useState("");
+    const [currentRaceName, setCurrentRaceName] = useState(() => {
+             return localStorage.getItem("currentRaceName");
+    });
     // const [isDisabled, setIsDisabled] = useState(() => {
     //     const storedIsDisabled = localStorage.getItem("isDisabled");
     //     return storedIsDisabled === "true";
@@ -224,6 +212,10 @@ function LapLineObserver() {
                     )}
                     {/*{isDisabled && <p className="information">Race session has ended</p>}*/}
                     {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
+                    <button
+                        id="fullscreenButton"
+                        onClick={toggleFullScreen}>fullscreen
+                    </button>
                 </div>
             </div>
         </div>
