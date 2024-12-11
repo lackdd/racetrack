@@ -205,8 +205,24 @@ function LapLineObserver() {
                                 onClick={() => driverCrossedFinishLine(driver.name)}
                             >
                                 {driver.name}
-                                <br />
-                                {formatLapTime(currentLapTimes[driver.name] || 0)}
+                                <p style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    fontSize: "1.6rem"
+                                }}>
+                                <span style={{width: "3ch", textAlign: "center"}}>
+                                    {formatLapTime(currentLapTimes[driver.name] || 0).minutes}
+                                </span>
+                                    :
+                                    <span style={{width: "3ch", textAlign: "center"}}>
+                                    {formatLapTime(currentLapTimes[driver.name] || 0).seconds}
+                                </span>
+                                    :
+                                    <span style={{width: "3ch", textAlign: "center"}}>
+                                    {formatLapTime(currentLapTimes[driver.name] || 0).milliseconds}
+                                </span>
+                                </p>
                             </button>
                         ))
                     )}
