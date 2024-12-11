@@ -9,7 +9,7 @@
     box-sizing: border-box;
 }
 
-#observerButtonsGrid {
+.LapLineObserver #observerButtonsGrid {
     flex: 1;
     display: grid;
     gap: 20px;
@@ -24,7 +24,7 @@
     box-sizing: border-box;
 }
 
-#observerButton {
+.LapLineObserver #observerButton {
     display: block;
     height: 100%;
     width: 100%;
@@ -37,12 +37,12 @@
 }
 
 @media only screen and (orientation: portrait) {
-    #observerButtonsGrid {
+    .LapLineObserver #observerButtonsGrid {
         grid-template-columns: repeat(2, 1fr);
         grid-template-rows: repeat(4, 1fr);
     }
 
-    #observerButton {
+    .LapLineObserver #observerButton {
         /*height: 20vh;*/
         min-height: 23vh;
         /*max-height: 23vh;*/
@@ -50,19 +50,19 @@
 }
 
 @media only screen and (orientation: landscape) {
-    #observerButtonsGrid {
+    .LapLineObserver #observerButtonsGrid {
         grid-template-columns: repeat(4, 1fr);
         grid-template-rows: repeat(2, 1fr);
     }
 
-    #observerButton {
+    .LapLineObserver #observerButton {
         /*height: 40vh;*/
         min-height: 45vh;
         /*max-height: 50vh;*/
     }
 }
 
-.information {
+.LapLineObserver .information {
     z-index: 2;
     font-size: 4em;
     display: flex;
@@ -75,5 +75,4 @@
     transform: translate(-50%, -50%);
     width: 100%;
 }
-
 
