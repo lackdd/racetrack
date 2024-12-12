@@ -5,63 +5,14 @@ import React, {useEffect, useRef, useState} from "react";
 import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
+import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
 
 function RaceCountdown() {
-    //const [currentRaceData, setCurrentRaceData] = useState([]); // Store all races and their drivers
     const [raceMode, setRaceMode] = useState("");
     const [isFlashing, setIsFlashing] = useState(false);
     const [timer, setTimer] = useState(0);
-
-
-    // useEffect(() => {
-    //     socket.emit("getRaceData") // todo use different sockets? causes wx proxy error when race ends closing the backend server
-    //
-    //     socket.on("raceData", (data) => {
-    //         try {
-    //             updateTimer(data);
-    //         } catch (err) {
-    //             console.error("Error updating timer:", err);
-    //         }
-    //
-    //     });
-    //
-    //     // Clean up the socket listener on unmount
-    //     return () => {
-    //         socket.off("raceData");
-    //     };
-    // }, [currentRaceData]);
-    //
-    // function updateTimer(data) {
-    //     console.log()
-    //     const onGoingRace = data.filter((race) => race.isOngoing === true);
-    //     setCurrentRaceData(onGoingRace[0])
-    //     if (onGoingRace.length > 0) {
-    //         setTimer(onGoingRace[0].timeRemainingOngoingRace);
-    //     } else {
-    //         console.error("No ongoing race exists.");
-    //     }
-    //     if (timer % 60000 === 0 && timer !== 600000) {
-    //         //setIsFlashing(prevIsFlashing => !prevIsFlashing);
-    //         setIsFlashing(true);
-    //     } else {
-    //         //setIsFlashing(prevIsFlashing => !prevIsFlashing);
-    //         setIsFlashing(false)
-    //     }
-    // }
-
-    // Handle incoming flag changes (race modes) so a race starting triggers the next useEffect to retrieve the timer data from the server
-    // useEffect(() => {
-    //     socket.emit("broadcastFlagButtonChange");
-    //     socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-    //         setRaceMode(newFlagStatus);
-    //         console.log("Getting flag status from server")
-    //     });
-    //
-    //     // Clean up the socket listener on unmount
-    //     return () => {
-    //         socket.off("broadcastFlagButtonChange");
-    //     };
-    // }, []);
 
     // Handle incoming race mode changes so a race starting triggers the next useEffect to retrieve the timer data from the server
     useEffect(() => {
@@ -152,7 +103,12 @@ function RaceCountdown() {
             </div>
             <button
                 id="fullscreenButton"
-                onClick={toggleFullScreen}>fullscreen
+                onClick={toggleFullScreen}>
+                fullscreen
+                <FontAwesomeIcon
+                    icon={faUpRightAndDownLeftFromCenter}
+                    style={{marginLeft: "10px"}} // Add space between text and icon
+                />
             </button>
         </div>
     )

@@ -163,7 +163,7 @@ function LapLineObserver() {
         setRaceDrivers((prev) =>
             prev.map((driver) => {
                 if (driver.name === driverName && currentLapTimes[driverName] !== undefined) {
-                    console.log(currentLapTimes[driverName]) // todo logs twice when button is clicked
+                    console.log(currentLapTimes[driverName])
                     const newLapTimes = [
                         ...driver.lapTimes,
                         formatLapTime(currentLapTimes[driverName] || 0),
