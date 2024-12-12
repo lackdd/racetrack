@@ -51,7 +51,7 @@ function Login({ setRole }) {
                         navigate("/driver/next-race");
                         break;
                     case "Safety official":
-                        navigate("/front-desk");
+                        navigate("/race-control");
                         break;
                     case "Lap line obs":
                         navigate("/lap-line-tracker");
