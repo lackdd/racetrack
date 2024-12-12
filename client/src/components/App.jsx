@@ -47,7 +47,7 @@ function App() {
 
     const receptionistLinks = [
         { to: "/", label: "Home" },
-        { to: "/race-control", label: "Race Control" },
+        { to: "/front-desk", label: "Front Desk" },
     ];
 
     const racerLinks = [

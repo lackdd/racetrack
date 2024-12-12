@@ -45,7 +45,7 @@ function Login({ setRole }) {
                 setRole(responseData.role);
                 switch (responseData.role) {
                     case "Receptionist":
-                        navigate("/race-control");
+                        navigate("/front-desk");
                         break;
                     case "Racer":
                         navigate("/driver/next-race");
