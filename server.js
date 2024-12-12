@@ -28,6 +28,7 @@ let raceData = [];
 
 let queuePosition = -1;
 let raceMode = "";
+let lastAssignedCar = 0;
 
 let areAllRacesFinished = true;
 let flagStatus = "";
@@ -170,6 +171,10 @@ io.on('connection', (socket) => {
         socket.emit("queuePosition", queuePosition);
     });
 
+    socket.on('getLastAssignedCar', () => {
+        socket.emit("lastAssignedCar", lastAssignedCar);
+    });
+
     socket.on('getRaceMode', () => {
         socket.emit("raceMode", raceMode);
     });
@@ -177,6 +182,11 @@ io.on('connection', (socket) => {
     socket.on('getAreAllRacesFinished', () => {
         socket.emit("areAllRacesFinished", areAllRacesFinished);
 
+    });
+
+    socket.on('updateLastAssignedCar', (data) => {
+        lastAssignedCar = data;
+        io.emit('lastAssignedCar', lastAssignedCar);
     });
 
     socket.on('updateQueuePosition', (position) => {

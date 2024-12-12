@@ -17,6 +17,7 @@ function RaceDetails() {
     useEffect(() => {
         // Fetch the latest race data from the server when user loads to page
         socket.emit("getRaceData");
+        socket.emit("getLastAssignedCar");
 
         const handleRaceData = (data) => {
             console.log("Received race data from server:", data);
@@ -33,12 +34,19 @@ function RaceDetails() {
             }
         };
 
+        const handleLastAssignedCar = (data) => {
+            console.log("Received last assigned car value from server: " + data);
+            setLastAssignedCar(data);
+        }
+
         socket.on("raceData", handleRaceData);
+        socket.on("lastAssignedCar", handleLastAssignedCar);
 
         return () => {
             socket.off("raceData", handleRaceData);
+            socket.off("lastAssignedCar", handleLastAssignedCar);
         };
-    }, [raceName]);
+    }, [raceName, lastAssignedCar]);
 
     // handle input change event for driver name
     const handleInputChange = (e) => {
@@ -79,6 +87,7 @@ function RaceDetails() {
         const updatedDrivers = [...raceDrivers, newDriver];
 
         setLastAssignedCar((prevCar) => prevCar + 1);
+        socket.emit("updateLastAssignedCar", lastAssignedCar+1);
         setRaceDrivers(updatedDrivers);
         socket.emit("updateRaceDrivers", { raceName, drivers: updatedDrivers });
         setDriverName("");
