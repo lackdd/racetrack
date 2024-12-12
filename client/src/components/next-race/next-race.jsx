@@ -10,97 +10,120 @@
 import React, { useState, useEffect } from "react";
 import socket from "../../socket.js";
 import {toggleFullScreen} from "../universal/toggleFullscreen.js";
-import {formatLapTime} from "../universal/formatLapTime.js";
+// import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
+import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import "./next-race.css"
 
 
 function NextRace() {
-    const [timeRemaining, setTimeRemaining] = useState(0);
     const [raceMode, setRaceMode] = useState("");
-    const [raceData, setRaceData] = useState([]);
-    const [currentRaceData, setCurrentRaceData] = useState([]); // Store all races and their drivers
-    const [nextRaceData, setNextRaceData] = useState([]); // Store all races and their drivers
+    const [flagStatus, setFlagStatus] = useState("");
+    const [raceData, setRaceData] = useState([]); // Store all races and their drivers
+    const [currentRace, setCurrentRace] = useState(null);  // store current race data
+    const [nextRace, setNextRace] = useState(null); // store next race data
+    const [queuePos, setQueuePos] = useState();
+    const [areAllRacesFinished, setAreAllRacesFinished] = useState(null);
+    const [timeRemaining, setTimeRemaining] = useState();
+    const [isOnGoing, setIsOnGoing] = useState(false);
 
-
-    // // Handle incoming flag changes (race modes)
+        //get the timer data from the server
     // useEffect(() => {
-    //     socket.emit("flagButtonWasClicked");
+    //     socket.emit("getCurrentRaceTimer")
     //
-    //     socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-    //         if (newFlagStatus === "danger") { // display current race's drivers and an extra message to proceed to the paddock
-    //             setRaceMode("danger");
+    //     socket.on("currentRaceTimer", (data) => {
+    //         if (data !== null) {
+    //             setTimeRemaining(data);
+    //         } else {
+    //             setTimeRemaining(0);
+    //             console.error("Error updating timer. Resetting...");
     //         }
-    //         if (newFlagStatus === "start" || newFlagStatus === "safe") { // display subsequent race session
-    //             setRaceMode("safe");
-    //         }
-    //         console.log("Getting flag status from server")
     //     });
     //
     //     // Clean up the socket listener on unmount
     //     return () => {
-    //         socket.off("broadcastFlagButtonChange");
+    //         socket.off("currentRaceTimer");
     //     };
     // }, []);
 
-    // Handle incoming flag changes (race modes)
     useEffect(() => {
-        socket.emit("getRaceMode");
+        socket.emit("flagButtonWasClicked");
 
-        socket.on("raceMode", (newRaceMode) => {
-            if (newRaceMode === "danger") { // display current race's drivers and an extra message to proceed to the paddock
+        socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
+            console.log(timeRemaining)
+            if ((newFlagStatus === "danger" ||  newFlagStatus === "") && !isOnGoing) { // display current race's drivers and an extra message to proceed to the paddock
+                // console.log(timeRemaining)
+                console.log("set flag status to danger")
                 setRaceMode("danger");
             }
-            if (newRaceMode === "start" || newRaceMode === "safe") { // display subsequent race session
+            if ((newFlagStatus === "start" || newFlagStatus === "safe") && !isOnGoing) { // display subsequent race session
+                // console.log(timeRemaining)
+                console.log("set flag status to safe")
                 setRaceMode("safe");
             }
-            console.log("Getting flag status from server")
+            console.log("Getting flag status from server: " + newFlagStatus);
         });
 
         // Clean up the socket listener on unmount
         return () => {
-            socket.off("raceMode");
+            socket.off("broadcastFlagButtonChange");
         };
-    }, []);
-
-    // get the timer data from the server
-    useEffect(() => {
-        socket.emit("getCurrentRaceTimer")
-
-        socket.on("currentRaceTimer", (data) => {
-            if (data !== null) {
-                setTimeRemaining(data);
-            } else {
-                setTimeRemaining(0);
-                console.error("Error updating timer. Resetting...");
-            }
-        });
-
-        // Clean up the socket listener on unmount
-        return () => {
-            socket.off("currentRaceTimer");
-        };
-    }, [raceMode]);
+    }, [isOnGoing]);
 
     useEffect(() => {
         socket.emit("getQueuePosition")
+        socket.emit("getAreAllRacesFinished")
+
         socket.on("queuePosition", queuePosition => {
             console.log("Queue position received: ", queuePosition);
-            // if queuePosition = -1 then all races are finished
-            setCurrentRaceData(raceData[queuePosition]);
-            setNextRaceData(raceData[queuePosition+1]);
+            setQueuePos(queuePosition);
+        });
+
+        socket.on("areAllRacesFinished", areAllRacesFinished => {
+            console.log("AreAllRacesFinished received: ", areAllRacesFinished);
+            setAreAllRacesFinished(areAllRacesFinished);
         });
 
         // Clean up the socket listener on unmount
         return () => {
             socket.off("queuePosition");
+            socket.off("areAllRacesFinished");
         };
 
-    },[raceData]);
+    },[]);
 
     useEffect(() => {
-        console.log("Current race data: " + currentRaceData);
-        console.log("Next race data: " + nextRaceData);
-    }, [currentRaceData, nextRaceData]);
+        if (areAllRacesFinished) {
+            console.log("if")
+            setCurrentRace(null);
+            setNextRace(null);
+        } else if (queuePos === -1 && !areAllRacesFinished) {
+                console.log("else if")
+                // No race has started, show first race (if any)
+                setCurrentRace(raceData[0] || null);
+                setNextRace(raceData[1] || null);
+        } else {
+                console.log("else")
+                // Display current and next races based on queue position
+                setCurrentRace(raceData[queuePos] || null);
+                setNextRace(raceData[queuePos + 1] || null);
+        }
+    }, [areAllRacesFinished, queuePos, raceData]);
+
+    useEffect(() => {
+        console.log("Current race data:");
+        console.log(currentRace);
+        console.log("Next race data:");
+        console.log(nextRace)
+    }, [raceMode]);
+
+
+    useEffect(() => {
+        console.log("isOnGoing");
+        console.log(isOnGoing);
+    }, [isOnGoing]);
+
 
     // Fetch race data
     useEffect(() => {
@@ -109,83 +132,88 @@ function NextRace() {
 
         socket.on("raceData", (data) => {
             console.log("New data fetched");
-            setRaceData(data);
-        });
+
+            const onGoingRace = data.find((race) => race.isOngoing === true)
+
+            setIsOnGoing(!!onGoingRace)
+
+            if (raceData !== data) {
+                setRaceData(data);
+            }
+
+            });
+
 
         // Clean up the socket listener on unmount
         return () => {
             socket.off("raceData");
         };
-        // } else {
-        //     console.log("Race is not started or has finished.");
-        // }
     }, [raceMode]);
 
 
-
-
-    //
-    // useEffect(() => {
-    //     // Listen for timer updates
-    //     const handleTimerUpdate = (data) => {
-    //         if (data.raceName === "nextRace") {
-    //             setTimeRemaining(data.timeRemaining);
-    //         }
-    //     };
-    //
-    //     socket.on("timerUpdate", handleTimerUpdate);
-    //
-    //     return () => {
-    //         socket.off("timerUpdate", handleTimerUpdate);
-    //     };
-    // }, []);
-    //
-    // const startTimer = () => {
-    //     socket.emit("startTimer", "nextRace");
-    // };
-    //
-    // const pauseTimer = () => {
-    //     socket.emit("pauseTimer", "nextRace");
-    // };
-    //
-    // const resetTimer = () => {
-    //     socket.emit("resetTimer", "nextRace");
-    // };
-
-    const time = formatLapTime(timeRemaining);
-
     return (
         <div className="NextRace">
-            <div>
-                <h1>Next Race</h1>
-                <h3>Time Remaining:
-                    {timeRemaining === 0 ? (
-                        <p style={{color: "black"}}>00:00:00</p>
-                    ) : (
-                        <p style={{display: "flex"}}>
-                            <span style={{width: "2ch"}}>{time.minutes}</span>:
-                            <span style={{width: "2ch"}}>{time.seconds}</span>:
-                            <span style={{width: "2ch"}}>{time.milliseconds}</span>
+            {currentRace ? (
+                raceMode === "danger" ? (
+                    <>
+                        <p>
+                            Current race: {currentRace.raceName} <br /> Move to the paddock!
                         </p>
-                    )}
-                </h3>
-                {/*<button onClick={startTimer}>Start Timer</button>*/}
-                {/*<button onClick={pauseTimer}>Pause Timer</button>*/}
-                {/*<button onClick={resetTimer}>Reset Timer</button>*/}
-            </div>
-            <div
-                style={{display: "flex", flexDirection: "column"}}>
-                <p>You car:</p>
-                <p>You lap times: </p>
-            </div>
-            <button
-                id="fullscreenButton"
-                onClick={toggleFullScreen}>fullscreen
+                        <table className="driverTable" id="currentRace" style={{ width: "100%" }}>
+                            <tbody>
+                            <tr>
+                                <td>Driver</td>
+                                <td>Car</td>
+                                <td>Status</td>
+                            </tr>
+                            {currentRace.drivers.map((driver, index) => (
+                                <tr key={index}>
+                                    <td>{driver.name}</td>
+                                    <td>{driver.car}</td>
+                                    <td>ok</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </>
+                ) : raceMode === "safe" && nextRace ? (
+                    <>
+                        <p>Next race: {nextRace.raceName}</p>
+                        <table className="driverTable" id="nextRace" style={{ width: "100%" }}>
+                            <tbody>
+                            <tr>
+                                <td>Driver</td>
+                                <td>Car</td>
+                                <td>Status</td>
+                            </tr>
+                            {nextRace.drivers.map((driver, index) => (
+                                <tr key={index}>
+                                    <td>{driver.name}</td>
+                                    <td>{driver.car}</td>
+                                    <td>ok</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </>
+                )
+                    : (
+                    <p>Next race has not been submitted</p>
+                )
+            )
+                : (
+                <p>No races have been submitted</p>
+            )}
+
+            <button id="fullscreenButton" onClick={toggleFullScreen}>
+                fullscreen
+                <FontAwesomeIcon
+                    icon={faUpRightAndDownLeftFromCenter}
+                    style={{ marginLeft: "10px" }} // Add space between text and icon
+                />
             </button>
         </div>
-
-
-    )
+    );
 }
 
 export default NextRace;
