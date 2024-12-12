@@ -30,6 +30,7 @@ function RaceControl() {
         socket.emit("getAreAllRacesFinished");
         socket.emit("getRaceData");
         socket.emit("getRaceMode");
+        socket.emit("getTimerUpdate");
 
         const handleRaceQueue = (queue) => {
             //console.log("Queue pos from server: " + queue);
@@ -46,6 +47,9 @@ function RaceControl() {
             data.find((race) => {
                 if (race.isOngoing === true) {
                     setRaceStarted(true);
+                    socket.emit("getTimeRemaining", race.raceName, (response) => {
+                        setTimeRemaining(response.timeRemaining);
+                    });
                 }
             });
             //console.log("data.length:", data.length);

@@ -66,6 +66,7 @@ io.on('connection', (socket) => {
         }
     }
 
+
     socket.on('pauseTimer', (raceName) => {
         timer.pauseTimer(raceName);
     });
@@ -83,6 +84,33 @@ io.on('connection', (socket) => {
         const timeRemaining = timer.getTimeRemaining(raceName);
         callback({ raceName, timeRemaining });
     });
+
+
+    // socket.on('getTimeRemaining', (raceName) => {
+    //
+    //     if (!timer.intervals) {
+    //         timer.intervals = {};
+    //     }
+    //
+    //     // Clear any existing interval for the same raceName to prevent duplicates
+    //     if (timer.intervals[raceName]) {
+    //         clearInterval(timer.intervals[raceName]);
+    //     }
+    //
+    //     // Start a new interval
+    //     timer.intervals[raceName] = setInterval(() => {
+    //         const timeRemaining = timer.getTimeRemaining(raceName);
+    //
+    //         // Broadcast updated time to the client
+    //         socket.emit('timeRemaining', { raceName, timeRemaining });
+    //
+    //         // Stop the interval when timeRemaining reaches 0
+    //         if (timeRemaining <= 0) {
+    //             clearInterval(timer.intervals[raceName]);
+    //             delete timer.intervals[raceName];
+    //         }
+    //     }, 10);
+    // });
 
     // immediately send current race data to the newly connected client
     socket.emit("raceData", raceData);
@@ -177,6 +205,10 @@ io.on('connection', (socket) => {
 
     socket.on('getRaceMode', () => {
         socket.emit("raceMode", raceMode);
+    });
+
+    socket.on('getTimerUpdate', () => {
+        socket.emit("timer", raceMode);
     });
 
     socket.on('getAreAllRacesFinished', () => {
@@ -274,8 +306,8 @@ io.on('connection', (socket) => {
         timerIntervalId = setInterval(() => {
             const onGoingRace = raceData.filter((race) => race.isOngoing === true);
             if (onGoingRace.length > 0) {
-                const timer = onGoingRace[0].timeRemainingOngoingRace;
-                socket.emit('currentRaceTimer', timer);
+                const currentTimer = onGoingRace[0].timeRemainingOngoingRace;
+                socket.emit('currentRaceTimer', currentTimer);
             } else {
                 // No ongoing race, clear the interval and emit null once
                 clearInterval(timerIntervalId);

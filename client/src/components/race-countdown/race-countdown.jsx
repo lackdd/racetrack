@@ -10,42 +10,48 @@ import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 function RaceCountdown() {
-    const [raceMode, setRaceMode] = useState("");
     const [isFlashing, setIsFlashing] = useState(false);
     const [timer, setTimer] = useState(0);
+    const [currentRaceName, setCurrentRaceName] = useState("");
 
-    // Handle incoming race mode changes so a race starting triggers the next useEffect to retrieve the timer data from the server
     useEffect(() => {
-        socket.emit("getRaceMode");
-        socket.on("raceMode", (newRaceMode) => {
-            setRaceMode(newRaceMode);
-            console.log("Getting race mode from server")
+
+        socket.on("timerUpdate", ({ raceName, timeRemaining }) => { // Destructure the object
+            setTimer(timeRemaining);
         });
 
-        // Clean up the socket listener on unmount
         return () => {
-            socket.off("raceMode");
+            socket.off("timerUpdate");
         };
     }, []);
 
-    // get the timer data from the server
     useEffect(() => {
-        socket.emit("getCurrentRaceTimer")
+        // Fetch race data
+        socket.emit("getRaceData");
 
-        socket.on("currentRaceTimer", (data) => {
-            if (data !== null) {
-                setTimer(data);
+        socket.on("raceData", (data) => {
+            const ongoingRace = data.find(race => race.isOngoing === true);
+            if (ongoingRace) {
+                setCurrentRaceName(ongoingRace.raceName); // Set the raceName of the first ongoing race
             } else {
-                setTimer(0);
-                console.error("Error updating timer. Resetting...");
+                setCurrentRaceName(null); // Handle the case where no race is ongoing
             }
         });
 
-        // Clean up the socket listener on unmount
         return () => {
-            socket.off("currentRaceTimer");
+            // Clean up listeners for raceData
+            socket.off("raceData");
         };
-    }, [raceMode]);
+    }, []);
+    //
+
+    useEffect(() => {
+        if (currentRaceName) {
+            socket.emit("getTimeRemaining", currentRaceName, (response) => {
+                setTimer(response.timeRemaining);
+            });
+        }
+    }, [currentRaceName]);
 
 
     useEffect(() => {
