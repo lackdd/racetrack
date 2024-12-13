@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
         //queuePosition--;
         io.emit('queuePosition', queuePosition);
-        if (queuePosition === -1 || raceData.length < 1) {
+        if (queuePosition === -1 || raceData.length < 1 || (wasFirstRaceEnded === true && raceData.length < 2)) {
             areAllRacesFinished = true;
             io.emit('areAllRacesFinished', areAllRacesFinished);
         }
