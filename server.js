@@ -252,6 +252,10 @@ io.on('connection', (socket) => {
                     //console.log(raceData)
                     break;
                 case "finish":
+                    const ongoingRace = raceData.find(race => race.isOngoing === true);
+                    if (ongoingRace) {
+                        stopwatch.clearAllStopwatches(ongoingRace.drivers);
+                    }
                     timer.resetTimer(raceName, io);
                     //updateRaceStatus( { raceName: raceName, isOngoing: false, });
                     //setRaceStarted(false);
@@ -303,27 +307,28 @@ io.on('connection', (socket) => {
         socket.emit('currentFlagStatus', flagStatus);
     });
 
+    // not used
     // handle socket for /countdown to get the current race timeRemainingOngoingRace value
-    let timerIntervalId = null; // Variable to store the interval ID
-
-    socket.on('getCurrentRaceTimer', () => {
-        if (timerIntervalId) {
-            clearInterval(timerIntervalId); // Clear any existing interval
-        }
-
-        timerIntervalId = setInterval(() => {
-            const onGoingRace = raceData.filter((race) => race.isOngoing === true);
-            if (onGoingRace.length > 0) {
-                const currentTimer = onGoingRace[0].timeRemainingOngoingRace;
-                socket.emit('currentRaceTimer', currentTimer);
-            } else {
-                // No ongoing race, clear the interval and emit null once
-                clearInterval(timerIntervalId);
-                timerIntervalId = null; // Reset the interval ID
-                socket.emit('currentRaceTimer', null);
-            }
-        }, 10); // Emit the timer every 10 milliseconds
-    });
+    // let timerIntervalId = null; // Variable to store the interval ID
+    //
+    // socket.on('getCurrentRaceTimer', () => {
+    //     if (timerIntervalId) {
+    //         clearInterval(timerIntervalId); // Clear any existing interval
+    //     }
+    //
+    //     timerIntervalId = setInterval(() => {
+    //         const onGoingRace = raceData.filter((race) => race.isOngoing === true);
+    //         if (onGoingRace.length > 0) {
+    //             const currentTimer = onGoingRace[0].timeRemainingOngoingRace;
+    //             socket.emit('currentRaceTimer', currentTimer);
+    //         } else {
+    //             // No ongoing race, clear the interval and emit null once
+    //             clearInterval(timerIntervalId);
+    //             timerIntervalId = null; // Reset the interval ID
+    //             socket.emit('currentRaceTimer', null);
+    //         }
+    //     }, 10); // Emit the timer every 10 milliseconds
+    // });
 
     // Handle stopwatch sockets
     socket.on('initializeStopwatch', (driverName) => {
@@ -346,7 +351,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('stopStopwatch', (raceDrivers) => {
-        stopwatch.stopStopwatch(raceDrivers);
+        stopwatch.clearAllStopwatches(raceDrivers);
     });
 
     socket.on('getCurrentLapTimes', () => {
