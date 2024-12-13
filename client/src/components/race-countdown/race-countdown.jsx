@@ -7,6 +7,7 @@ import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
 import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import "./race-countdown.css"
 
 
 function RaceCountdown() {
@@ -54,59 +55,46 @@ function RaceCountdown() {
     }, [currentRaceName]);
 
 
-    useEffect(() => {
-        if (timer % 60000 === 0 && timer % 60010 === 0 && timer % 60020 === 0 && timer !== 600000) {
-            //setIsFlashing(prevIsFlashing => !prevIsFlashing);
-            setIsFlashing(true);
-        } else {
-            //setIsFlashing(prevIsFlashing => !prevIsFlashing);
-            setIsFlashing(false)
-        }
-    }, [timer]);
+    // useEffect(() => {
+    //     if (timer % 6000 === 0 || timer % 6001 === 0 || timer % 6002 === 0 && timer !== 60000) {
+    //         //setIsFlashing(prevIsFlashing => !prevIsFlashing);
+    //         setIsFlashing(true);
+    //     } else {
+    //         //setIsFlashing(prevIsFlashing => !prevIsFlashing);
+    //         setIsFlashing(false)
+    //     }
+    // }, [timer]);
 
     const time = formatLapTime(timer);
 
     return (
         <div className="RaceCountdown">
-            <div
-                style={{
-                    fontSize: "8em",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "fixed",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "100%",
-                    fontFamily: "monospace"
-                }}>
-                {timer === 0 ? (
+                {timer === 0 || timer === 60000 || timer === 600000 ? ( // todo set timer in race control settings and compare to this value
                     <p style={{color: "black"}}>00:00:00</p>
                 ) : timer < 10000 && timer !== 0 ? (
-                    <p style={{color: "red"}}>
+                    <p className="lessThan10Seconds">
                         {/*{formatLapTime(timer)}*/}
-                        <span style={{width: "2ch"}}>{time.minutes}</span>:
-                        <span style={{width: "2ch"}}>{time.seconds}</span>:
-                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                        <span>{time.minutes}</span>:
+                        <span>{time.seconds}</span>:
+                        <span>{time.milliseconds}</span>
                     </p>
-                ) : isFlashing ? (
-                    <p style={{color: "red"}}>
-                        {/*{formatLapTime(timer)}*/}
-                        <span style={{width: "2ch"}}>{time.minutes}</span>:
-                        <span style={{width: "2ch"}}>{time.seconds}</span>:
-                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
-                    </p>
-                ) : (
+                )
+                //     : isFlashing ? (
+                //     <p style={{color: "red"}}>
+                //         {/*{formatLapTime(timer)}*/}
+                //         <span>{time.minutes}</span>:
+                //         <span>{time.seconds}</span>:
+                //         <span>{time.milliseconds}</span>
+                //     </p>
+                // )
+                    : (
                     // <p>{formatLapTime(timer)}</p>
-                    <p style={{display: "flex"}}>
-                        <span style={{width: "2ch"}}>{time.minutes}</span>:
-                        <span style={{width: "2ch"}}>{time.seconds}</span>:
-                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                    <p>
+                        <span>{time.minutes}</span>:
+                        <span>{time.seconds}</span>:
+                        <span>{time.milliseconds}</span>
                     </p>
                 )}
-            </div>
             <button
                 id="fullscreenButton"
                 onClick={toggleFullScreen}>
