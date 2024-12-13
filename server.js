@@ -29,6 +29,7 @@ let raceData = [];
 let queuePosition = -1;
 let raceMode = "";
 let lastAssignedCar = 0;
+let wasFirstRaceEnded = false;
 
 let areAllRacesFinished = true;
 let flagStatus = "";
@@ -125,17 +126,11 @@ io.on('connection', (socket) => {
         console.log("here");
 
         if (areAllRacesFinished === true) {
-
             queuePosition = raceData.length-1;
-
             areAllRacesFinished = false;
-
             console.log("areAllRacesFinished value: ", areAllRacesFinished);
-
             io.emit("areAllRacesFinished", areAllRacesFinished);
-
             io.emit('queuePosition', queuePosition);
-
         }
     });
 
@@ -169,10 +164,14 @@ io.on('connection', (socket) => {
     socket.on("deleteRace", (raceName) => {
         raceData = raceData.filter((race) => race.raceName !== raceName);
         io.emit("raceData", raceData); // Broadcast updated race data to all clients
-        queuePosition = raceData.length-1;
+        //queuePosition--;
         io.emit('queuePosition', queuePosition);
+        if (queuePosition === -1 || raceData.length < 1) {
+            areAllRacesFinished = true;
+            io.emit('areAllRacesFinished', areAllRacesFinished);
+        }
     });
-
+    //
     socket.on("updateRaceDrivers", ({ raceName, drivers }) => {
         const race = raceData.find((race) => race.raceName === raceName);
         console.log("i got new race driver data");
@@ -197,6 +196,15 @@ io.on('connection', (socket) => {
     // Send current race data to newly connected clients
     socket.on('getQueuePosition', () => {
         socket.emit("queuePosition", queuePosition);
+    });
+
+    socket.on('getWasFirstRaceEnded', () => {
+        socket.emit("wasFirstRaceEnded", wasFirstRaceEnded);
+    });
+
+    socket.on('updateWasFirstRaceEnded', (data) => {
+        wasFirstRaceEnded = data;
+        io.emit('wasFirstRaceEnded', wasFirstRaceEnded);
     });
 
     socket.on('getLastAssignedCar', () => {

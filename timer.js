@@ -58,8 +58,8 @@ class Timer {
             timer.running = false;
         }
     }
-
-    resetTimer(raceName, io, initialTime = 0) {
+    // 1
+    resetTimer(raceName, io, initialTime = 60000) {
         this.pauseTimer(raceName);
         if (this.timers[raceName]) {
             this.timers[raceName].timeRemaining = initialTime;

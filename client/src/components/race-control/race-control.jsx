@@ -183,6 +183,7 @@ function RaceControl() {
         }
         socket.emit("updateRaceStatus", {raceName: currentRace.raceName, isOngoing: false,});
         setRaceStarted(false);
+        socket.emit("updateWasFirstRaceEnded", true);
     };
 
     return (
