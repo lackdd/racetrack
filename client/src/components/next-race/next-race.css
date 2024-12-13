@@ -1,4 +1,76 @@
 .NextRace {
     align-items: center;
     justify-content: center;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.NextRace .information {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    font-size: clamp(1rem, 7vw, 5rem);
+}
+
+.NextRace .text {
+    color: #60addc;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.NextRace .raceName {
+    font-size: clamp(2rem, 3vw, 3rem);
+}
+
+.NextRace .paddock {
+    text-align: center;
+    padding: .5rem;
+    font-weight: bold;
+    color: red;
+    font-size: clamp(3rem, 4vw, 4rem);
+    margin: 0;
+}
+
+.blinking {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.NextRace .driverTable {
+    max-width: 50%;
+    min-width: 30%;
+    width: 100%;
+}
+
+.NextRace .driverTable th {
+    font-size: clamp(3rem, 2.5vw, 5rem);
+    border-bottom: 1px solid;
+}
+
+.NextRace .driverTable td {
+    font-size: clamp(2.5rem, 2vw, 4rem);
+}
+
+.NextRace .car {
+    text-align: right;
+}
+
+.NextRace .driver {
+
 }

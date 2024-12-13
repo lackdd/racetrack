@@ -19,7 +19,6 @@ import "./next-race.css"
 
 function NextRace() {
     const [raceMode, setRaceMode] = useState("");
-    const [flagStatus, setFlagStatus] = useState("");
     const [raceData, setRaceData] = useState([]); // Store all races and their drivers
     const [currentRace, setCurrentRace] = useState(null);  // store current race data
     const [nextRace, setNextRace] = useState(null); // store next race data
@@ -95,34 +94,31 @@ function NextRace() {
 
     useEffect(() => {
         if (areAllRacesFinished) {
-            console.log("if")
             setCurrentRace(null);
             setNextRace(null);
         } else if (queuePos === -1 && !areAllRacesFinished) {
-                console.log("else if")
                 // No race has started, show first race (if any)
                 setCurrentRace(raceData[0] || null);
                 setNextRace(raceData[1] || null);
         } else {
-                console.log("else")
                 // Display current and next races based on queue position
                 setCurrentRace(raceData[queuePos] || null);
                 setNextRace(raceData[queuePos + 1] || null);
         }
     }, [areAllRacesFinished, queuePos, raceData]);
 
-    useEffect(() => {
-        console.log("Current race data:");
-        console.log(currentRace);
-        console.log("Next race data:");
-        console.log(nextRace)
-    }, [raceMode]);
-
-
-    useEffect(() => {
-        console.log("isOnGoing");
-        console.log(isOnGoing);
-    }, [isOnGoing]);
+    // useEffect(() => {
+    //     console.log("Current race data:");
+    //     console.log(currentRace);
+    //     console.log("Next race data:");
+    //     console.log(nextRace)
+    // }, [raceMode]);
+    //
+    //
+    // useEffect(() => {
+    //     console.log("isOnGoing");
+    //     console.log(isOnGoing);
+    // }, [isOnGoing]);
 
 
     // Fetch race data
@@ -157,53 +153,54 @@ function NextRace() {
                 raceMode === "danger" ? (
                     <>
                         <p>
-                            Current race: {currentRace.raceName} <br /> Move to the paddock!
+                            <p className="text raceName"> Next race: {currentRace.raceName}</p>
+                            <p className="text paddock blinking">Move to the paddock!</p>
                         </p>
-                        <table className="driverTable" id="currentRace" style={{ width: "100%" }}>
+                        <table className="driverTable" id="currentRace">
                             <tbody>
                             <tr>
-                                <td>Driver</td>
-                                <td>Car</td>
-                                <td>Status</td>
+                            <th className="driver">Driver</th>
+                                <th className="car">Car</th>
+                                {/*<td>Status</td>*/}
                             </tr>
                             {currentRace.drivers.map((driver, index) => (
                                 <tr key={index}>
                                     <td>{driver.name}</td>
-                                    <td>{driver.car}</td>
-                                    <td>ok</td>
+                                    <td className="car" >{driver.car}</td>
+                                    {/*<td>ok</td>*/}
                                 </tr>
                             ))}
                             </tbody>
                         </table>
                     </>
                 ) : raceMode === "safe" && nextRace ? (
-                    <>
-                        <p>Next race: {nextRace.raceName}</p>
-                        <table className="driverTable" id="nextRace" style={{ width: "100%" }}>
-                            <tbody>
-                            <tr>
-                                <td>Driver</td>
-                                <td>Car</td>
-                                <td>Status</td>
-                            </tr>
-                            {nextRace.drivers.map((driver, index) => (
-                                <tr key={index}>
-                                    <td>{driver.name}</td>
-                                    <td>{driver.car}</td>
-                                    <td>ok</td>
+                        <>
+                            <p className="text raceName"> Next race: {nextRace.raceName}</p>
+                            <table className="driverTable" id="nextRace">
+                                <tbody>
+                                <tr>
+                                    <th className="driver">Driver</th>
+                                    <th className="car">Car</th>
+                                    {/*<td>Status</td>*/}
                                 </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </>
-                )
+                                {nextRace.drivers.map((driver, index) => (
+                                    <tr key={index}>
+                                        <td className="driver">{driver.name}</td>
+                                        <td className="car">{driver.car}</td>
+                                        {/*<td>ok</td>*/}
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </>
+                    )
                     : (
-                    <p>Next race has not been submitted</p>
+                        <p className="information">Next race has not been submitted</p>
                 )
             )
                 : (
-                <p>No races have been submitted</p>
-            )}
+                    <p className="information" >No races have been submitted</p>
+                )}
 
             <button id="fullscreenButton" onClick={toggleFullScreen}>
                 fullscreen
