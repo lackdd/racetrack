@@ -26,4 +26,5 @@
 #fullscreenButton:hover {
     transform: scale(1.05);
     font-weight: bold;
+    box-shadow: 2px 2px 2px;
 }
