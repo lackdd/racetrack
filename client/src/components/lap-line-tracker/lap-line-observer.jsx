@@ -5,6 +5,8 @@ import socket from "../../socket.js";
 import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import {fastestLapTime} from "../universal/calculateFastestLapTime.js"
+import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function LapLineObserver() {
     //const [elapsedTimes, setElapsedTimes] = useState({});
@@ -109,7 +111,6 @@ function LapLineObserver() {
             socket.emit("getRaceData");
 
             socket.on("raceData", (data) => {
-                console.log("New data fetched");
                 handleRaceData(data);
             });
 
@@ -158,31 +159,42 @@ function LapLineObserver() {
         socket.emit("initializeStopwatch", driverName);
     };
 
+
     // Handle lap completion for a driver
     const driverCrossedFinishLine = (driverName) => {
         setRaceDrivers((prev) =>
             prev.map((driver) => {
-                if (driver.name === driverName && currentLapTimes[driverName] !== undefined) {
-                    console.log(currentLapTimes[driverName])
-                    const newLapTimes = [
-                        ...driver.lapTimes,
-                        formatLapTime(currentLapTimes[driverName] || 0),
-                    ];
-                    const newLapTimesMS = [
-                        ...driver.lapTimesMS,
-                        currentLapTimes[driverName] || 0,
-                    ];
+                if (driver.name === driverName) {
+                    const newCurrentLap = driver.currentLap + 1;
+
+                    // Only update lapTimes, lapTimesMS, and fastestLap if currentLap > 0
+                    if (driver.currentLap > 0) {
+                        const newLapTimes = [
+                            ...driver.lapTimes,
+                            formatLapTime(currentLapTimes[driverName] || 0),
+                        ];
+                        const newLapTimesMS = [
+                            ...driver.lapTimesMS,
+                            currentLapTimes[driverName] || 0,
+                        ];
+                        return {
+                            ...driver,
+                            currentLap: newCurrentLap,
+                            lapTimes: newLapTimes,
+                            lapTimesMS: newLapTimesMS,
+                            fastestLap: formatLapTime(fastestLapTime(newLapTimesMS)),
+                        };
+                    }
+                    // If it's the first lap (currentLap === 0), only increment the lap
                     return {
                         ...driver,
-                        finishedLaps: driver.finishedLaps + 1,
-                        lapTimes: newLapTimes,
-                        lapTimesMS: newLapTimesMS,
-                        fastestLap: formatLapTime(fastestLapTime(newLapTimesMS)),
-                    }
+                        currentLap: newCurrentLap,
+                    };
                 }
                 return driver;
             })
         );
+
         initializeStopwatch(driverName);
         resetStopwatch(driverName);
         startStopwatch(driverName);
@@ -190,49 +202,46 @@ function LapLineObserver() {
 
     return (
         <div className="LapLineObserver">
-            <div className="container">
-                <div id="observerButtonsGrid">
-                    {/*{raceDrivers.length === 0 && !isDisabled ? (*/}
-                    {!currentRaceName ? (
+            <div id="observerButtonsGrid">
+                {!currentRaceName ? (
+                    <>
                         <p className="information">No ongoing race exists</p>
-                    ) : (
-                        raceDrivers.map((driver, index) => (
-                            <button
-                                id="observerButton"
-                                key={index}
-                                className="waves-effect waves-light btn-large"
-                                disabled={isDisabled}
-                                onClick={() => driverCrossedFinishLine(driver.name)}
-                            >
-                                {driver.name}
-                                <p style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    fontSize: "1.6rem"
-                                }}>
-                                <span style={{width: "3ch", textAlign: "center"}}>
+                    </>
+
+                ) : (
+                    raceDrivers.map((driver, index) => (
+                        <button
+                            id="observerButton"
+                            key={index}
+                            className="waves-effect waves-light btn-large"
+                            disabled={isDisabled}
+                            onClick={() => driverCrossedFinishLine(driver.name)}
+                        >
+                            {driver.car}
+                            <p className="timer-container">
+                                <span>
                                     {formatLapTime(currentLapTimes[driver.name] || 0).minutes}
                                 </span>
-                                    :
-                                    <span style={{width: "3ch", textAlign: "center"}}>
+                                :
+                                <span>
                                     {formatLapTime(currentLapTimes[driver.name] || 0).seconds}
                                 </span>
-                                    :
-                                    <span style={{width: "3ch", textAlign: "center"}}>
+                                :
+                                <span>
                                     {formatLapTime(currentLapTimes[driver.name] || 0).milliseconds}
                                 </span>
-                                </p>
-                            </button>
-                        ))
-                    )}
-                    {/*{isDisabled && <p className="information">Race session has ended</p>}*/}
-                    {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
-                    <button
-                        id="fullscreenButton"
-                        onClick={toggleFullScreen}>fullscreen
-                    </button>
-                </div>
+                            </p>
+                        </button>
+                    ))
+                )}
+                {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
+                <button id="fullscreenButton" onClick={toggleFullScreen}>
+                    fullscreen
+                    <FontAwesomeIcon
+                        icon={faUpRightAndDownLeftFromCenter}
+                        style={{marginLeft: "10px"}} // Add space between text and icon
+                    />
+                </button>
             </div>
         </div>
     );
