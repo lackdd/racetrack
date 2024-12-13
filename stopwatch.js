@@ -31,6 +31,7 @@ class Stopwatch {
     };
 
     // Stop and reset stopwatch when driver finishes lap
+    // todo Always check whether interval is null before restarting the stopwatch to avoid creating duplicate intervals.
     resetStopwatch = (driverName) => {
         const stopwatch = this.stopwatches[driverName];
         if (!stopwatch) {
@@ -40,14 +41,25 @@ class Stopwatch {
         clearInterval(stopwatch.interval);
         delete stopwatch.interval;
         stopwatch.elapsedTime = 0;
-        // setElapsedTimes((prev) => ({
-        //     ...prev,
-        //     [driverName]: 0,
-        // }));
+    };
+
+    // Pause stopwatches for all drivers
+    pauseAllStopwatches = (raceDrivers) => {
+        //let stopwatch = this.stopwatches[raceDrivers];
+        raceDrivers.forEach((driver) => {
+            const stopwatch = this.stopwatches[driver.name];
+            if (!stopwatch) {
+                console.error(`Stopwatch for driver ${driver.name} not initialized.`);
+                return;
+            }
+            clearInterval(stopwatch.interval);
+            stopwatch.interval = null; // Mark interval as paused
+        });
+        console.log(raceDrivers) // log final results
     };
 
     // Stop stopwatches for all drivers and delete data when race finishes
-    stopStopwatch = (raceDrivers) => {
+    clearAllStopwatches = (raceDrivers) => {
         //let stopwatch = this.stopwatches[raceDrivers];
         raceDrivers.forEach((driver) => {
             const stopwatch = this.stopwatches[driver.name];
@@ -59,11 +71,6 @@ class Stopwatch {
         console.log(raceDrivers) // log final results
     };
 
-
-    // getCurrentLapTimes() {
-    //     console.log(this.stopwatches.elapsedTime);
-    //     return this.stopwatches.elapsedTime || 0;
-    // }
 
     getCurrentLapTimes() {
         return Object.fromEntries(
