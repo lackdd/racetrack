@@ -1,70 +1,63 @@
-.LapLineObserver .container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    place-self: center;
-    height: 100vh;
+.LapLineObserver {
+    height: 100%;
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
 .LapLineObserver #observerButtonsGrid {
     flex: 1;
     display: grid;
-    gap: 20px;
-    /*place-items: center;*/
-    /*height: 100vh;*/
-    /*max-height: 100vh;*/
-    /*padding-bottom: 10px;*/
-    /*padding-top: 10px;*/
+    gap: 10px;
     height: 100%;
     width: 100%;
     margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 .LapLineObserver #observerButton {
+    padding: 0;
     display: block;
     height: 100%;
     width: 100%;
-    font-size: 2em;
+    font-size: clamp(0.5rem, 6vw, 10rem);
     word-wrap: break-word;
     text-align: center;
-    /*    height: 0;
-        padding-bottom: 100%;*/
-
+    border-radius: 5px;
+    flex-grow: 1;
+    background-color: #b3e3f2;
 }
 
 @media only screen and (orientation: portrait) {
     .LapLineObserver #observerButtonsGrid {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(4, 1fr);
-    }
-
-    .LapLineObserver #observerButton {
-        /*height: 20vh;*/
-        min-height: 23vh;
-        /*max-height: 23vh;*/
     }
 }
 
 @media only screen and (orientation: landscape) {
     .LapLineObserver #observerButtonsGrid {
-        grid-template-columns: repeat(4, 1fr);
+        /*grid-template-columns: repeat(4, 1fr);*/
+        /*grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); !* Dynamic columns *!*/
+        grid-auto-flow: column;
         grid-template-rows: repeat(2, 1fr);
-    }
-
-    .LapLineObserver #observerButton {
-        /*height: 40vh;*/
-        min-height: 45vh;
-        /*max-height: 50vh;*/
     }
 }
 
+/* Portrait Mode */
+/*@media only screen and (orientation: portrait) {*/
+/*    .LapLineObserver #observerButtonsGrid {*/
+/*        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); !* Adjust minimum width if needed *!*/
+/*    }*/
+/*}*/
+
+/*!* Landscape Mode *!*/
+/*@media only screen and (orientation: landscape) {*/
+/*    .LapLineObserver #observerButtonsGrid {*/
+/*        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); !* Adjust minimum width if needed *!*/
+/*    }*/
+/*}*/
+
 .LapLineObserver .information {
     z-index: 2;
-    font-size: 4em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -74,5 +67,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
+    font-size: clamp(1rem, 7vw, 5rem);
+}
+
+.LapLineObserver .timer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(0.5rem, 3vw, 3rem);
 }
 
