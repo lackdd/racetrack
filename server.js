@@ -460,7 +460,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('stopStopwatch', (raceDrivers) => {
-        stopwatch.stopStopwatch(raceDrivers);
+        stopwatch.clearAllStopwatches(raceDrivers);
     });
 
     socket.on('getCurrentLapTimes', () => {
