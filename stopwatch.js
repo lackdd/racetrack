@@ -1,8 +1,25 @@
+const Race = require("./models/Race");
 
 class Stopwatch {
     constructor() {
         this.stopwatches = {}; // Store lap times for drivers. Same as const [elapsedTimes, setElapsedTimes] = useState({})?
     }
+
+/*    async saveStopwatchToDatabase() {
+        try {
+            const stopwatch = this.stopwatches[driverName];
+            if (stopwatch) {
+                await Race.findOneAndUpdate(
+                    { driverName },
+                    { timeRemainingOngoingRace: stopwatch.getCurrentLapTimes },
+                    { new: true, upsert: true }
+                );
+                console.log(`Saved stopwatches for driver "${raceName}": ${stopwatch.getCurrentLapTimes} ms`);
+            }
+        } catch (error) {
+            console.error(`Error saving stopwatches for race "${raceName}":`, error);
+        }
+    }*/
 
     initializeStopwatch(driverName, initialTime = 0) {
         if (!this.stopwatches[driverName]) {
