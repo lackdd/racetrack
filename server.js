@@ -9,6 +9,7 @@ const Stopwatch = require('./stopwatch.js');
 const keys = require('./config/keys');
 const mongoose = require('mongoose');
 const Race = require('./models/Race');
+const StopwatchesSchema = require('./models/Stopwatch');
 const LastRaceData = require('./models/LastRaceData');
 const Variable = require('./models/Variable');
 mongoose.connect(keys.mongoURI);
@@ -36,7 +37,7 @@ let lastRaceData = [];
 let areAllRacesFinished = true;
 let flagStatus = "";
 const timer = new Timer();
-const stopwatch = new Stopwatch();
+let currentRaceStopwatches = new Stopwatch();
 
 // Load existing races from MongoDB into memory
 (async () => {
@@ -67,6 +68,21 @@ const stopwatch = new Stopwatch();
         if (!flagStatusVar) {
             flagStatusVar = await Variable.create({key: "flagStatus", value: ""});
         }
+
+        console.log("currentRaceStopwatches: ", currentRaceStopwatches);
+
+        let stopwatchesVar = await StopwatchesSchema.findOne();
+        console.log("stopwatchesVar.stopwatches: ", stopwatchesVar.stopwatches);
+
+        if (stopwatchesVar) {
+            currentRaceStopwatches.stopwatches = stopwatchesVar.stopwatches
+                ? Object.fromEntries(stopwatchesVar.stopwatches)
+                : {};
+            console.log("Converted stopwatches to Object:", currentRaceStopwatches);
+        } else {
+            console.log("No stopwatches found in the database.");
+        }
+
         queuePosition = queuePositionVar.value;
         raceMode = raceModeVar.value;
         lastAssignedCar = lastAssignedCarVar.value;
@@ -368,7 +384,7 @@ io.on('connection', (socket) => {
             case "finish":
                 const ongoingRace = raceData.find(race => race.isOngoing === true);
                 if (ongoingRace) {
-                    stopwatch.clearAllStopwatches(ongoingRace.drivers);
+                    currentRaceStopwatches.clearAllStopwatches(ongoingRace.drivers);
                 }
                 timer.resetTimer(raceName, io);
                 console.log("finish");
@@ -439,7 +455,7 @@ io.on('connection', (socket) => {
 
     // Handle stopwatch sockets
     socket.on('initializeStopwatch', (driverName) => {
-        stopwatch.initializeStopwatch(driverName);
+        currentRaceStopwatches.initializeStopwatch(driverName);
     });
 
     //Handle spectator stuff here
@@ -449,22 +465,22 @@ io.on('connection', (socket) => {
     });
 
     socket.on('startStopwatch', (driverName) => {
-        console.log(stopwatch);
-        stopwatch.startStopwatch(driverName);
+        console.log(currentRaceStopwatches);
+        currentRaceStopwatches.startStopwatch(driverName);
     });
 
     socket.on('resetStopwatch', (driverName) => {
-        console.log(stopwatch);
-        stopwatch.initializeStopwatch(driverName);
-        stopwatch.resetStopwatch(driverName);
+            console.log(currentRaceStopwatches);
+            currentRaceStopwatches.initializeStopwatch(driverName);
+            currentRaceStopwatches.resetStopwatch(driverName);
     });
 
     socket.on('stopStopwatch', (raceDrivers) => {
-        stopwatch.clearAllStopwatches(raceDrivers);
+            currentRaceStopwatches.clearAllStopwatches(raceDrivers);
     });
 
     socket.on('getCurrentLapTimes', () => {
-        socket.emit("currentLapTimes", stopwatch.getCurrentLapTimes());
+            socket.emit("currentLapTimes", currentRaceStopwatches.getCurrentLapTimes());
     });
 
 
@@ -477,8 +493,8 @@ io.on('connection', (socket) => {
 
         stopwatchesIntervalId = setInterval(() => {
             const onGoingRace = raceData.filter((race) => race.isOngoing === true);
-            if (onGoingRace.length > 0) {
-                socket.emit('currentLapTimesInRealTime', stopwatch.getCurrentLapTimes());
+            if (onGoingRace.length) {
+                socket.emit('currentLapTimesInRealTime', currentRaceStopwatches.getCurrentLapTimes());
             } else {
                 // No ongoing race, clear the interval and emit null once
                 clearInterval(stopwatchesIntervalId);

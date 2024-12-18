@@ -1,25 +1,27 @@
-const Race = require("./models/Race");
+const StopwatchesSchema = require("./models/Stopwatch");
 
 class Stopwatch {
     constructor() {
         this.stopwatches = {}; // Store lap times for drivers. Same as const [elapsedTimes, setElapsedTimes] = useState({})?
     }
 
-/*    async saveStopwatchToDatabase() {
+    async saveStopwatchesToDatabase() {
         try {
-            const stopwatch = this.stopwatches[driverName];
-            if (stopwatch) {
-                await Race.findOneAndUpdate(
-                    { driverName },
-                    { timeRemainingOngoingRace: stopwatch.getCurrentLapTimes },
-                    { new: true, upsert: true }
-                );
-                console.log(`Saved stopwatches for driver "${raceName}": ${stopwatch.getCurrentLapTimes} ms`);
+            const stopwatchesInDatabase = await StopwatchesSchema.findOne();
+            //console.log("stopwatchesInDatabase: ", stopwatchesInDatabase);
+            if (!stopwatchesInDatabase) {
+                const newStopwatches = new StopwatchesSchema({
+                    stopwatches: this.stopwatches,
+                });
+                await newStopwatches.save();
+            } else {
+                stopwatchesInDatabase.set("stopwatches", this.stopwatches);
+                await stopwatchesInDatabase.save();
             }
         } catch (error) {
-            console.error(`Error saving stopwatches for race "${raceName}":`, error);
+            console.error(`Error saving stopwatches:`, error);
         }
-    }*/
+    }
 
     initializeStopwatch(driverName, initialTime = 0) {
         if (!this.stopwatches[driverName]) {
@@ -41,8 +43,13 @@ class Stopwatch {
         if (!stopwatch.interval) {
             clearInterval(stopwatch.interval);
 
-            stopwatch.interval = setInterval(() => {
+            stopwatch.interval = setInterval(async() => {
                 stopwatch.elapsedTime += 10;
+
+                // Save to database every 1 second
+                if (stopwatch.elapsedTime % 1000 === 0) {
+                    await this.saveStopwatchesToDatabase();
+                }
             }, 10);
         }
     };
@@ -58,6 +65,7 @@ class Stopwatch {
         clearInterval(stopwatch.interval);
         delete stopwatch.interval;
         stopwatch.elapsedTime = 0;
+        this.saveStopwatchesToDatabase();
     };
 
     // Pause stopwatches for all drivers
@@ -85,6 +93,7 @@ class Stopwatch {
                 delete this.stopwatches[driver.name];
             }
         });
+        this.saveStopwatchesToDatabase();
         console.log(raceDrivers) // log final results
     };
 
