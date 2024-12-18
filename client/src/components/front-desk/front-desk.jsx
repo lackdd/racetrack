@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import socket from "../../socket.js";
 import "./front-desk.css";
 
@@ -19,7 +19,7 @@ function FrontDesk() {
 
         // actively fetch data from server
         const handleRaceData = (data) => {
-            console.log("Received race data from server:", data);
+            //console.log("Received race data from server:", data);
             setRaceList(data); // Update race list state
             const ongoingRace = data.find((race) => race.isOngoing === true);
             setRaceStarted(!!ongoingRace);
@@ -51,7 +51,7 @@ function FrontDesk() {
             return;
         }
 
-        const newRace = { raceName, isOngoing };
+        const newRace = {raceName, isOngoing};
         socket.emit("createRace", newRace); // Notify the server
         setRaceName("");
     };
@@ -65,18 +65,18 @@ function FrontDesk() {
     };
 
     return (
-        <div className="front-desk" style={{ textAlign: "center" }}>
+        <div className="front-desk" style={{textAlign: "center"}}>
             <h1 className="header">Front Desk Interface</h1>
-            { !raceStarted && (
+            {!raceStarted && (
                 <>
-            <div>
-                <input className="input"
-                    placeholder="Race name"
-                    value={raceName}
-                    onChange={handleRaceNameChange}
-                />
-                <button className="button add-button" onClick={handleRaceSubmit}>Add Race</button>
-            </div>
+                    <div>
+                        <input className="input"
+                               placeholder="Race name"
+                               value={raceName}
+                               onChange={handleRaceNameChange}
+                        />
+                        <button className="button add-button" onClick={handleRaceSubmit}>Add Race</button>
+                    </div>
                     <ul className="ul">
                         {raceList.map((race, index) => {
                             if (!wasFirstRaceEnded || (wasFirstRaceEnded && index !== 0)) {
