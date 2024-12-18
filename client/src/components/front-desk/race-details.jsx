@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from "react";
+import {useParams} from "react-router-dom";
+import {useNavigate} from 'react-router-dom';
 import socket from "../../socket.js";
 import "./front-desk.css";
 
 function RaceDetails() {
-    const { raceName } = useParams(); // Get the race name from the URL
+    const {raceName} = useParams(); // Get the race name from the URL
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [driverName, setDriverName] = useState("");
     const [lastAssignedCar, setLastAssignedCar] = useState(0);
     const [editValues, setEditValues] = useState({});
-
     const navigate = useNavigate();
 
     // get the current race data from the server
@@ -20,22 +19,13 @@ function RaceDetails() {
         socket.emit("getLastAssignedCar");
 
         const handleRaceData = (data) => {
-            console.log("Received race data from server:", data);
             const race = data.find((race) => race.raceName === raceName);
             if (race) {
                 setRaceDrivers(race.drivers || []);
-                // näitab edit current driveri asemel originaalseid nimesid
-                /*setEditValues(
-                    race.drivers.reduce((acc, driver) => {
-                        acc[driver.name] = driver.name;
-                        return acc;
-                    }, {})
-                );*/
             }
         };
 
         const handleLastAssignedCar = (data) => {
-            console.log("Received last assigned car value from server: " + data);
             setLastAssignedCar(data);
         }
 
@@ -78,18 +68,20 @@ function RaceDetails() {
             return;
         }
 
-        const newDriver = { name: driverName, car: lastAssignedCar + 1,
-            currentLap: 0,
+        const newDriver = {
+            name: driverName, car: lastAssignedCar + 1,
+            finishedLaps: 0,
             lapTimes: [],
             lapTimesMS: [],
-            fastestLap: null};
+            fastestLap: null
+        };
 
         const updatedDrivers = [...raceDrivers, newDriver];
 
         setLastAssignedCar((prevCar) => prevCar + 1);
-        socket.emit("updateLastAssignedCar", lastAssignedCar+1);
+        socket.emit("updateLastAssignedCar", lastAssignedCar + 1);
         setRaceDrivers(updatedDrivers);
-        socket.emit("updateRaceDrivers", { raceName, drivers: updatedDrivers });
+        socket.emit("updateRaceDrivers", {raceName, drivers: updatedDrivers});
         setDriverName("");
     };
 
@@ -97,7 +89,7 @@ function RaceDetails() {
     const handleRemoveDriver = (driverName) => {
         const updatedDrivers = raceDrivers.filter((driver) => driver.name !== driverName);
         setRaceDrivers(updatedDrivers);
-        socket.emit("updateRaceDrivers", { raceName, drivers: updatedDrivers });
+        socket.emit("updateRaceDrivers", {raceName, drivers: updatedDrivers});
     };
 
     const handleEditDriver = (originalName) => {
@@ -115,23 +107,23 @@ function RaceDetails() {
 
         const updatedDrivers = raceDrivers.map((driver) => {
             if (driver.name === originalName) {
-                return { ...driver, name: updatedName };
+                return {...driver, name: updatedName};
             }
             return driver;
         });
 
         setRaceDrivers(updatedDrivers);
-        socket.emit("updateRaceDrivers", { raceName, drivers: updatedDrivers });
+        socket.emit("updateRaceDrivers", {raceName, drivers: updatedDrivers});
     };
 
     return (
-        <div className="front-desk" style={{ textAlign: "center" }}>
+        <div className="front-desk" style={{textAlign: "center"}}>
             <h1 className="header">Race: {raceName}</h1>
             <div>
                 <input className="input"
-                    placeholder="Driver name"
-                    value={driverName}
-                    onChange={handleInputChange}
+                       placeholder="Driver name"
+                       value={driverName}
+                       onChange={handleInputChange}
                 />
                 <button className="button" onClick={handleAddDriver}>Add Driver</button>
             </div>
@@ -142,12 +134,16 @@ function RaceDetails() {
                             {driver.name} - Car {driver.car}
                         </span>
                         <input className="input race-details-input"
-                            placeholder="Edit driver name"
-                            value={editValues[driver.name] || ""}
-                            onChange={(e) => handleEditInputChange(e, driver.name)}
+                               placeholder="Edit driver name"
+                               value={editValues[driver.name] || ""}
+                               onChange={(e) => handleEditInputChange(e, driver.name)}
                         />
-                        <button className="button race-details-button" onClick={() => handleEditDriver(driver.name)}>Edit</button>
-                        <button className="button race-details-button" onClick={() => handleRemoveDriver(driver.name)}>Remove</button>
+                        <button className="button race-details-button"
+                                onClick={() => handleEditDriver(driver.name)}>Edit
+                        </button>
+                        <button className="button race-details-button"
+                                onClick={() => handleRemoveDriver(driver.name)}>Remove
+                        </button>
                     </li>
                 ))}
             </ul>
