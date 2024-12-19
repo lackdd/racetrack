@@ -22,7 +22,7 @@ function App() {
     useEffect(() => {
         keepTheme(); // track theme
     })
-
+    // todo siin samuti mõned routed, mis ei ole first level, aga peaksid olema
     const spectatorLinks = [
         { to: "/", label: "Home" },
         { to: "/worker", label: "Worker" },

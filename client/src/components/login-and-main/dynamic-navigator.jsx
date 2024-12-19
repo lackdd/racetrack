@@ -1,7 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./navigator.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUpRightAndDownLeftFromCenter} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import {ThemeToggle} from '../universal/themeToggle.jsx'
 import {FullscreenToggle} from "../universal/fullscreenToggle.jsx";
@@ -10,7 +8,7 @@ function DynamicNavigator({ links, setRole }) {
     const navigate = useNavigate();
 
     const handleHomeClick = () => {
-        setRole(null);
+        // setRole(null); commentisin ajutiselt välja, et ei peaks testides iga kord uuesti isse logima ja oleks lihtsam DEV rollina testida asju
         navigate("/");
     };
 
@@ -29,12 +27,6 @@ function DynamicNavigator({ links, setRole }) {
             </div>
             <div className='toggleContainer'>
                 {FullscreenToggle()}
-                {/*<button*/}
-                {/*    id='fullscreenButton-navbar'*/}
-                {/*    onClick={toggleFullScreen}*/}
-                {/*title='Fullscreen mode'>*/}
-                {/*    <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter}/>*/}
-                {/*</button>*/}
                 {ThemeToggle()}
             </div>
         </div>

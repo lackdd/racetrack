@@ -4,8 +4,6 @@ import "../universal/universal.css"
 import socket from "../../socket.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import {fastestLapTime} from "../universal/calculateFastestLapTime.js"
-import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function LapLineObserver() {
     //const [elapsedTimes, setElapsedTimes] = useState({});
@@ -234,13 +232,6 @@ function LapLineObserver() {
                     ))
                 )}
                 {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
-                {/*<button id="fullscreenButton" onClick={toggleFullScreen}>*/}
-                {/*    fullscreen*/}
-                {/*    <FontAwesomeIcon*/}
-                {/*        icon={faUpRightAndDownLeftFromCenter}*/}
-                {/*        style={{marginLeft: "10px"}} // Add space between text and icon*/}
-                {/*    />*/}
-                {/*</button>*/}
             </div>
         </div>
     );

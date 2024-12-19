@@ -3,7 +3,6 @@ import socket from "../../socket.js";
 import "./race-control.css";
 
 function formatTimer(milliseconds) {
-    // todo maybe save as milliseconds so they can easily be compared and reformat after that to display
     const minutes = Math.floor(milliseconds / 60000);
     const seconds = Math.floor((milliseconds % 60000) / 1000);
     const millisecondsRemainder = milliseconds % 1000 / 10;

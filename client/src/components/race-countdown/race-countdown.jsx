@@ -4,8 +4,6 @@ import socket from "../../socket.js";
 import React, {useEffect, useRef, useState} from "react";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
-import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./race-countdown.css"
 
 
@@ -94,15 +92,6 @@ function RaceCountdown() {
                         <span>{time.milliseconds}</span>
                     </p>
                 )}
-            {/*<button*/}
-            {/*    id="fullscreenButton"*/}
-            {/*    onClick={toggleFullScreen}>*/}
-            {/*    fullscreen*/}
-            {/*    <FontAwesomeIcon*/}
-            {/*        icon={faUpRightAndDownLeftFromCenter}*/}
-            {/*        style={{marginLeft: "10px"}} // Add space between text and icon*/}
-            {/*    />*/}
-            {/*</button>*/}
         </div>
     )
 }

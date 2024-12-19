@@ -48,7 +48,7 @@ function Login({ setRole }) {
                         navigate("/front-desk");
                         break;
                     case "Racer":
-                        navigate("/driver/next-race");
+                        navigate("/driver/next-race"); // todo kõik need routed peavad olema first level, ehk nt see peaks olema lihtsalt /next-race
                         break;
                     case "Safety official":
                         navigate("/race-control");
