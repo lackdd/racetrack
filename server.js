@@ -38,6 +38,9 @@ let areAllRacesFinished = true;
 let flagStatus = "";
 const timer = new Timer();
 let currentRaceStopwatches = new Stopwatch();
+let raceDuration = 10 * 60 * 1000; // minutes * seconds * milliseconds
+let durationBetweenRaces = 1 * 60 * 1000; // minutes * seconds * milliseconds
+
 
 // Load existing races from MongoDB into memory
 (async () => {
@@ -483,6 +486,25 @@ io.on('connection', (socket) => {
     socket.on('getCurrentLapTimes', () => {
             socket.emit("currentLapTimes", currentRaceStopwatches.getCurrentLapTimes());
     });
+
+    socket.on('getRaceSettings', () => {
+        socket.emit("raceDuration", raceDuration);
+        socket.emit("durationBetweenRaces", durationBetweenRaces);
+        console.log('RaceDuration: ', raceDuration)
+        console.log('DurationBetweenRaces: ', durationBetweenRaces)
+    });
+
+    socket.on('updateRaceDuration', (newRaceDuration) => {
+        if (raceDuration !== newRaceDuration) {
+            raceDuration = newRaceDuration * 60 * 1000;
+        }
+    })
+
+    socket.on('updateDurationBetweenRaces', (newDurationBetweenRaces) => {
+        if (durationBetweenRaces !== newDurationBetweenRaces) {
+            durationBetweenRaces = newDurationBetweenRaces * 60 * 1000;
+        }
+    })
 
 
     let stopwatchesIntervalId = null; // Variable to store the interval ID
