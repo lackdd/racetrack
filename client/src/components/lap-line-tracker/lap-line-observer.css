@@ -70,10 +70,14 @@
     font-size: clamp(1rem, 7vw, 5rem);
 }
 
-.LapLineObserver .timer-container {
+.LapLineObserver .stopwatch-container {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: clamp(0.5rem, 3vw, 3rem);
+}
+
+.LapLineObserver .stopwatch {
+    font-family: monospace;
 }
 

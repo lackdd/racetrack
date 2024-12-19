@@ -218,16 +218,16 @@ function LapLineObserver() {
                             onClick={() => driverCrossedFinishLine(driver.name)}
                         >
                             {driver.car}
-                            <p className="timer-container">
-                                <span>
+                            <p className="stopwatch-container">
+                                <span className="stopwatch">
                                     {formatLapTime(currentLapTimes[driver.name] || 0).minutes}
                                 </span>
                                 :
-                                <span>
+                                <span className="stopwatch">
                                     {formatLapTime(currentLapTimes[driver.name] || 0).seconds}
                                 </span>
                                 :
-                                <span>
+                                <span className="stopwatch">
                                     {formatLapTime(currentLapTimes[driver.name] || 0).milliseconds}
                                 </span>
                             </p>
