@@ -25,7 +25,7 @@ function DynamicNavigator({ links, setRole }) {
                     </Link>
                 ))}
             </div>
-            <div className='toggleContainer'>
+            <div className='settingsContainer'>
                 {FullscreenToggle()}
                 {ThemeToggle()}
             </div>

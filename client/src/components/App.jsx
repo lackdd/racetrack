@@ -13,8 +13,11 @@ import RaceCountdown from "./race-countdown/race-countdown.jsx"
 import NextRace from "./next-race/next-race.jsx";
 import DynamicNavigator from "./login-and-main/dynamic-navigator.jsx";
 import RacingPanel from "./login-and-main/racing-panel.jsx";
+import RaceSettings from "./race-settings/race-settings.jsx";
 import {useEffect, useState} from "react";
 import { keepTheme } from './universal/themes.js'
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGear} from "@fortawesome/free-solid-svg-icons";
 
 function App() {
     const [role, setRole] = useState(null); // Track the logged-in role
@@ -37,6 +40,7 @@ function App() {
         { to: "/lap-line-tracker", label: "Lap Line Observer" },
         { to: "/driver/race-countdown", label: "Race Countdown" },
         { to: "/driver/next-race", label: "Next Race" },
+        { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} /> }
     ];
 
     const lapLineLinks = [
@@ -53,6 +57,7 @@ function App() {
     const receptionistLinks = [
         { to: "/", label: "Home" },
         { to: "/front-desk", label: "Front Desk" },
+        { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} /> }
     ];
 
     const racerLinks = [
@@ -92,6 +97,7 @@ function App() {
                         <Route path="/driver/next-race" element={<NextRace />} />
                         <Route path="/flag" element={<Flag />} />
                         <Route path="/spectator" element={<Spectator />} />
+                        <Route path="/race-settings" element={<RaceSettings />} />
                     <Route path="*" element={<PageNotFound404 />} />
                 </Routes>
             </BrowserRouter>
