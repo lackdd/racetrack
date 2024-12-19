@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+// todo instantly start stopwatches when server restarts. currently stopwatches arent going
 const stopwatchesSchema = new Schema({
     stopwatches: {
         // key: "stopwatches",

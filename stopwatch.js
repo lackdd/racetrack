@@ -28,7 +28,6 @@ class Stopwatch {
             this.stopwatches[driverName] = {
                 elapsedTime: initialTime,
                 interval: null,
-                running: false,
             };
         }
     }
@@ -59,7 +58,7 @@ class Stopwatch {
     resetStopwatch = (driverName) => {
         const stopwatch = this.stopwatches[driverName];
         if (!stopwatch) {
-            console.error(`Stopwatch for driver ${driverName} not initialized.`);
+            console.warn(`Stopwatch for driver ${driverName} not initialized.`);
             return;
         }
         clearInterval(stopwatch.interval);
@@ -77,10 +76,35 @@ class Stopwatch {
                 console.error(`Stopwatch for driver ${driver.name} not initialized.`);
                 return;
             }
+            if (stopwatch.interval === null) {
+                console.warn(`Stopwatch for driver ${driver.name} is already stopped.`);
+                return;
+            }
             clearInterval(stopwatch.interval);
             stopwatch.interval = null; // Mark interval as paused
         });
-        console.log(raceDrivers) // log final results
+        //console.log(raceDrivers) // log final results
+    };
+
+    // Continue stopwatches for all drivers
+    continueAllStopwatches = (raceDrivers) => {
+        raceDrivers.forEach((driver) => {
+            const stopwatch = this.stopwatches[driver.name];
+            if (!stopwatch) {
+                console.error(`Stopwatch for driver ${driver.name} not initialized.`);
+                return;
+            }
+
+            stopwatch.interval = setInterval(async() => {
+                stopwatch.elapsedTime += 10;
+
+                // Save to database every 1 second
+                if (stopwatch.elapsedTime % 1000 === 0) {
+                    await this.saveStopwatchesToDatabase();
+                }
+            }, 10);
+
+        });
     };
 
     // Stop stopwatches for all drivers and delete data when race finishes

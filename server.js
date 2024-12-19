@@ -69,16 +69,16 @@ let currentRaceStopwatches = new Stopwatch();
             flagStatusVar = await Variable.create({key: "flagStatus", value: ""});
         }
 
-        console.log("currentRaceStopwatches: ", currentRaceStopwatches);
+        //console.log("currentRaceStopwatches: ", currentRaceStopwatches);
 
         let stopwatchesVar = await StopwatchesSchema.findOne();
-        console.log("stopwatchesVar.stopwatches: ", stopwatchesVar.stopwatches);
+        //console.log("stopwatchesVar.stopwatches: ", stopwatchesVar.stopwatches);
 
         if (stopwatchesVar) {
             currentRaceStopwatches.stopwatches = stopwatchesVar.stopwatches
                 ? Object.fromEntries(stopwatchesVar.stopwatches)
                 : {};
-            console.log("Converted stopwatches to Object:", currentRaceStopwatches);
+            //console.log("Converted stopwatches to Object:", currentRaceStopwatches);
         } else {
             console.log("No stopwatches found in the database.");
         }
@@ -97,6 +97,7 @@ let currentRaceStopwatches = new Stopwatch();
             raceData.forEach((race) => {
                 if (!race.isOngoing) return;
                 timer.startTimer(race.raceName, io, raceData);
+                currentRaceStopwatches.continueAllStopwatches(race.drivers);
             });
         }
 
@@ -294,7 +295,7 @@ io.on('connection', (socket) => {
 
     socket.on("updateRaceDrivers", async ({raceName, drivers}) => {
         try {
-            console.log(drivers)
+            //console.log(drivers)
             const race = await Race.findOne({raceName});
             if (race) {
                 race.set("drivers", drivers);
@@ -465,12 +466,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('startStopwatch', (driverName) => {
-        console.log(currentRaceStopwatches);
+        //console.log(currentRaceStopwatches);
         currentRaceStopwatches.startStopwatch(driverName);
     });
 
     socket.on('resetStopwatch', (driverName) => {
-            console.log(currentRaceStopwatches);
+            //console.log(currentRaceStopwatches);
             currentRaceStopwatches.initializeStopwatch(driverName);
             currentRaceStopwatches.resetStopwatch(driverName);
     });
