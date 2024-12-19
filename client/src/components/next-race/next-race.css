@@ -18,10 +18,11 @@
     transform: translate(-50%, -50%);
     width: 100%;
     font-size: clamp(1rem, 7vw, 5rem);
+    color: var(--font-color)
 }
 
 .NextRace .text {
-    color: #60addc;
+    color: var(--primary-color);
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -56,6 +57,7 @@
     max-width: 50%;
     min-width: 30%;
     width: 100%;
+    color: var(--font-color)
 }
 
 .NextRace .driverTable th {

@@ -2,7 +2,6 @@
 
 import socket from "../../socket.js";
 import React, {useEffect, useRef, useState} from "react";
-import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
 import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
@@ -70,7 +69,7 @@ function RaceCountdown() {
     return (
         <div className="RaceCountdown">
                 {timer === 0 || timer === 60000 || timer === 600000 ? ( // todo set timer in race control settings and compare to this value
-                    <p style={{color: "black"}}>00:00:00</p>
+                    <p>00:00:00</p>
                 ) : timer < 10000 && timer !== 0 ? (
                     <p className="lessThan10Seconds">
                         {/*{formatLapTime(timer)}*/}
@@ -95,15 +94,15 @@ function RaceCountdown() {
                         <span>{time.milliseconds}</span>
                     </p>
                 )}
-            <button
-                id="fullscreenButton"
-                onClick={toggleFullScreen}>
-                fullscreen
-                <FontAwesomeIcon
-                    icon={faUpRightAndDownLeftFromCenter}
-                    style={{marginLeft: "10px"}} // Add space between text and icon
-                />
-            </button>
+            {/*<button*/}
+            {/*    id="fullscreenButton"*/}
+            {/*    onClick={toggleFullScreen}>*/}
+            {/*    fullscreen*/}
+            {/*    <FontAwesomeIcon*/}
+            {/*        icon={faUpRightAndDownLeftFromCenter}*/}
+            {/*        style={{marginLeft: "10px"}} // Add space between text and icon*/}
+            {/*    />*/}
+            {/*</button>*/}
         </div>
     )
 }

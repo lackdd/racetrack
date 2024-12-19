@@ -1,6 +1,8 @@
 html, body {
     height: 100%; /* Ensure the root container and body take full height */
     margin: 0; /* Remove default margin */
+    background: var(--bg-color);
+    transition: background 0.3s ease, color 0.3s ease; /* Transition for background and color */
 }
 
 #root {
@@ -20,4 +22,39 @@ html, body {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+}
+
+/* global css variables */
+:root {
+    --stopwatch-font:'monospace',  monospace;
+    --stopwatch-font-weight: 500;
+}
+
+/* color for light theme */
+.light-theme {
+    --primary-color: #3ca7c6; /* #41B8DD */
+    --secondary-color: #0056b3;
+    --tertiary-color: #004085;
+    --accent-color: #ffc107;
+    --input-field-bg: white;
+    --font-color: black;
+    --font-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    --border-color: black;
+    --bg-color: white;
+    --nav-color: #017BFE;
+}
+
+/* color for dark theme */
+.dark-theme {
+    --primary-color: #2c8cb5; /* #267997 */
+    --secondary-color: #1c5a70;
+    --tertiary-color: #174659;
+    --accent-color: #a38d27;
+    --input-field-bg: lightgrey;
+    --font-color: white;
+    --font-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+    --border-color: transparent;
+    /*--bg-color: rgba(3, 8, 23, 0.62);*/
+    --bg-color: #121212;
+    --nav-color: #2c4d77;
 }

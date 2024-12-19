@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import "./lap-line-observer.css";
 import "../universal/universal.css"
 import socket from "../../socket.js";
-import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import {fastestLapTime} from "../universal/calculateFastestLapTime.js"
 import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
@@ -14,10 +13,10 @@ function LapLineObserver() {
     const [raceStarted, setRaceStarted] = useState(false);
     //const [raceOngoing, setRaceOngoing] = useState(true);
     const [raceMode, setRaceMode] = useState("")
-    //const [currentRaceName, setCurrentRaceName] = useState("");
-    const [currentRaceName, setCurrentRaceName] = useState(() => {
-             return localStorage.getItem("currentRaceName");
-    });
+    const [currentRaceName, setCurrentRaceName] = useState("");
+    // const [currentRaceName, setCurrentRaceName] = useState(() => {
+    //          return localStorage.getItem("currentRaceName");
+    // });
     // const [isDisabled, setIsDisabled] = useState(() => {
     //     const storedIsDisabled = localStorage.getItem("isDisabled");
     //     return storedIsDisabled === "true";
@@ -211,10 +210,10 @@ function LapLineObserver() {
                 ) : (
                     raceDrivers.map((driver, index) => (
                         <button
-                            id="observerButton"
+                            id='observerButton'
                             key={index}
-                            className="waves-effect waves-light btn-large"
                             disabled={isDisabled}
+                            className={isDisabled ? 'blur' : ''}
                             onClick={() => driverCrossedFinishLine(driver.name)}
                         >
                             {driver.car}
@@ -235,13 +234,13 @@ function LapLineObserver() {
                     ))
                 )}
                 {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
-                <button id="fullscreenButton" onClick={toggleFullScreen}>
-                    fullscreen
-                    <FontAwesomeIcon
-                        icon={faUpRightAndDownLeftFromCenter}
-                        style={{marginLeft: "10px"}} // Add space between text and icon
-                    />
-                </button>
+                {/*<button id="fullscreenButton" onClick={toggleFullScreen}>*/}
+                {/*    fullscreen*/}
+                {/*    <FontAwesomeIcon*/}
+                {/*        icon={faUpRightAndDownLeftFromCenter}*/}
+                {/*        style={{marginLeft: "10px"}} // Add space between text and icon*/}
+                {/*    />*/}
+                {/*</button>*/}
             </div>
         </div>
     );

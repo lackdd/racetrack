@@ -9,7 +9,6 @@
 // The Next Race screen switches to the subsequent race session.
 import React, { useState, useEffect } from "react";
 import socket from "../../socket.js";
-import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 // import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
 import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
@@ -202,13 +201,13 @@ function NextRace() {
                     <p className="information" >No races have been submitted</p>
                 )}
 
-            <button id="fullscreenButton" onClick={toggleFullScreen}>
-                fullscreen
-                <FontAwesomeIcon
-                    icon={faUpRightAndDownLeftFromCenter}
-                    style={{ marginLeft: "10px" }} // Add space between text and icon
-                />
-            </button>
+            {/*<button id="fullscreenButton" onClick={toggleFullScreen}>*/}
+            {/*    fullscreen*/}
+            {/*    <FontAwesomeIcon*/}
+            {/*        icon={faUpRightAndDownLeftFromCenter}*/}
+            {/*        style={{ marginLeft: "10px" }} // Add space between text and icon*/}
+            {/*    />*/}
+            {/*</button>*/}
         </div>
     );
 }

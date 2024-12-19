@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #007bff;
+    background-color: var(--nav-color);
     padding: 10px 20px;
     margin-bottom: 10px;
     border-radius: 8px;
@@ -21,5 +21,61 @@
 
 /* Hovers etc */
 .navContainer a:hover {
+    color: #ffc107;
+}
+
+.navContainer .linksContainer {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.navContainer .toggleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navContainer .toggleContainer > * {
+
+}
+
+#fullscreenButton-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 0;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    transition: color 0.3s ease;
+}
+
+#fullscreenButton-navbar:hover {
+    color: #ffc107;
+}
+
+
+#themeButton-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 0;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    transition: color 0.3s ease;
+    width: 16px; /* Set a fixed width */
+    height: 16px; /* Set a fixed height */
+}
+
+#themeButton-navbar:hover {
     color: #ffc107;
 }

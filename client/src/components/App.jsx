@@ -13,10 +13,15 @@ import RaceCountdown from "./race-countdown/race-countdown.jsx"
 import NextRace from "./next-race/next-race.jsx";
 import DynamicNavigator from "./login-and-main/dynamic-navigator.jsx";
 import RacingPanel from "./login-and-main/racing-panel.jsx";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import { keepTheme } from './universal/themes.js'
 
 function App() {
     const [role, setRole] = useState(null); // Track the logged-in role
+
+    useEffect(() => {
+        keepTheme(); // track theme
+    })
 
     const spectatorLinks = [
         { to: "/", label: "Home" },

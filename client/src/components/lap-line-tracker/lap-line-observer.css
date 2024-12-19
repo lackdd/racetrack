@@ -24,7 +24,10 @@
     text-align: center;
     border-radius: 5px;
     flex-grow: 1;
-    background-color: #b3e3f2;
+    /*background-color: #b3e3f2;*/
+    background-color: var(--primary-color);
+    color: var(--font-color);
+    border-color: var(--border-color)
 }
 
 @media only screen and (orientation: portrait) {
@@ -68,6 +71,7 @@
     transform: translate(-50%, -50%);
     width: 100%;
     font-size: clamp(1rem, 7vw, 5rem);
+    color: var(--font-color)
 }
 
 .LapLineObserver .stopwatch-container {
@@ -78,6 +82,12 @@
 }
 
 .LapLineObserver .stopwatch {
-    font-family: monospace;
+    font-family: var(--stopwatch-font);
+    font-weight: var(--stopwatch-font-weight);
+}
+
+.LapLineObserver .blur {
+    filter: blur(2px);
+    pointer-events: none;
 }
 

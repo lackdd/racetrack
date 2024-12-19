@@ -12,10 +12,10 @@
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
-    background: rgb(66, 184, 221);
+    background: var(--primary-color);
     color: white;
     border: none;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    text-shadow: var(--font-shadow);
 }
 
 .front-desk .add-button {
@@ -23,11 +23,11 @@
 }
 
 .front-desk .button:hover {
-    background-color: #0056b3;
+    background-color: var(--secondary-color);
 }
 
 .front-desk .button:active {
-    background-color: #004085;
+    background-color: var(--tertiary-color);
 }
 
 .front-desk .input {
@@ -37,7 +37,7 @@
     font-size: 80px;
     border-radius: 10px;
     text-align: center;
-    //border: none;
+    background-color: var(--input-field-bg);
 }
 
 .front-desk .ul {
@@ -73,10 +73,10 @@
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
-    background: rgb(66, 184, 221);
+    background: var(--primary-color);
     color: white;
     border: none;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    text-shadow: var(--font-shadow);
 }
 
 .front-desk .header {
@@ -87,8 +87,7 @@
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
-    //background: rgb(66, 184, 221);
-    color: rgb(66, 184, 221);
+    color: var(--primary-color);
     border: none;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    text-shadow: var(--font-shadow);
 }

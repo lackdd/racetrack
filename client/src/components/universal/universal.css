@@ -1,7 +1,7 @@
 
 /* fullscreen background defaults to black otherwise */
 :fullscreen {
-    background-color: white;
+    background-color: var(--bg-color);
 }
 
 /* to overwrite nav bar display attribute to hide nav bar in fullscreen */
@@ -28,3 +28,4 @@
     font-weight: bold;
     box-shadow: 2px 2px 2px;
 }
+
