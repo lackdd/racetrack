@@ -48,7 +48,7 @@ function LapLineObserver() {
 
         if (raceMode === "finish") {
             setIsDisabled(true);
-            setRaceStarted(false);
+            // setRaceStarted(false);
             console.log("The race has finished! Final results:");
             console.log(raceDrivers)
             //handleRaceStop();
@@ -57,7 +57,7 @@ function LapLineObserver() {
 
         if (raceMode === "safe") {
             setIsDisabled(false);
-            setRaceStarted(true);
+            // setRaceStarted(true);
             console.log("The race has started!");
         }
 
@@ -71,6 +71,7 @@ function LapLineObserver() {
         const onGoingRace = raceData.filter((race) => race.isOngoing === true);
         if (onGoingRace[0]) {
             setCurrentRaceName(onGoingRace[0].raceName);
+            // localStorage.setItem("currentRaceName", onGoingRace[0].raceName)
         } else {
             setCurrentRaceName("")
             console.error("No ongoing race exists");
@@ -104,7 +105,7 @@ function LapLineObserver() {
 
     // Fetch race data
     useEffect(() => {
-        if (raceStarted) {
+        // if (raceStarted) {
             socket.emit("getRaceData");
 
             socket.on("raceData", (data) => {
@@ -115,10 +116,10 @@ function LapLineObserver() {
             return () => {
                 socket.off("raceData", handleRaceData);
             };
-        } else {
-            console.log("Race is not started or has finished.");
-        }
-    }, [raceStarted]);
+        // } else {
+        //     console.log("Race is not started or has finished.");
+        // }
+    }, []);
 
     // always get the latest stopwatch data form the server
     useEffect(() => {
