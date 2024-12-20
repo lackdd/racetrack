@@ -143,7 +143,7 @@ function NextRace() {
         };
     }, [raceMode]);
 
-
+    // todo when race mode changes to danger in the middle of the races then the screen shouldn't change
     return (
         <div className="NextRace">
             {currentRace ? (

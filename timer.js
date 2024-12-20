@@ -30,7 +30,7 @@ class Timer {
                     { timeRemainingOngoingRace: timer.timeRemaining },
                     { new: true, upsert: true }
                 );
-                console.log(`Saved timer for race "${raceName}": ${timer.timeRemaining} ms`);
+                //console.log(`Saved timer for race "${raceName}": ${timer.timeRemaining} ms`);
             }
         } catch (error) {
             console.error(`Error saving timer for race "${raceName}":`, error);

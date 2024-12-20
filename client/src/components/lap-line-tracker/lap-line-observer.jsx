@@ -197,6 +197,7 @@ function LapLineObserver() {
         startStopwatch(driverName);
     };
 
+    // todo when race mode changes to danger in the middle of the races then the buttons should stay and not display "no ongoing race exists"
     return (
         <div className="LapLineObserver">
             <div id="observerButtonsGrid">
@@ -231,7 +232,7 @@ function LapLineObserver() {
                         </button>
                     ))
                 )}
-                {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
+                {currentRaceName && raceMode === "finish" && <p className="information session-ended">Race session has ended</p>}
             </div>
         </div>
     );

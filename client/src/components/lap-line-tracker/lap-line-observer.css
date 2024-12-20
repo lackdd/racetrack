@@ -66,12 +66,17 @@
     align-items: center;
     justify-content: center;
     position: fixed;
+    text-align: center;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
     font-size: clamp(1rem, 7vw, 5rem);
     color: var(--font-color)
+}
+
+.LapLineObserver .session-ended {
+    text-shadow: 0 0 5px black;
 }
 
 .LapLineObserver .stopwatch-container {

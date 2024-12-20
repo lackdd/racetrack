@@ -18,7 +18,8 @@
     transform: translate(-50%, -50%);
     width: 100%;
     font-size: clamp(1rem, 7vw, 5rem);
-    color: var(--font-color)
+    color: var(--font-color);
+    text-align: center;
 }
 
 .NextRace .text {
@@ -31,7 +32,7 @@
 }
 
 .NextRace .raceName {
-    font-size: clamp(2rem, 3vw, 3rem);
+    font-size: clamp(1.5rem, 3vw, 3rem);
 }
 
 .NextRace .paddock {
@@ -39,7 +40,7 @@
     padding: .5rem;
     font-weight: bold;
     color: red;
-    font-size: clamp(3rem, 4vw, 4rem);
+    font-size: clamp(1.5rem, 4vw, 4rem);
     margin: 0;
 }
 
@@ -54,19 +55,35 @@
 }
 
 .NextRace .driverTable {
-    max-width: 50%;
-    min-width: 30%;
-    width: 100%;
+    container: driver-table / inline-size;
+    /*max-width: 90%;*/
+    /*min-width: 40%;*/
+    /*width: 100%;*/
+    width: clamp(40%, 75%, 100%);
     color: var(--font-color)
 }
 
+/*@container driver-table (min-width: 350px) {*/
+/*    .driverTable {*/
+/*        max-width: 75%;*/
+/*        min-width: 100%;*/
+/*        width: 100%;*/
+/*    }*/
+/*}*/
+
+@media (max-width: 500px) {
+    .NextRace .driverTable {
+        width: 100%;
+    }
+}
+
 .NextRace .driverTable th {
-    font-size: clamp(3rem, 2.5vw, 5rem);
+    font-size: clamp(1.5rem, 3.5vw, 5rem);
     border-bottom: 1px solid;
 }
 
 .NextRace .driverTable td {
-    font-size: clamp(2.5rem, 2vw, 4rem);
+    font-size: clamp(1rem, 3vw, 4rem);
 }
 
 .NextRace .car {
