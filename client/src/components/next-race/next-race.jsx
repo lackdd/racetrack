@@ -47,13 +47,13 @@ function NextRace() {
         socket.emit("flagButtonWasClicked");
 
         socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-            console.log(timeRemaining)
-            if ((newFlagStatus === "danger" ||  newFlagStatus === "") && !isOnGoing) { // display current race's drivers and an extra message to proceed to the paddock
+            // console.log(timeRemaining)
+            if ((newFlagStatus === "danger" ||  newFlagStatus === "")) { // display current race's drivers and an extra message to proceed to the paddock
                 // console.log(timeRemaining)
                 console.log("set flag status to danger")
                 setRaceMode("danger");
             }
-            if ((newFlagStatus === "start" || newFlagStatus === "safe") && !isOnGoing) { // display subsequent race session
+            if ((newFlagStatus === "start" || newFlagStatus === "safe")) { // display subsequent race session
                 // console.log(timeRemaining)
                 console.log("set flag status to safe")
                 setRaceMode("safe");
@@ -65,7 +65,7 @@ function NextRace() {
         return () => {
             socket.off("broadcastFlagButtonChange");
         };
-    }, [isOnGoing]);
+    }, [isOnGoing, raceMode]);
 
     useEffect(() => {
         socket.emit("getQueuePosition")
@@ -147,12 +147,10 @@ function NextRace() {
     return (
         <div className="NextRace">
             {currentRace ? (
-                raceMode === "danger" ? (
+                raceMode === "danger" && !isOnGoing ? (
                     <>
-                        <p>
-                            <p className="text raceName"> Next race: {currentRace.raceName}</p>
-                            <p className="text paddock blinking">Move to the paddock!</p>
-                        </p>
+                        <p className="text raceName"> Next race: {currentRace.raceName}</p>
+                        <p className="text paddock blinking">Move to the paddock!</p>
                         <table className="driverTable" id="currentRace">
                             <tbody>
                             <tr>
@@ -170,7 +168,7 @@ function NextRace() {
                             </tbody>
                         </table>
                     </>
-                ) : raceMode === "safe" && nextRace ? (
+                ) : isOnGoing && nextRace ? (
                         <>
                             <p className="text raceName"> Next race: {nextRace.raceName}</p>
                             <table className="driverTable" id="nextRace">
