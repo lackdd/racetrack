@@ -98,6 +98,7 @@ function RaceDetails() {
         setRaceDrivers(updatedDrivers);
         socket.emit("updateRaceDrivers", {raceName, drivers: updatedDrivers});
         setDriverName("");
+        setCarName("");
     };
 
     // remove driver from race data and server
