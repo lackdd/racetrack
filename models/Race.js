@@ -7,7 +7,7 @@ const raceSchema = new Schema({
     drivers: [
         {
             name: { type: String, required: true },
-            car: { type: Number, required: true },
+            car: { type: String, required: true },
             currentLap: { type: Number, default: 0 },
             lapTimes: {
                 type: [

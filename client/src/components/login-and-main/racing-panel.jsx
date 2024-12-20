@@ -77,14 +77,14 @@ function RacingPanel() {
                         <p>{driver.name} (car {driver.car})</p>
                         <p>Laps: {driver.lapTimes.length}</p>
                         {/*<p>Best Lap: {driver.fastestLap || "NA"}</p>*/}
-                        <p>
+                        {/*<p>
                             Best Lap:
                             {driver.fastestLap.minutes === 0 && driver.fastestLap.seconds === 0 && driver.fastestLap.milliseconds === 0
                                 ? "NA" // if minutes, seconds and milliseconds are 0 display NA, otherwise display time
                                 : ` ${(driver.fastestLap.minutes || 0).toString().padStart(2, "0")}:` +
                                 `${(driver.fastestLap.seconds || 0).toString().padStart(2, "0")}:` +
                                 `${(driver.fastestLap.milliseconds || 0).toString().padStart(2, "0")}`}
-                        </p>
+                        </p>*/}
                     </div>
                 </div>
             ))}

@@ -8,6 +8,7 @@ function RaceDetails() {
     const {raceName} = useParams(); // Get the race name from the URL
     const [raceDrivers, setRaceDrivers] = useState([]);
     const [driverName, setDriverName] = useState("");
+    const [carName, setCarName] = useState("");
     const [lastAssignedCar, setLastAssignedCar] = useState(0);
     const [editValues, setEditValues] = useState({});
     const navigate = useNavigate();
@@ -43,6 +44,10 @@ function RaceDetails() {
         setDriverName(e.target.value);
     };
 
+    const handleCarInputChange = (e) => {
+        setCarName(e.target.value);
+    };
+
     const handleEditInputChange = (e, name) => {
         const {value} = e.target;
         setEditValues((prev) => ({
@@ -63,13 +68,23 @@ function RaceDetails() {
             return;
         }
 
+        if (carName.trim() === "") {
+            console.log("Please enter a car name.");
+            return;
+        }
+
         if (raceDrivers.some((driver) => driver.name === driverName)) {
             console.log("Driver name must be unique.");
             return;
         }
 
+        if (raceDrivers.some((driver) => driver.car === carName)) {
+            console.log("Car name must be unique.");
+            return;
+        }
+
         const newDriver = {
-            name: driverName, car: lastAssignedCar + 1,
+            name: driverName, car: carName,
             currentLap: 0,
             lapTimes: [],
             lapTimesMS: [],
@@ -124,6 +139,11 @@ function RaceDetails() {
                        placeholder="Driver name"
                        value={driverName}
                        onChange={handleInputChange}
+                />
+                <input className="input"
+                       placeholder="Car name"
+                       value={carName}
+                       onChange={handleCarInputChange}
                 />
                 <button className="button" onClick={handleAddDriver}>Add Driver</button>
             </div>
