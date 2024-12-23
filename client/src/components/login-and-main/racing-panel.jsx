@@ -91,8 +91,10 @@ function RacingPanel() {
 
         </div>
     ) : (
-        <div>
+        <div className='no-races'>
             <p className="noRacesMessage">Races starting soon!</p>
+            <img className='logo'
+                src='/Beachside_Racetrack_favicon.png' alt='Beachside Racetrack' />
         </div>
     );
 }
