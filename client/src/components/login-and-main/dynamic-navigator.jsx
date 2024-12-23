@@ -18,6 +18,7 @@ function DynamicNavigator({ links, setRole }) {
 
     return (
         <div className='navContainer'>
+            {/* for bigger screens */}
             <div className='desktop-navigator'>
                 <div className='linksContainer'>
                     {links.map((link, index) => (
@@ -36,6 +37,8 @@ function DynamicNavigator({ links, setRole }) {
                     {ThemeToggle()}
                 </div>
             </div>
+
+            {/* for smaller screens */}
             <div className='mobile-navigator'>
                 <div className='settingsContainer'>
                     {FullscreenToggle()}
