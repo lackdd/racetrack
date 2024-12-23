@@ -43,6 +43,7 @@ export const FullscreenToggle = () => {
     return (
         <button
             id="fullscreenButton-navbar"
+            className='nav-icon'
             onClick={toggleFullScreen}
             title="Fullscreen Mode"
         >

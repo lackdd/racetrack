@@ -35,6 +35,7 @@ export function ThemeToggle() {
                 togClass === "light" ?
                     <button
                         id='themeButton-navbar'
+                        className='nav-icon'
                         onClick={handleOnClick}
                         title='Change theme'>
                         <FontAwesomeIcon icon={faSun}/>
@@ -42,6 +43,7 @@ export function ThemeToggle() {
                     :
                     <button
                         id='themeButton-navbar'
+                        className='nav-icon'
                         onClick={handleOnClick}
                         title='Change theme'>
                         <FontAwesomeIcon icon={faMoon}/>

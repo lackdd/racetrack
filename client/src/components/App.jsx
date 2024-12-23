@@ -17,7 +17,7 @@ import RaceSettings from "./race-settings/race-settings.jsx";
 import {useEffect, useState} from "react";
 import { keepTheme } from './universal/themes.js'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faGear} from "@fortawesome/free-solid-svg-icons";
+import {faGear, faHouse} from "@fortawesome/free-solid-svg-icons";
 
 function App() {
     const [role, setRole] = useState(null); // Track the logged-in role
@@ -27,41 +27,42 @@ function App() {
     })
     // todo siin samuti mõned routed, mis ei ole first level, aga peaksid olema
     const spectatorLinks = [
-        { to: "/", label: "Home" },
+        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/worker", label: "Worker" },
         { to: "/spectator", label: "Spectator" },
         { to: "/flag", label: "Flag" },
     ];
 
     const DEVlinks = [
-        { to: "/", label: "Home" },
+        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/front-desk", label: "Front Desk" },
         { to: "/race-control", label: "Race Control" },
         { to: "/lap-line-tracker", label: "Lap Line Observer" },
         { to: "/driver/race-countdown", label: "Race Countdown" },
         { to: "/driver/next-race", label: "Next Race" },
-        { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} /> }
+        { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} />, title: "Race settings" },
     ];
 
     const lapLineLinks = [
-        { to: "/", label: "Home" }
+        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        { to: "/lap-line-tracker", label: "Lap Line Observer" }
     ];
 
     const safetyOfficialLinks = [
-        { to: "/", label: "Home" },
+        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/race-control", label: "Race Control" },
         { to: "/driver/race-countdown", label: "Race Countdown" },
         { to: "/driver/next-race", label: "Next Race" },
     ];
 
     const receptionistLinks = [
-        { to: "/", label: "Home" },
+        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/front-desk", label: "Front Desk" },
-        { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} /> }
+        { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} />, title: "Race settings" }
     ];
 
     const racerLinks = [
-        { to: "/", label: "Home" },
+        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/driver/race-countdown", label: "Race Countdown" },
         { to: "/driver/next-race", label: "Next Race" },
     ];
