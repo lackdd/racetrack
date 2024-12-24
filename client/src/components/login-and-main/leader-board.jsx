@@ -1,7 +1,7 @@
 import socket from "../../socket.js";
 import { useState, useEffect, useRef } from "react";
 
-function Spectator() {
+function LeaderBoard() {
     const [raceDrivers, setRaceDrivers] = useState([]); // State to store data
 
     useEffect(() => {
@@ -18,4 +18,4 @@ function Spectator() {
     );
 }
 
-export default Spectator;
+export default LeaderBoard;
