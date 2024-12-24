@@ -45,13 +45,13 @@ function Login({ setRole }) {
                 setRole(responseData.role);
                 switch (responseData.role) {
                     case "Receptionist":
-                        navigate("/race-control");
+                        navigate("/front-desk");
                         break;
                     case "Racer":
-                        navigate("/driver/next-race");
+                        navigate("/driver/next-race"); // todo kõik need routed peavad olema first level, ehk nt see peaks olema lihtsalt /next-race
                         break;
                     case "Safety official":
-                        navigate("/front-desk");
+                        navigate("/race-control");
                         break;
                     case "Lap line obs":
                         navigate("/lap-line-tracker");

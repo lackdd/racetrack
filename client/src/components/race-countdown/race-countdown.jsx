@@ -2,158 +2,96 @@
 
 import socket from "../../socket.js";
 import React, {useEffect, useRef, useState} from "react";
-import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import "../universal/universal.css"
+import "./race-countdown.css"
+
 
 function RaceCountdown() {
-    //const [currentRaceData, setCurrentRaceData] = useState([]); // Store all races and their drivers
-    const [raceMode, setRaceMode] = useState("");
     const [isFlashing, setIsFlashing] = useState(false);
     const [timer, setTimer] = useState(0);
+    const [currentRaceName, setCurrentRaceName] = useState("");
+
+    useEffect(() => {
+
+        socket.on("timerUpdate", ({ raceName, timeRemaining }) => { // Destructure the object
+            setTimer(timeRemaining);
+        });
+
+        return () => {
+            socket.off("timerUpdate");
+        };
+    }, []);
+
+    useEffect(() => {
+        // Fetch race data
+        socket.emit("getRaceData");
+
+        socket.on("raceData", (data) => {
+            const ongoingRace = data.find(race => race.isOngoing === true);
+            if (ongoingRace) {
+                setCurrentRaceName(ongoingRace.raceName); // Set the raceName of the first ongoing race
+            } else {
+                setCurrentRaceName(null); // Handle the case where no race is ongoing
+            }
+        });
+
+        return () => {
+            // Clean up listeners for raceData
+            socket.off("raceData");
+        };
+    }, []);
+    //
+
+    useEffect(() => {
+        if (currentRaceName) {
+            socket.emit("getTimeRemaining", currentRaceName, (response) => {
+                setTimer(response.timeRemaining);
+            });
+        }
+    }, [currentRaceName]);
 
 
     // useEffect(() => {
-    //     socket.emit("getRaceData") // todo use different sockets? causes wx proxy error when race ends closing the backend server
-    //
-    //     socket.on("raceData", (data) => {
-    //         try {
-    //             updateTimer(data);
-    //         } catch (err) {
-    //             console.error("Error updating timer:", err);
-    //         }
-    //
-    //     });
-    //
-    //     // Clean up the socket listener on unmount
-    //     return () => {
-    //         socket.off("raceData");
-    //     };
-    // }, [currentRaceData]);
-    //
-    // function updateTimer(data) {
-    //     console.log()
-    //     const onGoingRace = data.filter((race) => race.isOngoing === true);
-    //     setCurrentRaceData(onGoingRace[0])
-    //     if (onGoingRace.length > 0) {
-    //         setTimer(onGoingRace[0].timeRemainingOngoingRace);
-    //     } else {
-    //         console.error("No ongoing race exists.");
-    //     }
-    //     if (timer % 60000 === 0 && timer !== 600000) {
+    //     if (timer % 6000 === 0 || timer % 6001 === 0 || timer % 6002 === 0 && timer !== 60000) {
     //         //setIsFlashing(prevIsFlashing => !prevIsFlashing);
     //         setIsFlashing(true);
     //     } else {
     //         //setIsFlashing(prevIsFlashing => !prevIsFlashing);
     //         setIsFlashing(false)
     //     }
-    // }
-
-    // Handle incoming flag changes (race modes) so a race starting triggers the next useEffect to retrieve the timer data from the server
-    // useEffect(() => {
-    //     socket.emit("broadcastFlagButtonChange");
-    //     socket.on("broadcastFlagButtonChange", (newFlagStatus) => {
-    //         setRaceMode(newFlagStatus);
-    //         console.log("Getting flag status from server")
-    //     });
-    //
-    //     // Clean up the socket listener on unmount
-    //     return () => {
-    //         socket.off("broadcastFlagButtonChange");
-    //     };
-    // }, []);
-
-    // Handle incoming race mode changes so a race starting triggers the next useEffect to retrieve the timer data from the server
-    useEffect(() => {
-        socket.emit("getRaceMode");
-        socket.on("raceMode", (newRaceMode) => {
-            setRaceMode(newRaceMode);
-            console.log("Getting race mode from server")
-        });
-
-        // Clean up the socket listener on unmount
-        return () => {
-            socket.off("raceMode");
-        };
-    }, []);
-
-    // get the timer data from the server
-    useEffect(() => {
-        socket.emit("getCurrentRaceTimer")
-
-        socket.on("currentRaceTimer", (data) => {
-            if (data !== null) {
-                setTimer(data);
-            } else {
-                setTimer(0);
-                console.error("Error updating timer. Resetting...");
-            }
-        });
-
-        // Clean up the socket listener on unmount
-        return () => {
-            socket.off("currentRaceTimer");
-        };
-    }, [raceMode]);
-
-
-    useEffect(() => {
-        if (timer % 60000 === 0 && timer % 60010 === 0 && timer % 60020 === 0 && timer !== 600000) {
-            //setIsFlashing(prevIsFlashing => !prevIsFlashing);
-            setIsFlashing(true);
-        } else {
-            //setIsFlashing(prevIsFlashing => !prevIsFlashing);
-            setIsFlashing(false)
-        }
-    }, [timer]);
+    // }, [timer]);
 
     const time = formatLapTime(timer);
 
     return (
         <div className="RaceCountdown">
-            <div
-                style={{
-                    fontSize: "8em",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "fixed",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "100%",
-                    fontFamily: "monospace"
-                }}>
-                {timer === 0 ? (
-                    <p style={{color: "black"}}>00:00:00</p>
+                {timer === 0 || timer === 60000 || timer === 600000 ? ( // todo set timer in race control settings and compare to this value
+                    <p>00:00:00</p>
                 ) : timer < 10000 && timer !== 0 ? (
-                    <p style={{color: "red"}}>
+                    <p className="lessThan10Seconds">
                         {/*{formatLapTime(timer)}*/}
-                        <span style={{width: "2ch"}}>{time.minutes}</span>:
-                        <span style={{width: "2ch"}}>{time.seconds}</span>:
-                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                        <span>{time.minutes}</span>:
+                        <span>{time.seconds}</span>:
+                        <span>{time.milliseconds}</span>
                     </p>
-                ) : isFlashing ? (
-                    <p style={{color: "red"}}>
-                        {/*{formatLapTime(timer)}*/}
-                        <span style={{width: "2ch"}}>{time.minutes}</span>:
-                        <span style={{width: "2ch"}}>{time.seconds}</span>:
-                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
-                    </p>
-                ) : (
+                )
+                //     : isFlashing ? (
+                //     <p style={{color: "red"}}>
+                //         {/*{formatLapTime(timer)}*/}
+                //         <span>{time.minutes}</span>:
+                //         <span>{time.seconds}</span>:
+                //         <span>{time.milliseconds}</span>
+                //     </p>
+                // )
+                    : (
                     // <p>{formatLapTime(timer)}</p>
-                    <p style={{display: "flex"}}>
-                        <span style={{width: "2ch"}}>{time.minutes}</span>:
-                        <span style={{width: "2ch"}}>{time.seconds}</span>:
-                        <span style={{width: "2ch"}}>{time.milliseconds}</span>
+                    <p>
+                        <span>{time.minutes}</span>:
+                        <span>{time.seconds}</span>:
+                        <span>{time.milliseconds}</span>
                     </p>
                 )}
-            </div>
-            <button
-                id="fullscreenButton"
-                onClick={toggleFullScreen}>fullscreen
-            </button>
         </div>
     )
 }

@@ -1,25 +1,198 @@
 .navContainer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    background-color: #007bff;
+    background-color: var(--nav-color);
     padding: 10px 20px;
     margin-bottom: 10px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* differentiate links and settings container */
+.navContainer .linksContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    padding-left: 2em;
+    padding-right: 2em;
+    overflow: visible;
+}
+
+.navContainer .settingsContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
 }
 
 /* Links */
-.navContainer a {
+.linksContainer a {
     color: white;
     text-decoration: none;
-    margin-right: 15px;
     font-size: 16px;
     font-weight: 500;
     transition: color 0.3s ease;
+    display: flex;
 }
 
-/* Hovers etc */
-.navContainer a:hover {
-    color: #ffc107;
+/* full screen and theme toggle buttons in the settings container */
+#fullscreenButton-navbar,
+#themeButton-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 0;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    background: transparent;
+    transition: color 0.3s ease;
+    width: 22px;
+    height: 22px;
 }
+
+.mobile-navigator,
+.desktop-navigator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* smaller screens */
+@media (max-width: 900px) {
+    .desktop-navigator {
+        display: none;
+    }
+
+    .mobile-navigator {
+        position: relative;
+        gap: 20px;
+    }
+
+    .fa-xmark {
+        font-size: 24px;
+    }
+
+}
+
+/* bigger screens */
+@media (min-width: 899px) {
+    .mobile-navigator {
+        display: none;
+    }
+
+    .home-button-mobile {
+        display: none;
+    }
+
+    .desktop-navigator {
+        height: 30px;
+        gap: 20px;
+    }
+
+    .navContainer a:hover {
+        transform: var(--transform-scale);
+    }
+
+    .fa-house,
+    .fa-gear {
+        font-size: 22px;
+    }
+}
+
+/* smaller screens */
+.mobile-navigator .linksContainer {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.hamburger {
+    background-color: transparent;
+    border: none;
+    transition: color 0.3s ease;
+    font-size: 22px;
+    color: white;
+    margin-left: auto;
+}
+
+.mobile-navigator .hamburger-links {
+    z-index: 3;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3vh;
+    top: 80px;
+    right: -2em;
+    width: 120%;
+    height: 100vh;
+    padding-top: 5vh;
+    padding-bottom: 15vh;
+    backdrop-filter: var(--hamburger-backdrop);
+}
+
+.hamburger-links a {
+    font-size: 22px;
+    color: var(--font-color);
+    padding-right: 130px;
+    text-shadow: var(--text-shadow);
+}
+
+.mobile-navigator .home-button-mobile {
+    position: absolute; /* Independent positioning */
+    top: 50%; /* Vertically center it */
+    left: 50%; /* Horizontally center it */
+    transform: translate(-50%, -50%); /* Adjust for accurate centering */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;/* Optional: make it circular */
+    background-color: var(--accent-color); /* Optional: add background for visibility */
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: shadow for emphasis */
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin-right: 0;
+}
+
+.home-button-mobile:hover {
+    color: white !important;
+    .fa-house {
+        transform: var(--transform-scale);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* Scaling effect only when the menu is closed */
+.hamburger.closed:hover {
+    transform: var(--transform-scale);
+}
+
+/* Prevent scaling when the menu is open */
+.hamburger.open {
+    transform: none;
+}
+
+/* hover effects */
+#themeButton-navbar:hover,
+#fullscreenButton-navbar:hover,
+.navContainer a:hover,
+.hamburger:hover{
+    color: var(--accent-color);
+}
+
+.nav-icon:hover {
+    transform: var(--transform-scale);
+}
+
+
+

@@ -1,0 +1,55 @@
+@mixin center-flex-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.RaceSettings {
+  @include center-flex-column;
+  gap: 20px;
+  color: var(--font-color);
+  height: 100vh;
+  font-size: 18px;
+
+  .input-field-container {
+    @include center-flex-column;
+  }
+
+  .information {
+    padding-top: 2em;
+  }
+
+  .input-settings {
+    //background-color: var(--input-field-bg);
+    border: black solid;
+    border-radius: 13px;
+    padding: 3px;
+    width: 8em;
+  }
+
+  .save-settings-button {
+    background-color: var(--primary-color);
+    margin-top: 4em;
+    border-radius: 13px;
+    color: var(--font-color);
+    border: none;
+    padding: 5px;
+    width: 9em;
+  }
+
+  .save-settings-button:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .save-settings-button:active {
+    background-color: var(--tertiary-color);
+  }
+
+  .dev-information {
+    position: fixed;
+    bottom: 10px;
+    text-align: center;
+    font-size: 12px;
+  }
+}

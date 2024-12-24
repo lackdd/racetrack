@@ -1,7 +1,7 @@
 
 /* fullscreen background defaults to black otherwise */
 :fullscreen {
-    background-color: white;
+    background-color: var(--bg-color);
 }
 
 /* to overwrite nav bar display attribute to hide nav bar in fullscreen */
@@ -14,15 +14,18 @@
     position: fixed;
     bottom: 10px;
     right: 10px;
-    background-color: white;
-    color: black;
+    align-items: center;
+    justify-content: center;
     padding: 10px 20px;
+    font-size: 0.8rem;
+    background-color: white;
     border-radius: 5px;
     cursor: pointer;
-    //box-sizing: border-box;
 }
 
 #fullscreenButton:hover {
     transform: scale(1.05);
     font-weight: bold;
+    box-shadow: 2px 2px 2px;
 }
+

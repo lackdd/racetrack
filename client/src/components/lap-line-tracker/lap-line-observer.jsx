@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import "./lap-line-observer.css";
 import "../universal/universal.css"
 import socket from "../../socket.js";
-import {toggleFullScreen} from "../universal/toggleFullscreen.js";
 import {formatLapTime} from "../universal/formatLapTime.js";
 import {fastestLapTime} from "../universal/calculateFastestLapTime.js"
 
@@ -12,10 +11,10 @@ function LapLineObserver() {
     const [raceStarted, setRaceStarted] = useState(false);
     //const [raceOngoing, setRaceOngoing] = useState(true);
     const [raceMode, setRaceMode] = useState("")
-    //const [currentRaceName, setCurrentRaceName] = useState("");
-    const [currentRaceName, setCurrentRaceName] = useState(() => {
-             return localStorage.getItem("currentRaceName");
-    });
+    const [currentRaceName, setCurrentRaceName] = useState("");
+    // const [currentRaceName, setCurrentRaceName] = useState(() => {
+    //          return localStorage.getItem("currentRaceName");
+    // });
     // const [isDisabled, setIsDisabled] = useState(() => {
     //     const storedIsDisabled = localStorage.getItem("isDisabled");
     //     return storedIsDisabled === "true";
@@ -49,7 +48,7 @@ function LapLineObserver() {
 
         if (raceMode === "finish") {
             setIsDisabled(true);
-            setRaceStarted(false);
+            // setRaceStarted(false);
             console.log("The race has finished! Final results:");
             console.log(raceDrivers)
             //handleRaceStop();
@@ -58,7 +57,7 @@ function LapLineObserver() {
 
         if (raceMode === "safe") {
             setIsDisabled(false);
-            setRaceStarted(true);
+            // setRaceStarted(true);
             console.log("The race has started!");
         }
 
@@ -72,6 +71,7 @@ function LapLineObserver() {
         const onGoingRace = raceData.filter((race) => race.isOngoing === true);
         if (onGoingRace[0]) {
             setCurrentRaceName(onGoingRace[0].raceName);
+            // localStorage.setItem("currentRaceName", onGoingRace[0].raceName)
         } else {
             setCurrentRaceName("")
             console.error("No ongoing race exists");
@@ -105,11 +105,10 @@ function LapLineObserver() {
 
     // Fetch race data
     useEffect(() => {
-        if (raceStarted) {
+        // if (raceStarted) {
             socket.emit("getRaceData");
 
             socket.on("raceData", (data) => {
-                console.log("New data fetched");
                 handleRaceData(data);
             });
 
@@ -117,10 +116,10 @@ function LapLineObserver() {
             return () => {
                 socket.off("raceData", handleRaceData);
             };
-        } else {
-            console.log("Race is not started or has finished.");
-        }
-    }, [raceStarted]);
+        // } else {
+        //     console.log("Race is not started or has finished.");
+        // }
+    }, []);
 
     // always get the latest stopwatch data form the server
     useEffect(() => {
@@ -158,31 +157,42 @@ function LapLineObserver() {
         socket.emit("initializeStopwatch", driverName);
     };
 
+
     // Handle lap completion for a driver
     const driverCrossedFinishLine = (driverName) => {
         setRaceDrivers((prev) =>
             prev.map((driver) => {
-                if (driver.name === driverName && currentLapTimes[driverName] !== undefined) {
-                    console.log(currentLapTimes[driverName]) // todo logs twice when button is clicked
-                    const newLapTimes = [
-                        ...driver.lapTimes,
-                        formatLapTime(currentLapTimes[driverName] || 0),
-                    ];
-                    const newLapTimesMS = [
-                        ...driver.lapTimesMS,
-                        currentLapTimes[driverName] || 0,
-                    ];
+                if (driver.name === driverName) {
+                    const newCurrentLap = driver.currentLap + 1;
+
+                    // Only update lapTimes, lapTimesMS, and fastestLap if currentLap > 0
+                    if (driver.currentLap > 0) {
+                        const newLapTimes = [
+                            ...driver.lapTimes,
+                            formatLapTime(currentLapTimes[driverName] || 0),
+                        ];
+                        const newLapTimesMS = [
+                            ...driver.lapTimesMS,
+                            currentLapTimes[driverName] || 0,
+                        ];
+                        return {
+                            ...driver,
+                            currentLap: newCurrentLap,
+                            lapTimes: newLapTimes,
+                            lapTimesMS: newLapTimesMS,
+                            fastestLap: formatLapTime(fastestLapTime(newLapTimesMS)),
+                        };
+                    }
+                    // If it's the first lap (currentLap === 0), only increment the lap
                     return {
                         ...driver,
-                        finishedLaps: driver.finishedLaps + 1,
-                        lapTimes: newLapTimes,
-                        lapTimesMS: newLapTimesMS,
-                        fastestLap: formatLapTime(fastestLapTime(newLapTimesMS)),
-                    }
+                        currentLap: newCurrentLap,
+                    };
                 }
                 return driver;
             })
         );
+
         initializeStopwatch(driverName);
         resetStopwatch(driverName);
         startStopwatch(driverName);
@@ -190,49 +200,39 @@ function LapLineObserver() {
 
     return (
         <div className="LapLineObserver">
-            <div className="container">
-                <div id="observerButtonsGrid">
-                    {/*{raceDrivers.length === 0 && !isDisabled ? (*/}
-                    {!currentRaceName ? (
+            <div id="observerButtonsGrid">
+                {!currentRaceName ? (
+                    <>
                         <p className="information">No ongoing race exists</p>
-                    ) : (
-                        raceDrivers.map((driver, index) => (
-                            <button
-                                id="observerButton"
-                                key={index}
-                                className="waves-effect waves-light btn-large"
-                                disabled={isDisabled}
-                                onClick={() => driverCrossedFinishLine(driver.name)}
-                            >
-                                {driver.name}
-                                <p style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    fontSize: "1.6rem"
-                                }}>
-                                <span style={{width: "3ch", textAlign: "center"}}>
+                    </>
+
+                ) : (
+                    raceDrivers.map((driver, index) => (
+                        <button
+                            id='observerButton'
+                            key={index}
+                            disabled={isDisabled}
+                            className={isDisabled ? 'blur' : ''}
+                            onClick={() => driverCrossedFinishLine(driver.name)}
+                        >
+                            {driver.car}
+                            <p className="stopwatch-container">
+                                <span className="stopwatch">
                                     {formatLapTime(currentLapTimes[driver.name] || 0).minutes}
                                 </span>
-                                    :
-                                    <span style={{width: "3ch", textAlign: "center"}}>
+                                :
+                                <span className="stopwatch">
                                     {formatLapTime(currentLapTimes[driver.name] || 0).seconds}
                                 </span>
-                                    :
-                                    <span style={{width: "3ch", textAlign: "center"}}>
+                                :
+                                <span className="stopwatch">
                                     {formatLapTime(currentLapTimes[driver.name] || 0).milliseconds}
                                 </span>
-                                </p>
-                            </button>
-                        ))
-                    )}
-                    {/*{isDisabled && <p className="information">Race session has ended</p>}*/}
-                    {currentRaceName && raceMode === "finish" && <p className="information">Race session has ended</p>}
-                    <button
-                        id="fullscreenButton"
-                        onClick={toggleFullScreen}>fullscreen
-                    </button>
-                </div>
+                            </p>
+                        </button>
+                    ))
+                )}
+                {currentRaceName && raceMode === "finish" && <p className="information session-ended">Race session has ended</p>}
             </div>
         </div>
     );
