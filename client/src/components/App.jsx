@@ -5,7 +5,7 @@ import FrontDesk from './front-desk/front-desk.jsx'
 import RaceControl from './race-control/race-control.jsx'
 import Login from "./login-and-main/login.jsx";
 import PageNotFound404 from "./login-and-main/pageNotFound404.jsx";
-import LeaderBoard from "./login-and-main/leader-board.jsx";
+
 import LapLineObserver from "./lap-line-tracker/lap-line-observer.jsx";
 import "./App.css";
 import Flag from "./flag/flag.jsx";
@@ -27,14 +27,10 @@ function App() {
     })
     // todo siin samuti mõned routed, mis ei ole first level, aga peaksid olema
     const spectatorLinks = [
-<<<<<<< HEAD
-        { to: "/", label: "Home" },
-        { to: "/leader-board", label: "Leader Board" },
-=======
         { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
->>>>>>> 876e84903145062b4e34e489f06fcd7033a1028d
         { to: "/worker", label: "Worker" },
-        { to: "/race-flags", label: "Flag" },
+        { to: "/spectator", label: "Spectator" },
+        { to: "/flag", label: "Flag" },
     ];
 
     const DEVlinks = [
@@ -90,24 +86,19 @@ function App() {
     return (
         <div className="mainContainer">
             <BrowserRouter>
-                <DynamicNavigator links={getNavigatorLinks()} setRole={setRole} />
+                <DynamicNavigator links={getNavigatorLinks()} />
                 <Routes>
-                        <Route path="/" element={<RacingPanel />} />
-                        <Route path="/worker" element={<Login setRole={setRole} />} />
-                        <Route path="/lap-line-tracker" element={<LapLineObserver />} />
-                        <Route path="/front-desk" element={<FrontDesk />} />
-                        <Route path="/front-desk/:raceName" element={<RaceDetails />} />
-                        <Route path="/race-control" element={<RaceControl />} />
-                        <Route path="/driver/race-countdown" element={<RaceCountdown />} />
-                        <Route path="/driver/next-race" element={<NextRace />} />
-<<<<<<< HEAD
-                        <Route path="/race-flags" element={<Flag />} />
-                        <Route path="/leader-board" element={<LeaderBoard />} />
-=======
-                        <Route path="/flag" element={<Flag />} />
-                        <Route path="/spectator" element={<Spectator />} />
-                        <Route path="/race-settings" element={<RaceSettings />} />
->>>>>>> 876e84903145062b4e34e489f06fcd7033a1028d
+                    <Route path="/" element={<RacingPanel />} />
+                    <Route path="/worker" element={<Login setRole={setRole} />} />
+                    <Route path="/lap-line-tracker" element={<LapLineObserver />} />
+                    <Route path="/front-desk" element={<FrontDesk />} />
+                    <Route path="/front-desk/:raceName" element={<RaceDetails />} />
+                    <Route path="/race-control" element={<RaceControl />} />
+                    <Route path="/driver/race-countdown" element={<RaceCountdown />} />
+                    <Route path="/driver/next-race" element={<NextRace />} />
+                    <Route path="/flag" element={<Flag />} />
+
+                    <Route path="/race-settings" element={<RaceSettings />} />
                     <Route path="*" element={<PageNotFound404 />} />
                 </Routes>
             </BrowserRouter>
