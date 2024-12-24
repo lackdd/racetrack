@@ -1,92 +1,125 @@
 import "./racing-panel.css";
 import socket from "../../socket.js";
-import {useEffect, useState} from "react";
-import {Button} from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
+
 
 function RacingPanel() {
-    const [allRaceData, setAllRaceData] = useState([]); //All races data
-    const [drivers, setDrivers] = useState([]); //Current race all drivers (names and cars)
-    const [raceName, setRaceName] = useState("Invalid race name"); //Current race name
-    const [currentShownRace, setCurrentShownRace] = useState(0); //What race is shown
-    const [raceDataHasData, setRaceDataHasData] = useState(false); //If there is no races at all!
-    const [countedLapsData, setCountedLapsData] = useState([]);
-    const [fastestLapTimeData, setFastestLapTimeData] = useState([]);
+    const [raceData, setRaceData] = useState([]); // All races data
+    const [drivers, setDrivers] = useState([]); // Current race all drivers
+    const [currentShownRace, setCurrentShownRace] = useState(""); // Shown race name
+    const [raceDataHasData, setRaceDataHasData] = useState(""); // If there are no races
 
-    //Get and update data with socket
+    const [flagStatus, setFlagStatus] = useState("safe")
+    const [timer, setTimer] = useState(null);
+
+    const [activeRaceIndex, setActiveRaceIndex] = useState(0);
+    const [activeRace, setActiveRace] = useState("no race")
+
+    // Get and update data with socket
     useEffect(() => {
         function handleIncomingRaceData(data) {
             if (data.length !== 0) {
-                setAllRaceData(data);
-                setDrivers(data[currentShownRace]['drivers']);
-                setRaceName(data[currentShownRace]['raceName']);
-                setRaceDataHasData(true);
-                setCountedLapsData(data[currentShownRace]['finishedLaps']);
+                setRaceData(data);
+                setDrivers(data[0]["drivers"]);
+                setRaceDataHasData("");
             } else {
-                setRaceDataHasData(false);
+                setRaceData([]);
+                setCurrentShownRace(null);
+                setDrivers([]);
+                setRaceDataHasData("No races happening!");
             }
         }
 
-        socket.on('raceData', handleIncomingRaceData);
-        socket.emit('getRaceData');
+        function handleIncomingRaceTime(timerValue) {
+            setTimer(timerValue);
+        }
+
+        function handleFlagStatus(status) {
+            setFlagStatus(status);
+        }
+
+        function handleQueuePosition(position) {
+            setActiveRaceIndex(position);
+
+            console.log("Hello", raceData.length, position);
+            if (raceData.length > 0 && position !== -1) {
+                setActiveRace(raceData[activeRaceIndex].raceName);
+            } else {
+                setActiveRace("no race");
+            }
+        }
+
+        socket.emit("getRaceData");
+        socket.emit("getCurrentRaceTimer");
+        socket.emit("getQueuePosition");
+        socket.emit("FlagPageConnected");
+
+        socket.on("raceData", handleIncomingRaceData);
+        socket.on("currentRaceTimer", handleIncomingRaceTime);
+        socket.on("broadcastFlagButtonChange", handleFlagStatus);
+        socket.on("queuePosition", handleQueuePosition);
+
         return () => {
-            socket.off('raceData', handleIncomingRaceData);
+            socket.off("raceData", handleIncomingRaceData);
+            socket.off("currentRaceTimer", handleIncomingRaceTime);
+            socket.off("broadcastFlagButtonChange", handleFlagStatus);
+            socket.off("queuePosition", handleQueuePosition);
         };
     }, []);
 
-    //Update data on button click
-    useEffect(()=> {
-        if (allRaceData.length !== 0) { //To Artur: if page loads, it also runs this code here even if allRaceData hasnt loaded yet and its []. Gives error
-            setRaceName(allRaceData[currentShownRace]['raceName']);
-            setDrivers(allRaceData[currentShownRace]['drivers']);
+    // Update displayed drivers when raceData changes
+    useEffect(() => {
+        if (currentShownRace) {
+            const updatedRace = raceData.find((race) => race.raceName === currentShownRace.raceName);
+
+            if (updatedRace) {
+                setDrivers(updatedRace.drivers);
+            }
         }
-    }, [currentShownRace]);
+    }, [raceData, currentShownRace]);
 
 
-    function nextOrPrevRaceButtonEvent(event){
-        if (event.target.value === "next" && currentShownRace !== allRaceData.length - 1) {
-            setCurrentShownRace((prev) => prev + 1);
-        } else if (event.target.value === "back" && currentShownRace !== 0) {
-            setCurrentShownRace((prev) => prev - 1);
-        }
+    function handleButtonEvent(race) {
+        setCurrentShownRace(race);
+        setDrivers(race.drivers);
     }
 
-
-    return raceDataHasData ? (
+    return (
         <div>
-            <div className="raceCarTracksContainerNavigator">
-                <Button value="back" onClick={nextOrPrevRaceButtonEvent}>Previous race</Button>
-                <div>
-                    <p>Race name: {raceName}</p>
-                    <p>Status:  soon!</p>
-                </div>
-                <Button value="next" onClick={nextOrPrevRaceButtonEvent}>Next race</Button>
+            <div>
+                <p>Flag status: {flagStatus}</p>
+                <p>Active race: {activeRace}</p>
+                <p>Timer: {timer}</p>
+            </div>
+            <p>{raceDataHasData}</p>
+            <div className="checkRaceButtonsContainer">
+                {raceData.map((race, index) => (
+                    <Button key={index} onClick={() => handleButtonEvent(race)}>
+                        {race.raceName}
+                    </Button>
+                ))}
             </div>
 
-            {drivers.map((driver, index) => (
-                <div key={index} className="raceCarTracksContainer">
-                    <div className="raceTrack">
-                        <img className="carImage"
-                             src="/car2.png"
-                             alt="Picture"
-                             style={{ left: `${driver.lapTimes.length * 5}%` }}
-                        />
-                        <div className="raceRoad"></div>
-                    </div>
-                    <div className="driverDataContainer"
-                         style={{ left: `${driver.lapTimes.length * 5}%` }}>
-                        <p>{driver.name} (car {driver.car})</p>
+            <div className="racersContainer">
+                {drivers.map((driver, index) => (
+                    <div key={index}>
+                        <p>Name: {driver.name}</p>
+                        <p>Car: {driver.car}</p>
                         <p>Laps: {driver.lapTimes.length}</p>
-                        <p>Best Lap: {driver.fastestLap || "NA"}</p>
+                        <p>
+                            Best Lap:{" "}
+                            {driver.fastestLap
+                                ? `${driver.fastestLap.minutes}:${driver.fastestLap.seconds}:${driver.fastestLap.milliseconds}`
+                                : "NA"}
+                        </p>
+                        <hr/>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
+        </div>
+    )
 
-        </div>
-    ) : (
-        <div>
-            <p className="noRacesMessage">Races starting soon!</p>
-        </div>
-    );
 }
 
-export default RacingPanel
+export default RacingPanel;
