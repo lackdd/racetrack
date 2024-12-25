@@ -5,20 +5,102 @@
     align-items: center;
     background-color: var(--nav-color);
     padding: 10px 20px;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
+    z-index: 10;
+    height: 50px;
+}
+
+/*.navContainer .home-button-container {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    !*padding-left: 30px;*!*/
+/*    !*padding-right: 30px;*!*/
+/*    border-radius: 50%;*/
+/*    width: 90px;*/
+/*    height: 90px;*/
+/*    background-color: var(--accent-color);*/
+/*    position: relative;*/
+/*}*/
+
+/*.home-button-desktop {*/
+/*    !*background-color: var(--primary-color);*!*/
+/*    color: white;*/
+/*    border: none;*/
+/*    !*border-radius: 50%;*!*/
+/*    !*width: 70px;*!*/
+/*    !*height: 70px;*!*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    transition: all 0.3s ease;*/
+/*    text-decoration: none;*/
+/*    font-weight: bold;*/
+/*    position: relative;*/
+/*    left: 5px;*/
+/*}*/
+
+/*.home-button-desktop {*/
+/*    !*position: absolute; !* Independent positioning *!*!*/
+/*    !*top: 50%; !* Vertically center it *!*!*/
+/*    !*left: 10%; !* Horizontally center it *!*!*/
+/*    !*transform: translate(-50%, -50%); !* Adjust for accurate centering *!*!*/
+/*    margin-left: 20px;*/
+/*    margin-right: 20px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    width: 90px;*/
+/*    height: 90px;*/
+/*    border-radius: 50%;!* Optional: make it circular *!*/
+/*    background-color: var(--accent-color); !* Optional: add background for visibility *!*/
+/*    color: white;*/
+/*    font-size: 14px;*/
+/*    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); !* Optional: shadow for emphasis *!*/
+/*    transition: all 0.3s ease;*/
+/*    text-decoration: none;*/
+/*    text-align: center;*/
+/*    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);*/
+/*}*/
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 16px;
+    box-shadow: var(--logo-shadow);
+    transition: all 0.3s ease;
+    filter: var(--logo-filter);
+}
+
+.nav-logo:hover {
+    background-color: white;
+    border: 3px solid white;
+}
+
+
+.home-button-desktop:hover {
+    font-size: 20px;
+    /*color: black;*/
 }
 
 /* differentiate links and settings container */
 .navContainer .linksContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 20px;
     align-items: center;
     flex: 1;
-    padding-left: 2em;
-    padding-right: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
     overflow: visible;
 }
 
@@ -27,6 +109,7 @@
     align-items: center;
     justify-content: center;
     gap: 20px;
+    padding-left: 1em;
 }
 
 /* Links */
@@ -35,7 +118,7 @@
     text-decoration: none;
     font-size: 16px;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
 }
 
@@ -51,7 +134,7 @@
     font-size: 20px;
     font-weight: 500;
     background: transparent;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     width: 22px;
     height: 22px;
 }
@@ -65,13 +148,13 @@
 }
 
 /* smaller screens */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .desktop-navigator {
         display: none;
     }
 
     .mobile-navigator {
-        position: relative;
+        /*position: relative;*/
         gap: 20px;
     }
 
@@ -82,7 +165,7 @@
 }
 
 /* bigger screens */
-@media (min-width: 899px) {
+@media (min-width: 769px) {
     .mobile-navigator {
         display: none;
     }
@@ -96,7 +179,7 @@
         gap: 20px;
     }
 
-    .navContainer a:hover {
+    .linksContainer a:hover {
         transform: var(--transform-scale);
     }
 
@@ -116,61 +199,81 @@
 .hamburger {
     background-color: transparent;
     border: none;
-    transition: color 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
     font-size: 22px;
     color: white;
     margin-left: auto;
+    position: absolute;
+    right: 1.5em;
+
 }
 
-.mobile-navigator .hamburger-links {
-    z-index: 3;
+@supports (backdrop-filter: blur(10px))
+{ .hamburger-links {
+    z-index: -1;
     position: fixed;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 3vh;
-    top: 80px;
-    right: -2em;
-    width: 120%;
+    left: 0;
+    top: 0;
+    /*top: 80px;*/
+    /*right: -1em;*/
+    width: 100vw;
     height: 100vh;
-    padding-top: 5vh;
-    padding-bottom: 15vh;
-    backdrop-filter: var(--hamburger-backdrop);
+    padding-top: 15vh;
+    /*padding-bottom: 15vh;*/
+    backdrop-filter: blur(10px);
+    /*background: rgba(0, 0, 0, 0.5);*/
 }
+    }
 
 .hamburger-links a {
     font-size: 22px;
     color: var(--font-color);
-    padding-right: 130px;
+    padding-right: 62px;
     text-shadow: var(--text-shadow);
 }
 
-.mobile-navigator .home-button-mobile {
+/*.mobile-navigator .home-button-mobile {*/
+/*    position: absolute; !* Independent positioning *!*/
+/*    top: 50%; !* Vertically center it *!*/
+/*    left: 50%; !* Horizontally center it *!*/
+/*    transform: translate(-50%, -50%); !* Adjust for accurate centering *!*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    width: 60px;*/
+/*    height: 60px;*/
+/*    border-radius: 50%;!* Optional: make it circular *!*/
+/*    background-color: var(--accent-color); !* Optional: add background for visibility *!*/
+/*    color: white;*/
+/*    font-size: 24px;*/
+/*    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); !* Optional: shadow for emphasis *!*/
+/*    transition: transform 0.3s ease, color 0.3s ease;*/
+/*    margin-right: 0;*/
+/*}*/
+
+/*.home-button-mobile:hover {*/
+/*    color: white !important;*/
+/*    .fa-house {*/
+/*        transform: var(--transform-scale);*/
+/*        transition: transform 0.1s ease;*/
+/*        !*color: black;*!*/
+/*    }*/
+/*}*/
+
+.home-button-mobile {
+    z-index: 4;
     position: absolute; /* Independent positioning */
     top: 50%; /* Vertically center it */
     left: 50%; /* Horizontally center it */
     transform: translate(-50%, -50%); /* Adjust for accurate centering */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;/* Optional: make it circular */
-    background-color: var(--accent-color); /* Optional: add background for visibility */
-    color: white;
-    font-size: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: shadow for emphasis */
-    transition: transform 0.3s ease, color 0.3s ease;
-    margin-right: 0;
+    width: 75px;
+    height: 75px;
 }
 
-.home-button-mobile:hover {
-    color: white !important;
-    .fa-house {
-        transform: var(--transform-scale);
-        transition: transform 0.1s ease;
-    }
-}
 
 /* Scaling effect only when the menu is closed */
 .hamburger.closed:hover {
@@ -185,7 +288,7 @@
 /* hover effects */
 #themeButton-navbar:hover,
 #fullscreenButton-navbar:hover,
-.navContainer a:hover,
+.linksContainer a:hover,
 .hamburger:hover{
     color: var(--accent-color);
 }
@@ -193,6 +296,8 @@
 .nav-icon:hover {
     transform: var(--transform-scale);
 }
+
+
 
 
 

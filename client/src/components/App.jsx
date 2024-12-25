@@ -27,14 +27,14 @@ function App() {
     })
     // todo siin samuti mõned routed, mis ei ole first level, aga peaksid olema
     const spectatorLinks = [
-        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/worker", label: "Worker" },
         { to: "/spectator", label: "Spectator" },
         { to: "/flag", label: "Flag" },
     ];
 
     const DEVlinks = [
-        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/front-desk", label: "Front Desk" },
         { to: "/race-control", label: "Race Control" },
         { to: "/lap-line-tracker", label: "Lap Line Observer" },
@@ -44,25 +44,25 @@ function App() {
     ];
 
     const lapLineLinks = [
-        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/lap-line-tracker", label: "Lap Line Observer" }
     ];
 
     const safetyOfficialLinks = [
-        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/race-control", label: "Race Control" },
         { to: "/driver/race-countdown", label: "Race Countdown" },
         { to: "/driver/next-race", label: "Next Race" },
     ];
 
     const receptionistLinks = [
-        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/front-desk", label: "Front Desk" },
         { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} />, title: "Race settings" }
     ];
 
     const racerLinks = [
-        { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/driver/race-countdown", label: "Race Countdown" },
         { to: "/driver/next-race", label: "Next Race" },
     ];

@@ -12,7 +12,7 @@ function DynamicNavigator({ links, setRole }) {
     const [hamburger, setHamburger] = useState(false);
 
     const handleHomeClick = () => {
-        // setRole(null); commentisin ajutiselt välja, et ei peaks testides iga kord uuesti isse logima ja oleks lihtsam DEV rollina testida asju
+        setRole(null); // commentisin ajutiselt välja, et ei peaks testides iga kord uuesti isse logima ja oleks lihtsam DEV rollina testida asju
         navigate("/");
     };
 
@@ -20,12 +20,23 @@ function DynamicNavigator({ links, setRole }) {
         <div className='navContainer'>
             {/* for bigger screens */}
             <div className='desktop-navigator'>
+                {/*<div className='home-button-container'>*/}
+                {/*    <a href='/' title='Home' className='home-button-desktop'>*/}
+                {/*       BEACHSIDE RACETRACK*/}
+                {/*    </a>*/}
+                {/*</div>*/}
+                <div className='home-button-container'>
+                    <a href='/' title='Home'>
+                        <img src='Beachside_Racetrack_favicon.png' className='nav-logo home-button-desktop'
+                             alt='Beachside Racetrack Logo'/>
+                    </a>
+                </div>
                 <div className='linksContainer'>
                     {links.map((link, index) => (
                         <Link
                             key={index}
                             to={link.to}
-                            onClick={link.to === "/" ? handleHomeClick : undefined}
+                            onClick={link.to === '/' ? handleHomeClick : undefined}
                             title={link.title}
                         >
                             {link.label}
@@ -44,9 +55,15 @@ function DynamicNavigator({ links, setRole }) {
                     {FullscreenToggle()}
                     {ThemeToggle()}
                 </div>
-                <a className='home-button-mobile' href='/' title='Home'>
-                    <FontAwesomeIcon icon={faHouse}/>
-                </a>
+                {/*<a className='home-button-mobile' href='/' title='Home'>*/}
+                {/*    <FontAwesomeIcon icon={faHouse}/>*/}
+                {/*</a>*/}
+                <div className='home-button-container'>
+                    <a href='/' title='Home'>
+                        <img src='Beachside_Racetrack_favicon.png' className='nav-logo home-button-mobile'
+                             alt='Beachside Racetrack Logo'/>
+                    </a>
+                </div>
                 <div className='linksContainer'>
                     <button
                         className={`hamburger ${hamburger ? "open" : "closed"}`}
