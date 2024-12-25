@@ -31,7 +31,7 @@ const raceSchema = new Schema({
             },
         }
     ],
-    timeRemainingOngoingRace: { type: Number, default: 60000 },
+    timeRemainingOngoingRace: { type: Number, required: true },
     timeRemainingNextRace: { type: Number, default: 60000 },
 });
 

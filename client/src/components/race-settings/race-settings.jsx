@@ -106,7 +106,7 @@ function RaceSettings() {
                         // Update state only if the value is a valid number or non-empty string
                         if (value !== "" && value >= 1 && value <= 100) {
                             setError("");
-                            setRaceDuration(value);
+                            setRaceDuration(value  * 60 * 1000);
                         } else {
                             setError("Please enter a valid time value between 1 and 100 minutes.")
                         }
@@ -121,14 +121,15 @@ function RaceSettings() {
                     id='durationBetweenRaces'
                     className='input-settings'
                     type='number'
-                    placeholder={durationBetweenRaces ? durationBetweenRaces / 1000 / 60 : "0"}
+                    // placeholder={durationBetweenRaces ? durationBetweenRaces / 1000 / 60 : "0"}
+                    placeholder='not used'
                     // value={durationBetweenRaces ? durationBetweenRaces / 1000 / 60 : ""}
                     onChange={(e) => {
                         const value = e.target.value.trim();
                         // Update state only if the value is a valid number or non-empty string
                         if (value !== "" && value >= 1 && value <= 100) {
                             setError("");
-                            setDurationBetweenRaces(value);
+                            setDurationBetweenRaces(value  * 60 * 1000);
                         } else {
                             setError("Please enter a valid time value between 1 and 100 minutes.")
                         }

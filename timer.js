@@ -11,7 +11,7 @@ class Timer {
         this.updateTimerFunction = updateFunction;
     }
 
-    initializeTimer(raceName, initialTime = 60000) {
+    initializeTimer(raceName, initialTime) {
         if (!this.timers[raceName]) {
             this.timers[raceName] = {
                 timeRemaining: initialTime,
@@ -30,7 +30,7 @@ class Timer {
                     { timeRemainingOngoingRace: timer.timeRemaining },
                     { new: true, upsert: true }
                 );
-                //console.log(`Saved timer for race "${raceName}": ${timer.timeRemaining} ms`);
+                console.log(`Saved timer for race "${raceName}": ${timer.timeRemaining} ms`);
             }
         } catch (error) {
             console.error(`Error saving timer for race "${raceName}":`, error);
@@ -82,7 +82,7 @@ class Timer {
         }
     }
     // 1
-    resetTimer(raceName, io, initialTime = 60000) {
+    resetTimer(raceName, io, initialTime) {
         this.pauseTimer(raceName);
         if (this.timers[raceName]) {
             this.timers[raceName].timeRemaining = initialTime;

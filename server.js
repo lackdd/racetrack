@@ -38,16 +38,32 @@ let areAllRacesFinished = true;
 let flagStatus = "";
 const timer = new Timer();
 let currentRaceStopwatches = new Stopwatch();
-let raceDuration = 10 * 60 * 1000; // minutes * seconds * milliseconds
-let durationBetweenRaces = 1 * 60 * 1000; // minutes * seconds * milliseconds
+// let raceDuration = 10 * 60 * 1000; // minutes * seconds * milliseconds
+// let durationBetweenRaces = 1 * 60 * 1000; // minutes * seconds * milliseconds
+let raceDuration;
+let durationBetweenRaces;
 
 
 // Load existing races from MongoDB into memory
 (async () => {
     try {
+        let raceDurationVar = await Variable.findOne({key: "raceDuration"});
+        if (!raceDurationVar) {
+            console.error("race duration not found")
+            raceDurationVar = await Variable.create({key: "raceDuration", value: (10 * 60 * 1000)});
+        }
+        let durationBetweenRacesVar = await Variable.findOne({key: "durationBetweenRaces"});
+        if (!durationBetweenRacesVar) {
+            durationBetweenRacesVar = await Variable.create({key: "durationBetweenRaces", value: (1 * 60 * 1000)});
+        }
+
+        raceDuration = raceDurationVar.value;
+        durationBetweenRaces = durationBetweenRacesVar.value;
+
         raceData = await Race.find(); // Fetch races from MongoDB
         raceData.forEach((race) => {
-            timer.initializeTimer(race.raceName, race.timeRemainingOngoingRace || 60000);
+            timer.initializeTimer(race.raceName,  race.timeRemainingOngoingRace); // 1. race.timeRemainingOngoingRace || raceDuration, 2. raceDuration
+            console.log("race duration: " + raceDuration)
         });
         console.log("Races and timers initialized from database:", raceData);
         lastRaceData = await LastRaceData.find(); // Fetch races from MongoDB
@@ -104,7 +120,7 @@ let durationBetweenRaces = 1 * 60 * 1000; // minutes * seconds * milliseconds
             });
         }
 
-        timer.initializeTimer("nextRace");
+        timer.initializeTimer("nextRace", raceDuration);
     } catch (error) {
         console.error("Error loading races from database:", error);
     }
@@ -129,7 +145,7 @@ io.on('connection', (socket) => {
 
     // Initialize timers for all races
     raceData.forEach((race) => {
-        timer.initializeTimer(race.raceName);
+        timer.initializeTimer(race.raceName, raceDuration);
     });
 
     // Handle timer commands
@@ -154,7 +170,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('resetTimer', (raceName) => {
-        timer.resetTimer(raceName, io);
+        timer.resetTimer(raceName, io, raceDuration);
     });
 
     socket.on('getTimeRemaining', (raceName, callback) => {
@@ -219,16 +235,22 @@ io.on('connection', (socket) => {
 
     socket.on("createRace", async (newRace) => {
         try {
+
             const race = new Race({
                 raceName: newRace.raceName,
                 isOngoing: newRace.isOngoing || false,
                 drivers: newRace.drivers || [],
+                timeRemainingOngoingRace: raceDuration || 0,
+                timeRemainingNextRace: raceDuration || 0,
             });
+            console.log("Type of raceDuration: ", typeof raceDuration);
 
-            await race.save(); // Save the race to MongoDB
+            //await race.save(); // Save the race to MongoDB
+
             raceData.push(race); // Add to in-memory data for existing clients
-            timer.initializeTimer(race.raceName); // Initialize timer for the new race
+            timer.initializeTimer(race.raceName, raceDuration); // Initialize timer for the new race
             io.emit("raceData", raceData); // Broadcast updated race data to all clients
+            await race.save(); // Save the race to MongoDB
 
             if (areAllRacesFinished === true) {
                 queuePosition = raceData.length - 1;
@@ -496,13 +518,16 @@ io.on('connection', (socket) => {
 
     socket.on('updateRaceDuration', (newRaceDuration) => {
         if (raceDuration !== newRaceDuration) {
-            raceDuration = newRaceDuration * 60 * 1000;
+            raceDuration = newRaceDuration; //  * 60 * 1000
+            saveVariable("raceDuration", newRaceDuration); //  * 60 * 1000
+            console.log("updating race duration: ", newRaceDuration)
         }
     })
 
     socket.on('updateDurationBetweenRaces', (newDurationBetweenRaces) => {
         if (durationBetweenRaces !== newDurationBetweenRaces) {
-            durationBetweenRaces = newDurationBetweenRaces * 60 * 1000;
+            durationBetweenRaces = newDurationBetweenRaces; //  * 60 * 1000
+            saveVariable("durationBetweenRaces", newDurationBetweenRaces); //  * 60 * 1000
         }
     })
 
