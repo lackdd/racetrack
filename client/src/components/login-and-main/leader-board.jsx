@@ -9,7 +9,6 @@ function LeaderBoard() {
             if (data.length !== 0) {
                 const updatedDrivers = data[0]["drivers"].map(driver => ({
                     ...driver,
-                    // Keep fastestLap as is, null will indicate no fastest lap
                     fastestLap: driver.fastestLap || null
                 }));
 
@@ -23,7 +22,6 @@ function LeaderBoard() {
 
                 console.log("Sorted drivers:", sortedDrivers);
 
-                // Append unsorted drivers with "N/A" to the bottom
                 const unsortedDrivers = updatedDrivers.filter(driver => driver.fastestLap === null);
 
                 const finalDrivers = [...sortedDrivers, ...unsortedDrivers];

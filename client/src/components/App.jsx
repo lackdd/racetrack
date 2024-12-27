@@ -40,8 +40,8 @@ function App() {
         { to: "/front-desk", label: "Front Desk" },
         { to: "/race-control", label: "Race Control" },
         { to: "/lap-line-tracker", label: "Lap Line Observer" },
-        { to: "/driver/race-countdown", label: "Race Countdown" },
-        { to: "/driver/next-race", label: "Next Race" },
+        { to: "/race-countdown", label: "Race Countdown" },
+        { to: "/next-race", label: "Next Race" },
         { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} />, title: "Race settings" },
     ];
 
@@ -53,8 +53,8 @@ function App() {
     const safetyOfficialLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/race-control", label: "Race Control" },
-        { to: "/driver/race-countdown", label: "Race Countdown" },
-        { to: "/driver/next-race", label: "Next Race" },
+        { to: "/race-countdown", label: "Race Countdown" },
+        { to: "/next-race", label: "Next Race" },
     ];
 
     const receptionistLinks = [
@@ -65,8 +65,8 @@ function App() {
 
     const racerLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
-        { to: "/driver/race-countdown", label: "Race Countdown" },
-        { to: "/driver/next-race", label: "Next Race" },
+        { to: "/race-countdown", label: "Race Countdown" },
+        { to: "/next-race", label: "Next Race" },
     ];
 
     const getNavigatorLinks = () => {
@@ -96,8 +96,8 @@ function App() {
                     <Route path="/front-desk" element={<FrontDesk />} />
                     <Route path="/front-desk/:raceName" element={<RaceDetails />} />
                     <Route path="/race-control" element={<RaceControl />} />
-                    <Route path="/driver/race-countdown" element={<RaceCountdown />} />
-                    <Route path="/driver/next-race" element={<NextRace />} />
+                    <Route path="/race-countdown" element={<RaceCountdown />} />
+                    <Route path="/next-race" element={<NextRace />} />
                     <Route path="/flag" element={<Flag />} />
                     <Route path="/leader-board" element={<LeaderBoard />} />
 
