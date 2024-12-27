@@ -18,6 +18,8 @@ import {useEffect, useState} from "react";
 import { keepTheme } from './universal/themes.js'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGear, faHouse} from "@fortawesome/free-solid-svg-icons";
+import LeaderBoard from './login-and-main/leader-board.jsx';
+
 
 function App() {
     const [role, setRole] = useState(null); // Track the logged-in role
@@ -29,7 +31,7 @@ function App() {
     const spectatorLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/worker", label: "Worker" },
-        { to: "/spectator", label: "Spectator" },
+        { to: "/leader-board", label: "Leader board" },
         { to: "/flag", label: "Flag" },
     ];
 
@@ -97,6 +99,7 @@ function App() {
                     <Route path="/driver/race-countdown" element={<RaceCountdown />} />
                     <Route path="/driver/next-race" element={<NextRace />} />
                     <Route path="/flag" element={<Flag />} />
+                    <Route path="/leader-board" element={<LeaderBoard />} />
 
                     <Route path="/race-settings" element={<RaceSettings />} />
                     <Route path="*" element={<PageNotFound404 />} />

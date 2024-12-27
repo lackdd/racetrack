@@ -3,6 +3,18 @@
     flex-direction: row;
 }
 
+.my-custom-container .RaceCountdown {
+
+    position: static; /* Override the fixed positioning */
+    transform: none; /* Reset the transform property */
+    top: auto; /* Reset the top property */
+    left: auto; /* Reset the left property */
+    display: inline-block; /* Adjust to inline layout */
+    flex-direction: row; /* Change layout to row if needed */
+    align-items: center; /* Center align items */
+    width: auto; /* Reset width */
+    font-size: 18px; /* Your desired font size */
+}
 
 .raceCarTracksContainer {
     position: relative;

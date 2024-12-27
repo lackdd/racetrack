@@ -2,7 +2,7 @@ import "./racing-panel.css";
 import socket from "../../socket.js";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-
+import RaceCountdown from "../race-countdown/race-countdown.jsx"
 
 function RacingPanel() {
     const [raceData, setRaceData] = useState([]); // All races data
@@ -11,7 +11,7 @@ function RacingPanel() {
     const [raceDataHasData, setRaceDataHasData] = useState(""); // If there are no races
 
     const [flagStatus, setFlagStatus] = useState("safe")
-    const [timer, setTimer] = useState(null);
+
 
     const [activeRaceIndex, setActiveRaceIndex] = useState(0);
     const [activeRace, setActiveRace] = useState("no race")
@@ -31,10 +31,6 @@ function RacingPanel() {
             }
         }
 
-        function handleIncomingRaceTime(timerValue) {
-            setTimer(timerValue);
-        }
-
         function handleFlagStatus(status) {
             setFlagStatus(status);
         }
@@ -42,27 +38,23 @@ function RacingPanel() {
         function handleQueuePosition(position) {
             setActiveRaceIndex(position);
 
-            console.log("Hello", raceData.length, position);
-            if (raceData.length > 0 && position !== -1) {
-                setActiveRace(raceData[activeRaceIndex].raceName);
+            if (raceData.length > 0) {
+                setActiveRace(raceData[0].raceName);
             } else {
                 setActiveRace("no race");
             }
         }
 
         socket.emit("getRaceData");
-        socket.emit("getCurrentRaceTimer");
         socket.emit("getQueuePosition");
         socket.emit("FlagPageConnected");
 
         socket.on("raceData", handleIncomingRaceData);
-        socket.on("currentRaceTimer", handleIncomingRaceTime);
         socket.on("broadcastFlagButtonChange", handleFlagStatus);
         socket.on("queuePosition", handleQueuePosition);
 
         return () => {
             socket.off("raceData", handleIncomingRaceData);
-            socket.off("currentRaceTimer", handleIncomingRaceTime);
             socket.off("broadcastFlagButtonChange", handleFlagStatus);
             socket.off("queuePosition", handleQueuePosition);
         };
@@ -90,7 +82,12 @@ function RacingPanel() {
             <div>
                 <p>Flag status: {flagStatus}</p>
                 <p>Active race: {activeRace}</p>
-                <p>Timer: {timer}</p>
+                <div className="my-custom-container" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                    <p>Race countdown:</p>
+                    <RaceCountdown/>
+                </div>
+
+
             </div>
             <p>{raceDataHasData}</p>
             <div className="checkRaceButtonsContainer">
