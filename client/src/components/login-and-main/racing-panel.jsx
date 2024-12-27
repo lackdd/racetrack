@@ -13,7 +13,6 @@ function RacingPanel() {
     const [flagStatus, setFlagStatus] = useState("safe")
 
 
-    const [activeRaceIndex, setActiveRaceIndex] = useState(0);
     const [activeRace, setActiveRace] = useState("no race")
 
     // Get and update data with socket
@@ -23,6 +22,7 @@ function RacingPanel() {
                 setRaceData(data);
                 setDrivers(data[0]["drivers"]);
                 setRaceDataHasData("");
+                setActiveRace(data[0]["raceName"]);
             } else {
                 setRaceData([]);
                 setCurrentShownRace(null);
@@ -35,15 +35,7 @@ function RacingPanel() {
             setFlagStatus(status);
         }
 
-        function handleQueuePosition(position) {
-            setActiveRaceIndex(position);
 
-            if (raceData.length > 0) {
-                setActiveRace(raceData[0].raceName);
-            } else {
-                setActiveRace("no race");
-            }
-        }
 
         socket.emit("getRaceData");
         socket.emit("getQueuePosition");
@@ -51,12 +43,11 @@ function RacingPanel() {
 
         socket.on("raceData", handleIncomingRaceData);
         socket.on("broadcastFlagButtonChange", handleFlagStatus);
-        socket.on("queuePosition", handleQueuePosition);
 
         return () => {
             socket.off("raceData", handleIncomingRaceData);
             socket.off("broadcastFlagButtonChange", handleFlagStatus);
-            socket.off("queuePosition", handleQueuePosition);
+
         };
     }, []);
 
