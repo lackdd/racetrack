@@ -88,7 +88,18 @@ class Timer {
             this.timers[raceName].timeRemaining = initialTime;
             // Broadcast updated time to all clients
             io.emit('timerUpdate', { raceName, timeRemaining: initialTime });
-            this.saveTimerToDatabase(raceName);
+            //this.saveTimerToDatabase(raceName);    ei tea kas vaja enam
+        }
+    }
+
+    deleteTimer(raceName) {
+        const timer = this.timers[raceName];
+        if (timer) {
+            if (timer.running) {
+                clearInterval(timer.interval);
+            }
+            delete this.timers[raceName];
+            console.log(`Deleted timer for race "${raceName}".`);
         }
     }
 

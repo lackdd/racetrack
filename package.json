@@ -7,8 +7,8 @@
     "server": "nodemon server.js",
     "client": "npm run start --prefix client",
     "concurrently": "concurrently \"npm run server\" \"npm run client\"",
-    "start": "npm run concurrently & ngrok start --config .ngrok.yml racetrack",
-    "dev": "npm run concurrently & ngrok start --config .ngrok.yml racetrack"
+    "start": "cross-env NODE_ENV=production npm run concurrently && ngrok start --config .ngrok.yml racetrack",
+    "dev": "cross-env NODE_ENV=development npm run concurrently && ngrok start --config .ngrok.yml racetrack"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "bootstrap": "^5.3.3",
     "concurrently": "^9.1.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongodb": "^6.12.0",

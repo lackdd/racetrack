@@ -54,7 +54,15 @@ let durationBetweenRaces;
 			durationBetweenRacesVar = await Variable.create({key: 'durationBetweenRaces', value: (1 * 60 * 1000)});
 		}
 
-		raceDuration = raceDurationVar.value;
+		if (process.env.NODE_ENV === 'production') {
+			console.log('Running in production mode');
+			raceDuration = 600000;
+		} else if (process.env.NODE_ENV === 'development') {
+			console.log('Running in development mode');
+			raceDuration = 60000;
+		}
+
+		//raceDuration = raceDurationVar.value;
 		durationBetweenRaces = durationBetweenRacesVar.value;
 
 		raceData = await Race.find(); // Fetch races from MongoDB
@@ -267,6 +275,7 @@ io.on('connection', (socket) => {
 			if (race) {
 				await Race.findByIdAndDelete(race._id); // Delete from MongoDB
 				raceData = raceData.filter((r) => r.raceName !== raceName); // Remove from memory
+				timer.deleteTimer(raceName);
 				io.emit('raceData', raceData);
 			}
 		} catch (error) {
@@ -366,6 +375,7 @@ io.on('connection', (socket) => {
 				console.log('safe');
 				break;
 			case 'hazard':
+				startTimer(raceName);
 				console.log('hazard');
 				break;
 			case 'finish':
@@ -373,7 +383,7 @@ io.on('connection', (socket) => {
 				if (ongoingRace) {
 					currentRaceStopwatches.clearAllStopwatches(ongoingRace.drivers);
 				}
-				timer.resetTimer(raceName, io);
+				timer.pauseTimer(raceName, io);
 				console.log('finish');
 				break;
 			default:
