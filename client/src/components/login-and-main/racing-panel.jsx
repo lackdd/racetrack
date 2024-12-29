@@ -69,12 +69,12 @@ function RacingPanel() {
     }
 
     return (
-        <div>
+        <div className="racing-panel">
             <div>
-                <p>Flag status: {flagStatus}</p>
-                <p>Active race: {activeRace}</p>
+                <p className="text">Flag status: {flagStatus}</p>
+                <p className="text">Active race: {activeRace}</p>
                 <div className="my-custom-container" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                    <p>Race countdown:</p>
+                    <p className="text3">Race countdown:</p>
                     <RaceCountdown/>
                 </div>
 
@@ -92,10 +92,10 @@ function RacingPanel() {
             <div className="racersContainer">
                 {drivers.map((driver, index) => (
                     <div key={index}>
-                        <p>Name: {driver.name}</p>
-                        <p>Car: {driver.car}</p>
-                        <p>Laps: {driver.lapTimes.length}</p>
-                        <p>
+                        <p className="text2">Name: {driver.name}</p>
+                        <p className="text2">Car: {driver.car}</p>
+                        <p className="text2">Laps: {driver.lapTimes.length}</p>
+                        <p className="text2">
                             Best Lap:{" "}
                             {driver.fastestLap
                                 ? `${driver.fastestLap.minutes}:${driver.fastestLap.seconds}:${driver.fastestLap.milliseconds}`

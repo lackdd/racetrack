@@ -1,9 +1,16 @@
-.raceCarTracksContainerNavigator {
+.racing-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.racing-panel .raceCarTracksContainerNavigator {
     display: flex;
     flex-direction: row;
 }
 
-.my-custom-container .RaceCountdown {
+.racing-panel .my-custom-container .RaceCountdown {
 
     position: static; /* Override the fixed positioning */
     transform: none; /* Reset the transform property */
@@ -16,23 +23,23 @@
     font-size: 18px; /* Your desired font size */
 }
 
-.raceCarTracksContainer {
+.racing-panel .raceCarTracksContainer {
     position: relative;
     margin-bottom: 40px;
 }
 
 /* Race track with car and road */
-.raceTrack {
+.racing-panel .raceTrack {
     position: relative;
     height: 25px;
 }
 
-.carImage {
+.racing-panel .carImage {
     position: absolute;
     width: 30px;
 }
 
-.raceRoad {
+.racing-panel .raceRoad {
     position: absolute;
     height: 4px;
     width: 100%;
@@ -40,21 +47,21 @@
     margin: 20px 0;
 }
 
-.driverDataContainer {
+.racing-panel .driverDataContainer {
     position: relative;
     line-height: 0;
     padding-top: 10px;
 }
 
-.driverDataContainer p {
+.racing-panel .driverDataContainer p {
     color: var(--font-color);
 }
 
-.raceCarTracksContainerNavigator div {
+.racing-panel .raceCarTracksContainerNavigator div {
     color: var(--font-color);
 }
 
-.no-races {
+.racing-panel .no-races {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -64,7 +71,47 @@
     font-size: clamp(2.5vw, 3em, 4vw);
 }
 
-.logo {
+.racing-panel .logo {
     width: 75%;
     opacity: 90%;
+}
+
+.racing-panel .text {
+    font-weight: bold;
+    height: 40px;
+    width: 250px;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px;
+    margin-right: 10px;
+    color: var(--primary-color);
+    border: none;
+    text-shadow: var(--font-shadow);
+}
+
+.racing-panel .text2 {
+    font-weight: bold;
+    height: 40px;
+    width: 250px;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px;
+    margin-right: 1000px;
+    color: var(--primary-color);
+    border: none;
+    text-shadow: var(--font-shadow);
+}
+
+.racing-panel .text3 {
+    font-weight: bold;
+    height: 40px;
+    width: 190px;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    border: none;
+    text-shadow: var(--font-shadow);
 }

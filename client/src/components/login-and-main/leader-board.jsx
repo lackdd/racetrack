@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import socket from "../../socket.js";
+import "./leader-board.css";
 
 function LeaderBoard() {
     const [filteredDrivers, setFilteredDrivers] = useState([]);
@@ -40,16 +41,16 @@ function LeaderBoard() {
     }, []);
 
     return (
-        <div>
-            <h2>Leader Board</h2>
+        <div className="leader-board">
+            <h2 className="header">Leader Board</h2>
             <div className="racersContainer">
                 {filteredDrivers.map((driver, index) => (
                     <div key={index}>
-                        <p>Rank: {index + 1}</p>
-                        <p>Name: {driver.name}</p>
-                        <p>Car: {driver.car}</p>
-                        <p>Laps: {driver.lapTimes.length}</p>
-                        <p>
+                        <p className="text">Rank: {index + 1}</p>
+                        <p className="text">Name: {driver.name}</p>
+                        <p className="text">Car: {driver.car}</p>
+                        <p className="text">Laps: {driver.lapTimes.length}</p>
+                        <p className="text">
                             Best Lap:{" "}
                             {driver.fastestLap
                                 ? `${driver.fastestLap.minutes}:${driver.fastestLap.seconds.toString().padStart(2, '0')}:${driver.fastestLap.milliseconds.toString().padStart(3, '0')}`
