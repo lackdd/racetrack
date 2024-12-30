@@ -1,117 +1,249 @@
 .racing-panel {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "race-buttons race-info"
+        "race-buttons leader-board";
+    /*grid-template-rows: auto 150px 1fr; !* Define row heights *!*/
+    grid-template-columns: 1fr 5fr; /* Define column widths */
+    width: 100%;
+}
+
+
+.racing-panel > div.race-buttons-container {
+    grid-area: race-buttons;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 15px;
+    padding-right: 10px;
 }
 
-.racing-panel .raceCarTracksContainerNavigator {
+@media (max-width: 768px) {
+    .racing-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .racing-panel > div.race-buttons-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 15px;
+    }
+
+    .racing-panel > div.race-info-container {
+        width: 90%;
+        gap: 20px;
+    }
+}
+
+.racing-panel > h1 {
+    grid-area: header;
+    text-align: center;
+    padding-bottom: 20px;
+    color: var(--secondary-color)
+}
+
+
+.racing-panel > div.race-info-container {
+    grid-area: race-info;
     display: flex;
-    flex-direction: row;
-}
-
-.racing-panel .my-custom-container .RaceCountdown {
-
-    position: static; /* Override the fixed positioning */
-    transform: none; /* Reset the transform property */
-    top: auto; /* Reset the top property */
-    left: auto; /* Reset the left property */
-    display: inline-block; /* Adjust to inline layout */
-    flex-direction: row; /* Change layout to row if needed */
-    align-items: center; /* Center align items */
-    width: auto; /* Reset width */
-    font-size: 18px; /* Your desired font size */
-}
-
-.racing-panel .raceCarTracksContainer {
-    position: relative;
-    margin-bottom: 40px;
-}
-
-/* Race track with car and road */
-.racing-panel .raceTrack {
-    position: relative;
-    height: 25px;
-}
-
-.racing-panel .carImage {
-    position: absolute;
-    width: 30px;
-}
-
-.racing-panel .raceRoad {
-    position: absolute;
-    height: 4px;
-    width: 100%;
-    background: var(--font-color);
-    margin: 20px 0;
-}
-
-.racing-panel .driverDataContainer {
-    position: relative;
-    line-height: 0;
-    padding-top: 10px;
-}
-
-.racing-panel .driverDataContainer p {
+    flex: 1;
+    justify-content: space-evenly;
+    /*border-bottom: 1px solid grey;*/
+    padding-left: 60px;
+    padding-right: 60px;
+    font-weight: bold;
     color: var(--font-color);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    gap: 0.5rem;
+    padding-bottom: 0.2rem;
 }
 
-.racing-panel .raceCarTracksContainerNavigator div {
-    color: var(--font-color);
+.racing-panel > p. {
+    /*padding: 10px;*/
+    font-size: 20px;
+}
+
+
+.racing-panel > div.leader-board {
+    grid-area: leader-board;
+}
+
+.racing-panel > div.leader-board table {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+}
+
+.racing-panel .flag-status-info {
+    width: 80px;
+}
+
+.flag-status-info.warning {
+    color: red;
+}
+
+.racing-panel .welcome {
+    padding-top: 10vh;
+    color: var(--accent-color)
 }
 
 .racing-panel .no-races {
+    text-align: center;
+    color: var(--font-color);
+}
+
+.racing-panel .no-race-container {
     display: flex;
-    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--font-color);
-    font-size: clamp(2.5vw, 3em, 4vw);
+    width: 100vw;
 }
 
-.racing-panel .logo {
-    width: 75%;
-    opacity: 90%;
-}
-
-.racing-panel .text {
+.racing-panel .RaceCountdown {
+        position: static; /* Override the fixed positioning */
+        transform: none; /* Reset the transform property */
+        top: auto; /* Reset the top property */
+        left: auto; /* Reset the left property */
+        display: inline-block; /* Adjust to inline layout */
+        flex-direction: row; /* Change layout to row if needed */
+        align-items: center; /* Center align items */
+        width: auto; /* Reset width */
     font-weight: bold;
-    height: 40px;
-    width: 250px;
-    font-size: 20px;
-    border-radius: 10px;
-    padding: 10px;
-    margin-right: 10px;
-    color: var(--primary-color);
-    border: none;
-    text-shadow: var(--font-shadow);
+    font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
-.racing-panel .text2 {
-    font-weight: bold;
-    height: 40px;
-    width: 250px;
-    font-size: 20px;
-    border-radius: 10px;
-    padding: 10px;
-    margin-right: 1000px;
-    color: var(--primary-color);
-    border: none;
-    text-shadow: var(--font-shadow);
-}
+/*.active-race-container,*/
+/*.flag-status-container,*/
+/*.countdown-container {*/
+/*    flex: 1;*/
+/*    display: flex;*/
+/*    justify-content: flex-end;  !* Align to the right by default *!*/
+/*}*/
 
-.racing-panel .text3 {
-    font-weight: bold;
-    height: 40px;
-    width: 190px;
-    font-size: 20px;
-    border-radius: 10px;
-    padding: 10px;
-    margin-right: 10px;
-    margin-bottom: 30px;
-    color: var(--primary-color);
-    border: none;
-    text-shadow: var(--font-shadow);
-}
+/*.active-race-info {*/
+/*    text-align: left; !* Align this paragraph to the left *!*/
+/*    flex: 1; !* Ensure it takes available space *!*/
+/*}*/
+
+/*.flag-status-info,*/
+/*.countdown-container p {*/
+/*    text-align: right; !* Align other paragraphs to the right *!*/
+/*}*/
+
+
+/*.racing-panel .raceCarTracksContainerNavigator {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*}*/
+
+/*.racing-panel .my-custom-container .RaceCountdown {*/
+
+/*    position: static; !* Override the fixed positioning *!*/
+/*    transform: none; !* Reset the transform property *!*/
+/*    top: auto; !* Reset the top property *!*/
+/*    left: auto; !* Reset the left property *!*/
+/*    display: inline-block; !* Adjust to inline layout *!*/
+/*    flex-direction: row; !* Change layout to row if needed *!*/
+/*    align-items: center; !* Center align items *!*/
+/*    width: auto; !* Reset width *!*/
+/*    font-size: 18px; !* Your desired font size *!*/
+/*}*/
+
+/*.racing-panel .raceCarTracksContainer {*/
+/*    position: relative;*/
+/*    margin-bottom: 40px;*/
+/*}*/
+
+/*!* Race track with car and road *!*/
+/*.racing-panel .raceTrack {*/
+/*    position: relative;*/
+/*    height: 25px;*/
+/*}*/
+
+/*.racing-panel .carImage {*/
+/*    position: absolute;*/
+/*    width: 30px;*/
+/*}*/
+
+/*.racing-panel .raceRoad {*/
+/*    position: absolute;*/
+/*    height: 4px;*/
+/*    width: 100%;*/
+/*    background: var(--font-color);*/
+/*    margin: 20px 0;*/
+/*}*/
+
+/*.racing-panel .driverDataContainer {*/
+/*    position: relative;*/
+/*    line-height: 0;*/
+/*    padding-top: 10px;*/
+/*}*/
+
+/*.racing-panel .driverDataContainer p {*/
+/*    color: var(--font-color);*/
+/*}*/
+
+/*.racing-panel .raceCarTracksContainerNavigator div {*/
+/*    color: var(--font-color);*/
+/*}*/
+
+/*.racing-panel .no-races {*/
+/*    display: flex;*/
+/*    flex: 1;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    color: var(--font-color);*/
+/*    font-size: clamp(2.5vw, 3em, 4vw);*/
+/*}*/
+
+/*.racing-panel .logo {*/
+/*    width: 75%;*/
+/*    opacity: 90%;*/
+/*}*/
+
+/*.racing-panel .text {*/
+/*    font-weight: bold;*/
+/*    height: 40px;*/
+/*    width: 250px;*/
+/*    font-size: 20px;*/
+/*    border-radius: 10px;*/
+/*    padding: 10px;*/
+/*    margin-right: 10px;*/
+/*    color: var(--primary-color);*/
+/*    border: none;*/
+/*    text-shadow: var(--font-shadow);*/
+/*}*/
+
+/*.racing-panel .text2 {*/
+/*    font-weight: bold;*/
+/*    height: 40px;*/
+/*    width: 250px;*/
+/*    font-size: 20px;*/
+/*    border-radius: 10px;*/
+/*    padding: 10px;*/
+/*    margin-right: 1000px;*/
+/*    color: var(--primary-color);*/
+/*    border: none;*/
+/*    text-shadow: var(--font-shadow);*/
+/*}*/
+
+/*.racing-panel .text3 {*/
+/*    font-weight: bold;*/
+/*    height: 40px;*/
+/*    width: 190px;*/
+/*    font-size: 20px;*/
+/*    border-radius: 10px;*/
+/*    padding: 10px;*/
+/*    margin-right: 10px;*/
+/*    margin-bottom: 30px;*/
+/*    color: var(--primary-color);*/
+/*    border: none;*/
+/*    text-shadow: var(--font-shadow);*/
+/*}*/

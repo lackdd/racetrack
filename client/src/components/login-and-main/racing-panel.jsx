@@ -1,7 +1,8 @@
 import "./racing-panel.css";
 import socket from "../../socket.js";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
+import {formatLapTime} from '../universal/formatLapTime.js';
 import RaceCountdown from "../race-countdown/race-countdown.jsx"
 
 function RacingPanel() {
@@ -14,6 +15,7 @@ function RacingPanel() {
 
 
     const [activeRace, setActiveRace] = useState("no race")
+
 
     // Get and update data with socket
     useEffect(() => {
@@ -70,43 +72,75 @@ function RacingPanel() {
 
     return (
         <div className="racing-panel">
-            <div>
-                <p className="text">Flag status: {flagStatus}</p>
-                <p className="text">Active race: {activeRace}</p>
-                <div className="my-custom-container" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                    <p className="text3">Race countdown:</p>
-                    <RaceCountdown/>
+            {activeRace === "no race" ? (
+                <div className='no-race-container'>
+                    <h1 className='welcome'>Welcome to Beachside Racetrack!</h1>
+                    <p className='no-races'>No active races</p>
                 </div>
 
+            ) : (
+                <>
 
-            </div>
-            <p>{raceDataHasData}</p>
-            <div className="checkRaceButtonsContainer">
-                {raceData.map((race, index) => (
-                    <Button key={index} onClick={() => handleButtonEvent(race)}>
-                        {race.raceName}
-                    </Button>
-                ))}
-            </div>
+    <div className='race-buttons-container'>
+        {raceData.map((race, index) => (
+            <Button key={index} onClick={() => handleButtonEvent(race)}>
+                {race.raceName}
+            </Button>
+        ))}
+    </div>
 
-            <div className="racersContainer">
-                {drivers.map((driver, index) => (
-                    <div key={index}>
-                        <p className="text2">Name: {driver.name}</p>
-                        <p className="text2">Car: {driver.car}</p>
-                        <p className="text2">Laps: {driver.lapTimes.length}</p>
-                        <p className="text2">
-                            Best Lap:{" "}
-                            {driver.fastestLap
-                                ? `${driver.fastestLap.minutes}:${driver.fastestLap.seconds}:${driver.fastestLap.milliseconds}`
-                                : "NA"}
-                        </p>
-                        <hr/>
-                    </div>
-                ))}
-            </div>
+    <div className='race-info-container'>
+        <div className='countdown-container'>
+            <RaceCountdown/>
         </div>
-    )
+        <div className='flag-status-container'>
+            <p className={`flag-status-info ${flagStatus !== 'safe' ? 'warning' : ''}`}>
+                {flagStatus}
+            </p>
+        </div>
+    </div>
+
+    <div className='leader-board'>
+        <table className='driver-table'>
+            <tbody>
+            <tr className='first-row'>
+                <th className='rank'>Rank</th>
+                <th className='name'>Name</th>
+                <th className='car'>Car</th>
+                <th className='laps'>Laps</th>
+                <th className='best-lap'>Best Lap</th>
+            </tr>
+            {drivers.map((driver, index) => (
+                index === 0 ?
+                    <tr key={index} className='next-rows first-place'>
+                        <td>{index + 1}</td>
+                        <td>{driver.name}</td>
+                        <td>{driver.car}</td>
+                        <td>{driver.lapTimes.length}</td>
+                        <td className='lap-time'>{driver.fastestLap
+                            ? `${driver.fastestLap.minutes}:${driver.fastestLap.seconds.toString().padStart(2, '0')}:${driver.fastestLap.milliseconds.toString().padStart(3, '0')}`
+                            : 'N/A'}
+                        </td>
+                    </tr>
+                    :
+                    <tr key={index} className='next-rows'>
+                        <td>{index + 1}</td>
+                        <td>{driver.name}</td>
+                        <td>{driver.car}</td>
+                        <td>{driver.lapTimes.length}</td>
+                        <td className='lap-time'>{driver.fastestLap
+                            ? `${driver.fastestLap.minutes}:${driver.fastestLap.seconds.toString().padStart(2, '0')}:${driver.fastestLap.milliseconds.toString().padStart(3, '0')}`
+                            : 'N/A'}
+                        </td>
+                    </tr>
+            ))}
+            </tbody>
+        </table>
+    </div>
+</>
+)}
+</div>
+);
 
 }
 
