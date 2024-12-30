@@ -57,6 +57,7 @@ let durationBetweenRaces;
 		if (process.env.NODE_ENV === 'production') {
 			console.log('Running in production mode');
 			raceDuration = 600000;
+			//raceDuration = raceDurationVar.value;
 		} else if (process.env.NODE_ENV === 'development') {
 			console.log('Running in development mode');
 			raceDuration = 60000;
