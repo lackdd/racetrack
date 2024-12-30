@@ -27,11 +27,10 @@ function App() {
     useEffect(() => {
         keepTheme(); // track theme
     })
-    // todo siin samuti mõned routed, mis ei ole first level, aga peaksid olema
     const spectatorLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/worker", label: "Worker" },
-        { to: "/leader-board", label: "Leader board" },
+        { to: "/leader-board", label: "Leaderboard" },
         { to: "/flag", label: "Flag" },
     ];
 
