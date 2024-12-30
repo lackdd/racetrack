@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import {useState} from "react";
 import { useNavigate } from "react-router-dom";
+import "./login.scss";
 
 function Login({ setRole }) {
     const [optionValue, setOptionValue] = useState("Safety official");
@@ -48,7 +49,7 @@ function Login({ setRole }) {
                         navigate("/front-desk");
                         break;
                     case "Racer":
-                        navigate("/driver/next-race"); // todo kõik need routed peavad olema first level, ehk nt see peaks olema lihtsalt /next-race
+                        navigate("/next-race");
                         break;
                     case "Safety official":
                         navigate("/race-control");
@@ -70,20 +71,22 @@ function Login({ setRole }) {
     }
 
     return (
-        <form onSubmit={handleLogin}>
-            <FloatingLabel controlId="floatingPassword" label="Password">
-                <Form.Control type="password" placeholder="Password" onChange={givenPassword} />
-            </FloatingLabel>
-            <Form.Select aria-label="Default select example" onChange={chosenOption}>
-                <option value="Safety official">Safety official</option>
-                <option value="Receptionist">Receptionist</option>
-                <option value="Racer">Racer</option>
-                <option value="Lap line obs">Lap line obs</option>
-                <option value="DEV">DEV mode</option>
-            </Form.Select>
-            <p>{loginStatusText}</p>
-            <button type="submit">Login</button>
-        </form>
+        <div className='login-screen'>
+            <form onSubmit={handleLogin} className='login-form'>
+                <FloatingLabel controlId="floatingPassword" label="Password">
+                    <Form.Control type="password" placeholder="Password" onChange={givenPassword}/>
+                </FloatingLabel>
+                <Form.Select aria-label="Default select example" onChange={chosenOption}>
+                    <option value="Safety official">Safety official</option>
+                    <option value="Receptionist">Receptionist</option>
+                    <option value="Racer">Racer</option>
+                    <option value="Lap line obs">Lap line obs</option>
+                    <option value="DEV">DEV mode</option>
+                </Form.Select>
+                <p>{loginStatusText}</p>
+                <button type="submit">Login</button>
+            </form>
+        </div>
     );
 }
 
