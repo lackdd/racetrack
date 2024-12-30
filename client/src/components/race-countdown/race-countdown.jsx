@@ -1,7 +1,7 @@
 // As a race driver, I want to know when it is my turn to race, so that I can proceed to the paddock.
 
 import socket from '../../socket.js';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {formatLapTime} from '../universal/formatLapTime.js';
 import '../universal/universal.css';
 import './race-countdown.css';
@@ -11,6 +11,20 @@ function RaceCountdown() {
 	const [isFlashing, setIsFlashing] = useState(false);
 	const [timer, setTimer] = useState(0);
 	const [currentRaceName, setCurrentRaceName] = useState('');
+	const [raceDur, setRaceDur] = useState(0);
+
+	useEffect(() => {
+		socket.emit('raceDurationValue');
+
+		socket.on('getRaceDuration', (data) => {
+			setRaceDur(data);
+		});
+
+		return () => {
+			// Clean up listeners for raceData
+			socket.off('getRaceDuration');
+		};
+	}, []);
 
 	useEffect(() => {
 
@@ -66,9 +80,9 @@ function RaceCountdown() {
 
 	return (
 		<div className='RaceCountdown'>
-			{timer === 0 || timer === 60000 || timer === 600000 ? ( // todo set timer in race control settings and compare to this value
+			{timer === 0 ? ( // || timer === raceDur
 				<p>00:00:00</p>
-			) : timer < 10000 && timer !== 0 ? (
+			) : timer < 10000 && timer !== 0 && timer !== raceDur ? (
 					<p className='lessThan10Seconds'>
 						{/*{formatLapTime(timer)}*/}
 						<span>{time.minutes}</span>:
