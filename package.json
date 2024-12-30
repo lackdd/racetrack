@@ -6,9 +6,10 @@
   "scripts": {
     "server": "nodemon server.js",
     "client": "npm run start --prefix client",
+    "tunnel": "ngrok start --config .ngrok.yml racetrack",
     "concurrently": "concurrently \"npm run server\" \"npm run client\"",
     "start": "cross-env NODE_ENV=production npm run concurrently && ngrok start --config .ngrok.yml racetrack",
-    "dev": "cross-env NODE_ENV=development npm run concurrently && ngrok start --config .ngrok.yml racetrack"
+    "dev": "cross-env NODE_ENV=development npm run concurrently && sleep 5 && ngrok start --config .ngrok.yml racetrack"
   },
   "keywords": [],
   "author": "",
