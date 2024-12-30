@@ -96,7 +96,7 @@
 .navContainer .linksContainer {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
     align-items: center;
     flex: 1;
     padding-left: 1em;
