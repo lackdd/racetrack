@@ -49,7 +49,6 @@ function Flag() {
     // Determine the appropriate CSS class
     const flagClass = flagColour === "finish" ? "chequered-flag" : "";
 
-    // todo lippu vaja täiesti full screenis
     return (
         <div>
             <div className="flag-container">
