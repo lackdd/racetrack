@@ -483,6 +483,10 @@ io.on('connection', (socket) => {
 		socket.emit('durationBetweenRaces', durationBetweenRaces);
 	});
 
+	socket.on('getRaceDuration', () => {
+		socket.emit('raceDurationValue', raceDuration);
+	});
+
 	socket.on('updateRaceDuration', (newRaceDuration) => {
 		if (raceDuration !== newRaceDuration) {
 			raceDuration = newRaceDuration; //  * 60 * 1000
