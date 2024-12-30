@@ -17,12 +17,12 @@ This project is a real-time system for managing Beachside Racetrack, enabling ra
 ## How to Start the Server
 
 ### Prerequisites
-1. Install **Node.js** (>= v14.x).
-2. Install **npm** (Node Package Manager).
-3. Install **MongoDB** for database storage (or any other supported database if configured).
+1. Install **[Node.js](https://nodejs.org/en/download)** (>= v14.x):
+2. Install **[npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)** (Node Package Manager):
+3. Install **[MongoDB](https://www.mongodb.com/docs/manual/installation/)** for database storage (or any other supported database if configured).
 
-### Environment Variables
-Create a `.env` file in the root of the project with the following variables:
+### Environment Variables (optional)
+Edit the `.env` file in the root of the project with the following variables:
 
 ```env
 # Server Configuration
@@ -46,7 +46,7 @@ JWT_SECRET=your_jwt_secret_key
 
 2. Install dependencies:
    ```bash
-   npm install
+   npm run install-all
    ```
 
 3. Start the database (if using MongoDB):
@@ -153,7 +153,7 @@ This project is a real-time system designed for managing races at the Beachside 
 
 2. Install dependencies:
    ```bash
-   npm install
+   npm run install-all
    ```
 
 3. Set up the `.env` file in the root directory with the following environment variables:
