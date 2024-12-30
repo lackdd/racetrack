@@ -3,104 +3,131 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-.leader-board .button {
-    height: 150px;
-    width: 600px;
-    font-size: 80px;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    text-shadow: var(--font-shadow);
-}
-
-.leader-board .add-button {
-    margin-left: 10px;
-}
-
-.leader-board .button:hover {
-    background-color: var(--secondary-color);
-}
-
-.leader-board .button:active {
-    background-color: var(--tertiary-color);
-}
-
-.leader-board .input {
-    height: 150px;
-    margin: 9px;
-    width: 600px;
-    font-size: 80px;
-    border-radius: 10px;
-    text-align: center;
-    background-color: var(--input-field-bg);
-}
-
-.leader-board .ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-.leader-board .race-details-button {
-    height: 80px;
-    width: 320px;
-    font-size: 43px;
-}
-
-.leader-board .go-back-button {
-    margin-top: 100px;
-    height: 80px;
-    width: 320px;
-    font-size: 43px;
-}
-
-.leader-board .race-details-input {
-    height: 80px;
-    width: 320px;
-    font-size: 43px;
-}
-
-.leader-board .driver-details {
-    font-weight: bold;
-    height: 80px;
-    width: 320px;
-    font-size: 43px;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    text-shadow: var(--font-shadow);
+    width: 100%;
 }
 
 .leader-board .header {
     font-weight: bold;
-    height: 80px;
-    width: 500px;
-    font-size: 43px;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    color: var(--primary-color);
-    border: none;
+    font-size: clamp(2rem, 5vw, 4rem); /* Scales based on viewport width */
+    color: var(--secondary-color);
     text-shadow: var(--font-shadow);
+    padding-bottom: 15px;
+    padding-top: 30px;
 }
 
-.leader-board .text {
-    font-weight: bold;
-    height: 40px;
-    width: 250px;
-    font-size: 20px;
-    border-radius: 10px;
-    padding: 10px;
-    margin-right: 1200px;
+.leader-board .driver-table {
+    width: 75%;
+    font-size: clamp(1rem, 3vw, 2rem); /* Scales based on viewport width */
     color: var(--primary-color);
-    border: none;
-    text-shadow: var(--font-shadow);
+    border-spacing: 0; /* Removes gaps caused by default border-spacing */
+    border-collapse: separate; /* Allows spacing control */
+    text-align: right;
 }
+
+.leader-board tr {
+    text-align: right; /* Center text horizontally */
+    vertical-align: middle; /* Center text vertically */
+}
+
+.leader-board th {
+    font-weight: bold;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--tertiary-color);
+    text-align: right; /* Center text horizontally */
+    vertical-align: middle; /* Center text vertically */
+    padding: 0 0.3em 0 0.3em;
+}
+
+.leader-board td {
+    padding: 0px clamp(5px, 2vw, 15px) clamp(20px, 2vw, 10px); clamp(5px, 2vw, 15px);
+}
+
+.leader-board .first-place {
+    color: var(--accent-color)
+}
+
+/*.leader-board .lap-time {*/
+/*    font-family: monospace;*/
+/*}*/
+
+
+/*.leader-board .driver {*/
+/*    font-weight: bold;*/
+/*    font-size: 20px;*/
+/*    color: var(--primary-color);*/
+/*    text-shadow: var(--font-shadow);*/
+/*}*/
+
+/*.leader-board .button {*/
+/*    height: 150px;*/
+/*    width: 600px;*/
+/*    font-size: 80px;*/
+/*    border-radius: 10px;*/
+/*    padding: 10px;*/
+/*    margin: 10px;*/
+/*    background: var(--primary-color);*/
+/*    color: white;*/
+/*    border: none;*/
+/*    text-shadow: var(--font-shadow);*/
+/*}*/
+
+/*.leader-board .add-button {*/
+/*    margin-left: 10px;*/
+/*}*/
+
+/*.leader-board .button:hover {*/
+/*    background-color: var(--secondary-color);*/
+/*}*/
+
+/*.leader-board .button:active {*/
+/*    background-color: var(--tertiary-color);*/
+/*}*/
+
+/*.leader-board .input {*/
+/*    height: 150px;*/
+/*    margin: 9px;*/
+/*    width: 600px;*/
+/*    font-size: 80px;*/
+/*    border-radius: 10px;*/
+/*    text-align: center;*/
+/*    background-color: var(--input-field-bg);*/
+/*}*/
+
+/*.leader-board .ul {*/
+/*    list-style-type: none;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+/*.leader-board .race-details-button {*/
+/*    height: 80px;*/
+/*    width: 320px;*/
+/*    font-size: 43px;*/
+/*}*/
+
+/*.leader-board .go-back-button {*/
+/*    margin-top: 100px;*/
+/*    height: 80px;*/
+/*    width: 320px;*/
+/*    font-size: 43px;*/
+/*}*/
+
+/*.leader-board .race-details-input {*/
+/*    height: 80px;*/
+/*    width: 320px;*/
+/*    font-size: 43px;*/
+/*}*/
+
+/*.leader-board .driver-details {*/
+/*    font-weight: bold;*/
+/*    height: 80px;*/
+/*    width: 320px;*/
+/*    font-size: 43px;*/
+/*    border-radius: 10px;*/
+/*    padding: 10px;*/
+/*    margin: 10px;*/
+/*    background: var(--primary-color);*/
+/*    color: white;*/
+/*    border: none;*/
+/*    text-shadow: var(--font-shadow);*/
+/*}*/
