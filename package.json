@@ -1,9 +1,11 @@
 {
   "name": "racetrack",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
+    "install-all": "npm install && cd client && npm install",
     "server": "nodemon server.js",
     "client": "npm run start --prefix client",
     "tunnel": "ngrok start --config .ngrok.yml racetrack",
