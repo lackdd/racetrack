@@ -17,7 +17,7 @@ import RaceSettings from "./race-settings/race-settings.jsx";
 import {useEffect, useState} from "react";
 import { keepTheme } from './universal/themes.js'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faGear, faHouse} from "@fortawesome/free-solid-svg-icons";
+import {faGear} from "@fortawesome/free-solid-svg-icons";
 import LeaderBoard from './login-and-main/leader-board.jsx';
 
 
@@ -29,18 +29,19 @@ function App() {
     })
     const spectatorLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
-        { to: "/worker", label: "Worker" },
         { to: "/leader-board", label: "Leaderboard" },
-        { to: "/flag", label: "Flag" },
+        { to: "/login", label: "Log in" },
     ];
 
     const DEVlinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        { to: "/leader-board", label: "Leaderboard" },
         { to: "/front-desk", label: "Front Desk" },
         { to: "/race-control", label: "Race Control" },
         { to: "/lap-line-tracker", label: "Lap Line Observer" },
         { to: "/race-countdown", label: "Race Countdown" },
         { to: "/next-race", label: "Next Race" },
+        { to: "/race-flags", label: "Flag" },
         { to: "/race-settings", label: <FontAwesomeIcon icon={faGear} />, title: "Race settings" },
     ];
 
@@ -90,7 +91,7 @@ function App() {
                 <DynamicNavigator links={getNavigatorLinks()} />
                 <Routes>
                     <Route path="/" element={<RacingPanel />} />
-                    <Route path="/worker" element={<Login setRole={setRole} />} />
+                    <Route path="/login" element={<Login setRole={setRole} />} />
                     <Route path="/lap-line-tracker" element={<LapLineObserver />} />
                     <Route path="/front-desk" element={<FrontDesk />} />
                     <Route path="/front-desk/:raceName" element={<RaceDetails />} />

@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import {ThemeToggle} from '../universal/themeToggle.jsx'
 import {FullscreenToggle} from "../universal/fullscreenToggle.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars, faHouse, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faBars, faXmark} from "@fortawesome/free-solid-svg-icons";
 
 
 function DynamicNavigator({ links, setRole }) {
@@ -12,7 +12,7 @@ function DynamicNavigator({ links, setRole }) {
     const [hamburger, setHamburger] = useState(false);
 
     const handleHomeClick = () => {
-        setRole(null); // commentisin ajutiselt välja, et ei peaks testides iga kord uuesti isse logima ja oleks lihtsam DEV rollina testida asju
+        setRole(null);
         navigate("/");
     };
 
