@@ -79,9 +79,9 @@ function Login({ setRole }) {
                 <Form.Select aria-label="Default select example" onChange={chosenOption}>
                     <option value="Safety official">Safety official</option>
                     <option value="Receptionist">Receptionist</option>
-                    <option value="Racer">Racer</option>
+                    {/*<option value="Racer">Race driver</option>*/}
                     <option value="Lap line obs">Lap line obs</option>
-                    <option value="DEV">DEV mode</option>
+                    <option value="DEV">Developer</option>
                 </Form.Select>
                 <p>{loginStatusText}</p>
                 <button type="submit">Login</button>

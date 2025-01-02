@@ -5,6 +5,7 @@ agent:
 
 endpoints:
   - name: racetrack
-    url: intimate-upright-sunfish.ngrok-free.app
+#    url: intimate-upright-sunfish.ngrok-free.app
+#    proto: http
     upstream:
       url: 5173

@@ -30,6 +30,8 @@ function App() {
     const spectatorLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
         { to: "/leader-board", label: "Leaderboard" },
+        { to: "/race-countdown", label: "Race Countdown" },
+        { to: "/next-race", label: "Next Race" },
         { to: "/login", label: "Log in" },
     ];
 
@@ -65,6 +67,7 @@ function App() {
 
     const racerLinks = [
         // { to: "/", label: <FontAwesomeIcon icon={faHouse} /> },
+        { to: "/leader-board", label: "Leaderboard" },
         { to: "/race-countdown", label: "Race Countdown" },
         { to: "/next-race", label: "Next Race" },
     ];
