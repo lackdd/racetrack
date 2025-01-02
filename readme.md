@@ -1,44 +1,20 @@
-# Beachside Racetrack Real-Time System
+# Beachside Racetrack - Real-Time Race Management System
 
-This project is a real-time system for managing Beachside Racetrack, enabling race preparation, race control, and spectator information updates. It features:
+## Overview
 
-- **Real-time functionality** powered by Socket.IO.
-- **Role-based interfaces** for race controllers, spectators, and other personas.
-- **Data persistence** using a database.
-- **Secure employee interfaces**.
-
-## Features
-- **Race Preparation**: Configure races with details like participants, timing, and laps.
-- **Race Control**: Monitor and control the race in real time.
-- **Spectator Information**: Provide live updates to spectators via a public interface.
+The Beachside Racetrack system is designed to manage races in real time, ensuring smooth operation and providing up-to-date information for employees, race drivers, and spectators. Built using **Node.js**, **React**, and **Socket.IO**, it supports multiple personas and features dynamic race management interfaces.
 
 ---
 
 ## How to Start the Server
 
 ### Prerequisites
-1. Install **[Node.js](https://nodejs.org/en/download)** (>= v14.x):
-2. Install **[npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)** (Node Package Manager):
-3. Install **[MongoDB](https://www.mongodb.com/docs/manual/installation/)** for database storage (or any other supported database if configured).
+1. Install **[Node.js](https://nodejs.org/en/download)** (>= v14.x)
+2. Install **[npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)** (Node Package Manager)
+2. Environment variables set in a `.env` file (see below).
 
-### Environment Variables (optional)
-Edit the `.env` file in the root of the project with the following variables:
-
-```env
-# Server Configuration
-PORT=3000
-
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=27017
-DB_NAME=beachside_race
-
-# Security Keys
-JWT_SECRET=your_jwt_secret_key
-```
-
-### Installation
-1. Clone the repository:
+### Setup Instructions
+1. Clone this repository:
    ```bash
    git clone https://gitea.kood.tech/andreberezin/racetrack.git
    cd racetrack
@@ -49,179 +25,139 @@ JWT_SECRET=your_jwt_secret_key
    npm run install-all
    ```
 
-3. Start the database (if using MongoDB):
-   ```bash
-   mongod --dbpath /path/to/your/db
-   ```
-
-4. Start the server:
-   ```bash
-   npm start
-   ```
-
-The server will be running at `http://localhost:3000`.
-
----
-
-## User Guide
-
-### Race Preparation
-1. **Login**: Log in as an employee to access race preparation features.
-2. **Configure a Race**:
-    - Navigate to the `Front desk` interface at /front-desk.
-    - Fill in the race details:
-        - Race name
-        - Up to 8 drivers with their names and car numbers
-
-**Screenshot**:
-![Race Preparation Screenshot](path/to/image1.png)
-
-### Race Control
-1. Access the `Race Control` interface at /race-control.
-2. Use the dashboard to:
-    - Start the race.
-    - Change the race status.
-3. Real-time updates will be pushed to connected clients.
-
-**Screenshot**:
-![Race Control Screenshot](path/to/image2.png)
-
-### Spectator Information
-1. Spectators can access the public interface at /leader-board or on the main screen`.
-2. The page shows:
-    - Live race updates.
-    - Participant rankings.
-    - Race status.
-   - Race timer.
-
-**Screenshot**:
-![Spectator Interface Screenshot](path/to/image3.png)
-
----
-
-## Codebase Overview
-
-### Directories
-- `/src`: Main source code for the application.
-    - `/components`: All the components.
-- `/public`: Static files.
-- `/models`: Database models.
-
-### Key Files
-- `server.js`: Entry point of the application.
-- `.env`: Configuration file for environment variables.
-
----
-
-## Real-Time Functionality
-- **Socket.IO** is used to provide live updates to spectators and enable communication between race controllers and participants.
-
----
-
-## Security Measures
-- **Role-Based Access Control**: Different features are accessible based on the user's role (e.g., employee vs. spectator).
-
-# Beachside Racetrack Management System
-
-This project is a real-time system designed for managing races at the Beachside Racetrack. It includes race preparation, race control, and live updates for spectators. The system is built using Node.js, Express, Socket.IO, React, and MongoDB Atlas.
-
-## Features
-- Real-time race management with live updates.
-- Interactive interfaces for different roles, including Receptionist, Safety Official, and Racers.
-- Timer and stopwatch functionality for races and laps.
-- Remote MongoDB Atlas database integration.
-- Configurable race settings.
-
----
-
-## Getting Started
-
-### Prerequisites
-- [Node.js](https://nodejs.org) (v16 or later)
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account
-- `.env` file with required environment variables
-
----
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://gitea.kood.tech/andreberezin/racetrack.git
-   cd racetrack
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm run install-all
-   ```
-
-3. Set up the `.env` file in the root directory with the following environment variables:
+3. Create a `.env` file at the root of the project with the following variables:
    ```env
-   PORT=3000
-   MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/racetrack?retryWrites=true&w=majority
-   SAFETY_OF=your_safety_official_key
-   LAP_LINE_OBS=your_lap_line_observer_key
-   RECEPTIONIST=your_receptionist_key
-   RACE_DRIVER=your_race_driver_key
-   DEV=your_dev_key
-   NODE_ENV=development
+   PORT=<port_number>
+   SAFETY_OF=<safety_official_key>
+   LAP_LINE_OBS=<lap_line_observer_key>
+   RECEPTIONIST=<receptionist_key>
+   DEV=<developer_mode_key>
    ```
+   
+4. Ngrok setup (OPTIONAL)
+### Ngrok Setup Guide
 
-4. Run the server:
-   ```bash
-   npm start
-   ```
+#### What is Ngrok?
+Ngrok is a tool that creates secure tunnels to localhost, allowing your local server to be accessible via a public URL. It is especially useful for testing webhooks or sharing your local development server with team members.
+
+---
+
+#### Step 1: Install Ngrok
+
+1. **Download Ngrok**:
+    - Visit the [official Ngrok website](https://ngrok.com/download) and download the version suitable for your operating system.
+
+2. **Install Ngrok**:
+    - Extract the downloaded file and move it to a directory in your system's `PATH`.
+    - Test the installation:
+      ```bash
+      ngrok --version
+      ```
+    - You should see the installed version printed in your terminal.
+
+---
+
+#### Step 2: Create an Ngrok Account and Set Up Authtoken
+
+1. **Sign Up for an Ngrok Account**:
+    - Go to the [Ngrok sign-up page](https://dashboard.ngrok.com/signup) and create an account.
+
+2. **Retrieve Your Authtoken**:
+    - After logging in, navigate to your [dashboard](https://dashboard.ngrok.com/get-started/your-authtoken) and copy your unique authtoken.
+
+3. **Set Up Authtoken**:
+    - Run the following command in your terminal:
+      ```bash
+      ngrok config add-authtoken <your-authtoken>
+      ```
+    - Replace `<your-authtoken>` with the token from your Ngrok dashboard.
+
+---
+
+#### Step 3: Configure Ngrok for Your Racetrack Application
+
+1. **Edit the `.ngrok.yml` Configuration File**:
+    - In the root directory of your project, edit the file named `.ngrok.yml`. Replace the authtoken with your unique authtoken. 
+
+
+5.Start the server:
+   - Development Mode (default 1-minute races):
+     ```bash
+     npm run dev
+     ```
+   - Production Mode (default 10-minute races):
+     ```bash
+     npm start
+     ```
+     
+   - Copy the provided ngrok url form your terminal into your browser. You will see the ngrok warning page where you can press "visit site".
+
+---
 
 ## User Guide
 
-### Configuring a Race
-1. Navigate to the **Front Desk Interface**.
-2. Add a new race by entering the race name and clicking "Add Race".
-3. Click on the race name to view its details and add drivers.
+### Interfaces and Routes
 
-### Adding Drivers
-1. On the race details page, enter the driver's name and car number.
-2. Click "Add Driver" to save the driver to the race.
-3. You can edit or remove a driver using the respective buttons.
-
-### Optionally configure the race duration from **Race Settings**
-
-### Starting a Race
-1. Go to the **Race Control Interface**.
-2. Select a race and click "Start Race".
-3. Use the buttons to update the race mode (e.g., Safe, Danger, Hazard).
-
-### Viewing Race Progress
-1. Navigate to the **Racing Panel** (home page) to see the race's current progress and lap times.
-2. Use the **Next Race** page to view the next race and its drivers.
-
-### Managing Flags
-1. Open the **Flag Interface**.
-2. The current race flag status will be displayed dynamically, reflecting race conditions.
-
-### Spectator View
-- Spectators can view live updates on race progress and standings via the **Leaderboard** page.
+| Interface            | Persona           | Route               |
+|----------------------|-------------------|---------------------|
+| **Front Desk**       | Receptionist      | `/front-desk`       |
+| **Race Settings**    | Receptionist      | `/race-settings`    |
+| **Race Control**     | Safety Official   | `/race-control`     |
+| **Lap Line Tracker** | Lap-Line Observer | `/lap-line-tracker` |
+| **Leader Board**     | Spectator         | `/leader-board`     |
+| **Next Race**        | Race Driver       | `/next-race`        |
+| **Race Countdown**   | Race Driver       | `/race-countdown`   |
+| **Race Flags**       | Race Driver       | `/race-flags`       |
 
 ---
 
-## Screenshots
+### Logging in
+- Navigate to `/login`
+- Choose the desired role and enter the password which you set in the `.env` file.
+- To access all the routes, choose the `Developer` role.
 
-### Front Desk Interface
-![Front Desk Interface](screenshots/front_desk.png)
+### Configuring a Race (Receptionist - Front Desk)
 
-### Race Control
-![Race Control](screenshots/race_control.png)
-
-### Flag Status
-![Flag Status](screenshots/flag_status.png)
+1. **Edit race duration** (Optional): Navigate to `/race-settings`. Enter a new race duration number in minutes.
+2. **Add a Race**: Navigate to `/front-desk`. Enter a unique race name and click **Add Race**.
+3. **Manage Drivers**: Click on a race name to configure drivers. Add drivers by entering a unique name and car number.
+4. **Edit/Delete Drivers**: Modify driver names or remove them using the **Edit** and **Delete** buttons.
 
 ---
 
-## Deployment Notes
-- Ensure your MongoDB Atlas database is accessible and properly configured.
-- Update the allowed origins in `cors` settings to match your frontend's URL.
-- Use a reverse proxy like Nginx or a deployment service like Heroku or AWS for production environments.
+### Starting and Managing a Race (Safety Official - Race Control)
+
+1. Navigate to `/race-control`. View the **Next Race** or active race.
+2. Start the race using the **Start Race** button. Manage race modes (Safe, Hazard, Danger, Finish) using corresponding buttons.
+3. End the race session by clicking **End Session** after the race timer finishes or after choosing the Finish race mode.
+
+---
+
+### Observing Lap Times (Lap-Line Observer)
+
+1. Go to `/lap-line-tracker`. Click on car numbers when they cross the lap line.
+2. Lap times are recorded and displayed in real time. Race sessions automatically disable buttons after the race ends.
+
+---
+
+### Viewing Public Interfaces 
+
+1. **Leaderboard**: `/leader-board` shows real-time rankings based on fastest lap times.
+2. **Next Race**: `/next-race` displays the upcoming race session and assigned cars.
+3. **Flag**: `/race-flags` displays the current race flag status.
+4. **Race Countdown**: `/race-countdown` shows the timer for current race.
+5. **Homepage**: `/` combines `/race-countdown`, `/leader-board` and `/race-flags` into one interface if any races have been entered. Functions as a welcome screen if no races have been entered.
+
+---
+
+## Technical Features
+
+- **Real-Time Communication**: Powered by **Socket.IO**, ensuring instant updates across all interfaces.
+- **Persistent Data**: Race sessions, lap times, and configurations are saved in a **MongoDB Atlas** database.
+- **Dynamic Role-Based Interfaces**: Custom routes and controls based on user roles (e.g., employee vs. spectator).
+- **Responsive Design**: Optimized for various screen sizes, from tablets to large public displays. Hamburger style navigation bar for smaller screens.
+- **Light and dark mode UI**: Toggle between light and dark mode by clicking the sun or moon icon in the navigation bar.
+- **Full screen mode**: Switch to full screen mode by clicking the full screen icon in the navigation bar. Exit full screen mode by pressing the escape key.
 
 ---
 
@@ -238,14 +174,10 @@ This project is a real-time system designed for managing races at the Beachside 
 - ![React](https://img.shields.io/badge/React-18.3.1-blue)
 - ![Vite](https://img.shields.io/badge/Vite-5.4.10-yellow)
 - ![React Router](https://img.shields.io/badge/React%20Router-6.28.0-purple)
-- ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.3-blueviolet)
 
 ### General Tools
 - ![Ngrok](https://img.shields.io/badge/Ngrok-5.0.0--beta.2-lightgrey)
-- ![Nodemon](https://img.shields.io/badge/Nodemon-3.1.7-informational)
 
-## Contributors
-- [Your Name](https://github.com/your-profile)
 
 For any issues or feature requests, please open an issue on [GitHub](https://github.com/your-repo/beachside-racetrack).
 
