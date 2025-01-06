@@ -101,7 +101,7 @@ function App() {
                     <Route path="/race-control" element={<RaceControl />} />
                     <Route path="/race-countdown" element={<RaceCountdown />} />
                     <Route path="/next-race" element={<NextRace />} />
-                    <Route path="/flag" element={<Flag />} />
+                    <Route path="/race-flags" element={<Flag />} />
                     <Route path="/leader-board" element={<LeaderBoard />} />
 
                     <Route path="/race-settings" element={<RaceSettings />} />
