@@ -6,6 +6,16 @@ The Beachside Racetrack system is designed to manage races in real time, ensurin
 
 ---
 
+### Quick setup
+
+1. Download zip folder, extract to anywhere you like and open the folder in your preferred IDE
+2. Enter "npm install-all" in terminal to get all dependencies
+3. Enter "npm start" to start the application
+4. Open localhost:5173 in your web browser
+5. Log in as developer with password 11 to test every feature, you can also log in as other roles with password 11 but only the receptionist can create races
+
+---
+
 ## How to Start the Server
 
 ### Prerequisites
