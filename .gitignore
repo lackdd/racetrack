@@ -5,3 +5,4 @@ node_modules
 .idea/git_toolbox_prj.xml
 *.env
 keys.env
+keys.js
