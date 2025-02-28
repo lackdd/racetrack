@@ -3,3 +3,5 @@ node_modules
 .idea/inspectionProfiles
 .idea/git_toolbox_blame.xml
 .idea/git_toolbox_prj.xml
+*.env
+keys.env
