@@ -4,7 +4,7 @@
 
 The Beachside Racetrack system is designed to manage races in real time, ensuring smooth operation and providing up-to-date information for employees, race drivers, and spectators. Built using **Node.js**, **React**, and **Socket.IO**, it supports multiple personas and features dynamic race management interfaces.
 
-This project was made in collaboration with Andre Berezin and Artur Stoljar. I was assigned to create the frontend and backend parts of /race-control and /front-desk so my task included figuring out the whole dynamic of race and race-driver creation and control logic, which needed a lot of backend data transfer. I also came up with the style for the buttons, text in race-control, front-desk and leaderboard and set up mongodb Atlas as out remote database.
+This project was made in collaboration with Andre Berezin and Artur Stoljar. I was assigned to create the frontend and backend parts of /race-control and /front-desk so my task included figuring out the whole dynamic of race and race-driver creation and control logic, which needed a lot of backend data transfer. I also came up with the style for the buttons, text in race-control, front-desk and leaderboard and set up mongodb Atlas as our remote database.
 
 ---
 
